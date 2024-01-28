@@ -2,32 +2,45 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+@layer base {
+  /* To Be Prepared Later */
+  /* :root { */
+  /* } */
+  .dark {
+    --background: #0b0b0b;
+    --foreground: #f5f5f7;
+    --primary: #0071e3;
+    --border: #424245;
+    --card: #141414;
+    --muted: #252525;
+    --muted-foreground: #a9a9a9;
+    --destructive: #ff453a;
   }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+/* Works on Firefox */
+* {
+  scrollbar-width: 5px;
+  scrollbar-color: hsl(var(--muted-foreground)) hsl(var(--accent));
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+/* Works on Brave, Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  width: 5px;
+  height: 4px;
+}
+@media screen and (max-width: 768px) {
+  *::-webkit-scrollbar {
+    height: 0px;
   }
+}
+
+*::-webkit-scrollbar-track {
+  background: hsl(var(--accent));
+  padding: 2px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: hsl(var(--muted-foreground));
+  border-radius: 8px;
 }
