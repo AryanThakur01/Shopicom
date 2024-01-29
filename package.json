@@ -6,11 +6,17 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "generate": "drizzle-kit generate:pg"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
+    "bcryptjs": "^2.4.3",
+    "drizzle-orm": "^0.29.3",
+    "jsonwebtoken": "^9.0.2",
     "next": "14.1.0",
+    "pg": "^8.11.3",
+    "postgres": "^3.4.3",
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.49.3",
@@ -18,10 +24,13 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.5",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",
+    "drizzle-kit": "^0.20.13",
     "eslint": "^8",
     "eslint-config-next": "14.1.0",
     "postcss": "^8",

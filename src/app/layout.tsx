@@ -26,7 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className={ubuntu.className}>{children}</body>
+      <body className={ubuntu.className + " bg-background"}>{children}</body>
     </html>
   );
 }

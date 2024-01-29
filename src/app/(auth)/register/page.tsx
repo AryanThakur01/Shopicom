@@ -1,4 +1,5 @@
 "use client";
+import React, { useState } from "react";
 import FormField from "@/components/FormField";
 import Link from "next/link";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -7,7 +8,6 @@ import { LuLoader, LuLock, LuMail } from "react-icons/lu";
 import * as zod from "zod";
 import { FaApple, FaGoogle } from "react-icons/fa";
 import { XIcon } from "@/components/CustomIcons";
-import { useState } from "react";
 
 interface IFormInput {
   email: string;
@@ -18,7 +18,7 @@ const schema = zod.object({
   password: zod.string().min(8),
 });
 
-const Login = () => {
+const Register = () => {
   const [submitting, setSubmitting] = useState(false);
   const {
     handleSubmit,
@@ -34,7 +34,7 @@ const Login = () => {
   const submitHandler: SubmitHandler<IFormInput> = async (data) => {
     setSubmitting(true);
     const body = { ...data };
-    const res = await fetch("/api/login", {
+    const res = await fetch("/api/register", {
       method: "POST",
       body: JSON.stringify(body),
     });
@@ -44,11 +44,11 @@ const Login = () => {
   return (
     <section className="bg-background h-screen min-h-fit text-foreground flex flex-col container">
       <div className="my-auto md:w-1/3 w-full mx-auto bg-card p-4 rounded-lg">
-        <h1 className="text-center text-2xl">Welcome Back</h1>
+        <h1 className="text-center text-2xl">Register</h1>
         <h2 className="text-center text-xs text-muted-foreground my-2">
-          Don&apos;t have an account yet?{" "}
-          <Link href="/register" className="hover:underline text-primary">
-            Register Now
+          Already have an account?{" "}
+          <Link href="/login" className="hover:underline text-primary">
+            Login
           </Link>
         </h2>
         <form
@@ -79,7 +79,7 @@ const Login = () => {
             {submitting ? (
               <LuLoader className="animate-spin mx-auto size-5" />
             ) : (
-              "Login"
+              "Register"
             )}
           </button>
         </form>
@@ -104,4 +104,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;
