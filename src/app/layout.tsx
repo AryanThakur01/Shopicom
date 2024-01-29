@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Ubuntu } from "next/font/google";
 import "./globals.css";
+import Nav from "@/components/Nav";
 
 const ubuntu = Ubuntu({
   weight: ["300", "400", "500", "700"],
@@ -26,7 +27,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className={ubuntu.className + " bg-background"}>{children}</body>
+      <body
+        className={ubuntu.className + " bg-background text-foreground"}
+        suppressHydrationWarning={true}
+      >
+        {/* <Nav /> */}
+        {children}
+      </body>
     </html>
   );
 }

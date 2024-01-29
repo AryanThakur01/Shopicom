@@ -2,15 +2,16 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-// This function can be marked `async` if using `await` inside
-export function middleware(request: NextRequest) {
-  const cookie = cookies().get("Session_Token");
-  if (cookie) {
-    return NextResponse.redirect(new URL("/", request.url));
-  }
-}
+const protectedRoutes = ["/login", "/register"];
+const privateRoutes = ["/dashboard"];
 
-// See "Matching Paths" below to learn more
-export const config = {
-  matcher: ["/login", "/register"],
-};
+export async function middleware(request: NextRequest) {
+  const url = new URL(request.url, request.url);
+  const cookie = cookies().get("Session_Token");
+
+  if (protectedRoutes.includes(url.pathname) && cookie)
+    return NextResponse.redirect(new URL("/", request.url));
+
+  if (privateRoutes.includes(url.pathname) && !cookie)
+    return NextResponse.redirect(new URL("/login", request.url));
+}
