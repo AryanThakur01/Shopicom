@@ -53,7 +53,7 @@ const AsideButton: React.FC<IAsideButton> = ({ link, icon, text }) => {
     <Link
       href={link}
       className={
-        (path === link
+        (path === link || (link !== "/dashboard" && path.match(link + "/*"))
           ? "bg-primary "
           : "text-muted-foreground hover:text-foreground hover:bg-card ") +
         "hidden md:flex gap-4 items-center rounded-lg p-2 px-4 transition-all duration-400"
