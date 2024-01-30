@@ -4,19 +4,14 @@ import FormField from "@/components/FormField";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import * as zod from "zod";
-import { LuLoader } from "react-icons/lu";
-import Image from "next/image";
+import { LuLoader, LuTrash } from "react-icons/lu";
 
 const schema = zod.object({
   name: zod.string().min(3),
   description: zod.string().min(10),
-  images: zod.array(
-    zod.object({
-      value: zod.custom<FileList>((val) => {
-        return typeof val;
-      }),
-    }),
-  ),
+  properties: zod
+    .array(zod.object({ key: zod.string(), value: zod.string() }))
+    .max(16),
 });
 type TFormInput = zod.infer<typeof schema>;
 
@@ -26,25 +21,28 @@ const ProductCatelogueForm = () => {
     control,
     handleSubmit,
     register,
-    getValues,
     formState: { errors },
-    watch,
   } = useForm<TFormInput>({
     resolver: zodResolver(schema),
     defaultValues: {
       name: "",
       description: "",
-      images: [{}],
+      properties: [
+        {
+          key: "",
+          value: "",
+        },
+      ],
     },
   });
-  const { fields, append, remove } = useFieldArray({
-    name: "images",
+  // const { fields, append, remove } = useFieldArray({
+  const productProperties = useFieldArray({
     control,
+    name: "properties",
   });
   const submitHandler: SubmitHandler<TFormInput> = async (data) => {
     setSubmitting(true);
     console.log(data);
-    console.log(data.images[0].value[0]);
     setSubmitting(false);
   };
   // Price
@@ -57,7 +55,6 @@ const ProductCatelogueForm = () => {
     <>
       {/* <input type="color" onChange={(e) => setCol(e.target.value)} /> */}
       {/* <input type="file" onChange={(e) => console.log(e.target.files)} /> */}
-      {console.log(fields)}
       <form
         className="my-8 flex flex-col gap-4"
         onSubmit={handleSubmit(submitHandler)}
@@ -80,16 +77,58 @@ const ProductCatelogueForm = () => {
             error={errors.description?.message}
             label="Description"
           />
-          {getValues().images.map((_, i) => (
-            <FormField
-              key={"image_" + i}
-              uni={`images.${i}.value`}
-              type="file"
-              register={register}
-              error={errors.images?.message}
-              labelClass="h-40 w-40"
-            ></FormField>
-          ))}
+          <h3 className="my-4">Property Table</h3>
+          <div>
+            {productProperties.fields.map((item, i) => (
+              <div
+                key={item.id}
+                className="grid grid-cols-3 md:gap-8 2xl:gap-16 gap-8"
+              >
+                <FormField
+                  type="text"
+                  register={register}
+                  uni={`properties.${i}.key`}
+                  placeholder="Key"
+                />
+                <div className="col-span-2 flex gap-4 items-center">
+                  <FormField
+                    type="text"
+                    register={register}
+                    uni={`properties.${i}.value`}
+                    placeholder="Value"
+                    containerClass="col-span-2 w-full"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => productProperties.remove(i)}
+                    className="self-start hover:bg-muted w-10 h-10 rounded"
+                  >
+                    <LuTrash className="stroke-destructive mx-auto" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-center">
+            {productProperties.fields.length < 8 && (
+              <button
+                type="button"
+                onClick={() => {
+                  if (productProperties.fields.length < 16)
+                    productProperties.append({
+                      key: "",
+                      value: "",
+                    });
+                }}
+                className="bg-background p-2 w-32 rounded"
+              >
+                Add
+              </button>
+            )}
+          </div>
+        </SectionContainer>
+        <SectionContainer title="Price/Picture Details">
+          <div></div>
         </SectionContainer>
         <button
           type="submit"

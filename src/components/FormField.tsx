@@ -1,6 +1,7 @@
 "use client";
-import React, { ReactNode } from "react";
-import { FieldError, UseFormRegister } from "react-hook-form";
+import Image from "next/image";
+import React, { ReactNode, useState } from "react";
+import { UseFormRegister } from "react-hook-form";
 import { LuAlertCircle, LuPlus, LuPlusCircle } from "react-icons/lu";
 
 interface IFormField {
@@ -34,9 +35,11 @@ const FormField: React.FC<IFormField> = ({
 }) => {
   return (
     <div className={containerClass}>
-      <label htmlFor={uni} className="block mb-2">
-        {label}
-      </label>
+      {label && (
+        <label htmlFor={uni} className="block mb-2">
+          {label}
+        </label>
+      )}
       {type === "options" && (
         <select
           {...register(uni)}
@@ -44,25 +47,6 @@ const FormField: React.FC<IFormField> = ({
         >
           {children}
         </select>
-      )}
-      {type === "file" && (
-        <label
-          className={
-            "cursor-pointer group bg-background rounded-lg flex justify-center items-center text-muted-foreground px-4 border " +
-            " " +
-            (error ? " border-destructive" : "border-muted") +
-            " " +
-            labelClass
-          }
-          htmlFor={uni}
-        >
-          {children ? (
-            children
-          ) : (
-            <LuPlusCircle className="fill-primary size-10 stroke-1 stroke-foreground" />
-          )}
-          <input type={type} id={uni} {...register(uni)} className="hidden" />
-        </label>
       )}
       {(type === "text" || type === "password" || type === "email") && (
         <>
@@ -108,5 +92,43 @@ const FormField: React.FC<IFormField> = ({
     </div>
   );
 };
+
+interface IFileField {
+  labelClass?: string;
+  error?: string;
+  type: string;
+  uni: string;
+  register: UseFormRegister<any>;
+}
+export const FileField = React.forwardRef<HTMLInputElement, IFileField>(
+  ({ labelClass, error, type, uni, register }, ref) => {
+    const [image, setImage] = useState<string>("");
+    return (
+      <label
+        className={
+          "overflow-hidden cursor-pointer group bg-background rounded-lg flex justify-center items-center text-muted-foreground border" +
+          " " +
+          (error ? "border-destructive" : "border-muted") +
+          " " +
+          labelClass
+        }
+        htmlFor={uni}
+      >
+        {image ? (
+          <Image
+            src={image || ""}
+            alt={uni}
+            height={100}
+            width={100}
+            className="min-h-full min-w-full"
+          />
+        ) : (
+          <LuPlusCircle className="fill-primary size-10 stroke-1 stroke-foreground" />
+        )}
+        <input type={type} id={uni} {...register(uni)} className="hidden" />
+      </label>
+    );
+  },
+);
 
 export default FormField;
