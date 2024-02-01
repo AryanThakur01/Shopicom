@@ -28,6 +28,7 @@ const config: Config = {
           foreground: "var(--muted-foreground)",
         },
         destructive: "var(--destructive)",
+        success: "var(--success)",
         primary: {
           DEFAULT: "var(--primary)",
           foreground: "var(--primary-foreground)",

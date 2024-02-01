@@ -1,22 +1,48 @@
 "use client";
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import FormField from "@/components/FormField";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import * as zod from "zod";
 import { LuLoader, LuTrash } from "react-icons/lu";
+import ImageForm from "./ImageForm";
 
 const schema = zod.object({
   name: zod.string().min(3),
   description: zod.string().min(10),
   properties: zod
     .array(zod.object({ key: zod.string(), value: zod.string() }))
-    .max(16),
+    .max(8),
+  variants: zod
+    .array(
+      zod.object({
+        color: zod.string(),
+        imageList: zod.array(
+          zod.object({ value: zod.custom<FileList>().optional() }),
+        ),
+        price: zod.number(),
+        discountedPrice: zod.number(),
+      }),
+    )
+    .max(8),
 });
-type TFormInput = zod.infer<typeof schema>;
+export type TFormInput = zod.infer<typeof schema>;
 
 const ProductCatelogueForm = () => {
   const [submitting, setSubmitting] = useState(false);
+  const defaultValues = {
+    name: "",
+    description: "",
+    properties: [{ key: "", value: "" }],
+    variants: [
+      {
+        color: "#c2362d",
+        imageList: [{}, {}, {}, {}, {}],
+        price: 100,
+        discountedPrice: 200,
+      },
+    ],
+  };
   const {
     control,
     handleSubmit,
@@ -24,25 +50,26 @@ const ProductCatelogueForm = () => {
     formState: { errors },
   } = useForm<TFormInput>({
     resolver: zodResolver(schema),
-    defaultValues: {
-      name: "",
-      description: "",
-      properties: [
-        {
-          key: "",
-          value: "",
-        },
-      ],
-    },
+    defaultValues,
   });
-  // const { fields, append, remove } = useFieldArray({
-  const productProperties = useFieldArray({
-    control,
-    name: "properties",
-  });
+  const propTable = useFieldArray({ control, name: "properties" });
+  const variants = useFieldArray({ control, name: "variants" });
   const submitHandler: SubmitHandler<TFormInput> = async (data) => {
     setSubmitting(true);
-    console.log(data);
+    const fReader = new FileReader();
+    data.variants.map((item) => {
+      item.imageList.map((_, i) => {
+        const file = item.imageList[i].value;
+        if (!file) delete item.imageList[i];
+        else {
+          // fReader.readAsDataURL(file[0]);
+          // fReader.onload = (txt) => {
+          //   console.log(txt.target?.result);
+          // };
+        }
+      });
+    });
+    console.log(JSON.parse(JSON.stringify(data)));
     setSubmitting(false);
   };
   // Price
@@ -53,8 +80,6 @@ const ProductCatelogueForm = () => {
   // Stock
   return (
     <>
-      {/* <input type="color" onChange={(e) => setCol(e.target.value)} /> */}
-      {/* <input type="file" onChange={(e) => console.log(e.target.files)} /> */}
       <form
         className="my-8 flex flex-col gap-4"
         onSubmit={handleSubmit(submitHandler)}
@@ -77,9 +102,24 @@ const ProductCatelogueForm = () => {
             error={errors.description?.message}
             label="Description"
           />
-          <h3 className="my-4">Property Table</h3>
+        </SectionContainer>
+        <SectionContainer
+          title="Property Table"
+          ctaFunction={
+            propTable.fields.length < 8
+              ? () => {
+                  if (propTable.fields.length < 8)
+                    propTable.append({
+                      key: "",
+                      value: "",
+                    });
+                }
+              : undefined
+          }
+          ctaText="Add Property"
+        >
           <div>
-            {productProperties.fields.map((item, i) => (
+            {propTable.fields.map((item, i) => (
               <div
                 key={item.id}
                 className="grid grid-cols-3 md:gap-8 2xl:gap-16 gap-8"
@@ -100,8 +140,8 @@ const ProductCatelogueForm = () => {
                   />
                   <button
                     type="button"
-                    onClick={() => productProperties.remove(i)}
-                    className="self-start hover:bg-muted w-10 h-10 rounded"
+                    onClick={() => propTable.remove(i)}
+                    className="self-start bg-background hover:bg-muted w-10 h-10 rounded"
                   >
                     <LuTrash className="stroke-destructive mx-auto" />
                   </button>
@@ -109,26 +149,40 @@ const ProductCatelogueForm = () => {
               </div>
             ))}
           </div>
-          <div className="flex justify-center">
-            {productProperties.fields.length < 8 && (
-              <button
-                type="button"
-                onClick={() => {
-                  if (productProperties.fields.length < 16)
-                    productProperties.append({
-                      key: "",
-                      value: "",
-                    });
-                }}
-                className="bg-background p-2 w-32 rounded"
-              >
-                Add
-              </button>
-            )}
-          </div>
         </SectionContainer>
-        <SectionContainer title="Price/Picture Details">
-          <div></div>
+        <SectionContainer
+          title="Variant Details"
+          ctaFunction={
+            variants.fields.length < 8
+              ? () => {
+                  variants.append(defaultValues.variants);
+                }
+              : undefined
+          }
+          ctaText="Add Variant"
+        >
+          {variants.fields.map((item, i) => (
+            <React.Fragment key={item.id}>
+              <FormField
+                type="color"
+                uni={`variants.${i}.color`}
+                register={register}
+                error={errors.variants && errors.variants[i]?.color?.message}
+              />
+              <ImageForm
+                index={i}
+                value={{
+                  ...item,
+                  imageList: item.imageList,
+                }}
+                update={variants.update}
+                control={control}
+              />
+              {i !== variants.fields.length - 1 && (
+                <hr className="border-muted my-4" />
+              )}
+            </React.Fragment>
+          ))}
         </SectionContainer>
         <button
           type="submit"
@@ -149,11 +203,29 @@ const ProductCatelogueForm = () => {
 interface ISectionContainer {
   title: string;
   children: ReactNode;
+  ctaFunction?: () => void;
+  ctaText?: string;
 }
-const SectionContainer: React.FC<ISectionContainer> = ({ title, children }) => {
+const SectionContainer: React.FC<ISectionContainer> = ({
+  title,
+  children,
+  ctaFunction,
+  ctaText,
+}) => {
   return (
     <div className="border border-border bg-card rounded-lg overflow-hidden">
-      <h3 className="text-lg font-bold p-4 bg-muted">{title}</h3>
+      <div className="flex justify-between bg-muted items-center p-2 px-4 min-h-16">
+        <h3 className="text-lg font-bold">{title}</h3>
+        {ctaFunction && (
+          <button
+            type="button"
+            onClick={ctaFunction}
+            className="bg-success p-2 w-32 rounded"
+          >
+            {ctaText}
+          </button>
+        )}
+      </div>
       <hr className="border-border" />
       <div className="p-4">{children}</div>
     </div>
