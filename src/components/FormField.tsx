@@ -36,7 +36,7 @@ const FormField: React.FC<IFormField> = ({
   return (
     <div className={containerClass}>
       {label && (
-        <label htmlFor={uni} className={"block mb-2" + " " + labelClass}>
+        <label htmlFor={uni} className={"block mb-2 w-fit" + " " + labelClass}>
           {label}
         </label>
       )}
@@ -53,7 +53,7 @@ const FormField: React.FC<IFormField> = ({
           type={type}
           {...register(uni)}
           id={uni}
-          className={"" + inputClass}
+          className={"min-h-10 " + inputClass}
         />
       )}
       {(type === "text" ||
@@ -96,9 +96,9 @@ const FormField: React.FC<IFormField> = ({
               )}
             </span>
           </label>
-          <p className="h-4 text-xs px-4 text-destructive mt-1">{error}</p>
         </>
       )}
+      <p className="h-4 text-xs px-4 text-destructive mt-1">{error}</p>
     </div>
   );
 };

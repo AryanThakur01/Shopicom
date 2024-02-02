@@ -1,5 +1,5 @@
 "use client";
-import React, { ReactNode, useEffect, useMemo, useRef, useState } from "react";
+import React, { ReactNode, useState } from "react";
 import FormField from "@/components/FormField";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
@@ -18,10 +18,10 @@ const schema = zod.object({
       zod.object({
         color: zod.string(),
         imageList: zod.array(
-          zod.object({ value: zod.custom<FileList>().optional() }),
+          zod.object({ value: zod.custom<FileList | string>().optional() }),
         ),
-        price: zod.number(),
-        discountedPrice: zod.number(),
+        price: zod.string(),
+        discountedPrice: zod.string(),
       }),
     )
     .max(8),
@@ -38,8 +38,8 @@ const ProductCatelogueForm = () => {
       {
         color: "#c2362d",
         imageList: [{}, {}, {}, {}, {}],
-        price: 100,
-        discountedPrice: 200,
+        price: "",
+        discountedPrice: "",
       },
     ],
   };
@@ -54,22 +54,48 @@ const ProductCatelogueForm = () => {
   });
   const propTable = useFieldArray({ control, name: "properties" });
   const variants = useFieldArray({ control, name: "variants" });
+  const imageProcessor = async (image: File | string): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const fReader = new FileReader();
+      if (typeof image === "string") {
+        resolve(image);
+        return;
+      }
+      fReader.readAsDataURL(image);
+      fReader.onload = (e) => {
+        if (e.target?.result && typeof e.target.result === "string")
+          resolve(e.target.result);
+        else {
+          reject("Unsopperted File Format");
+        }
+      };
+    });
+  };
   const submitHandler: SubmitHandler<TFormInput> = async (data) => {
     setSubmitting(true);
-    const fReader = new FileReader();
-    data.variants.map((item) => {
-      item.imageList.map((_, i) => {
-        const file = item.imageList[i].value;
-        if (!file) delete item.imageList[i];
-        else {
-          // fReader.readAsDataURL(file[0]);
-          // fReader.onload = (txt) => {
-          //   console.log(txt.target?.result);
-          // };
+    try {
+      const images: { value: string }[] = [];
+      for (let i = 0; i < data.variants.length; i++) {
+        const variantImages = data.variants[i].imageList;
+        for (let j = 0; j < variantImages.length; j++) {
+          if (!variantImages[j].value) delete variantImages[j];
+          else {
+            const fileBlobList = variantImages[j].value;
+            if (!fileBlobList) throw new Error("Improper file format");
+            const image = await imageProcessor(fileBlobList[0]);
+            images.push({ value: image });
+          }
         }
+        data.variants[i].imageList = images;
+      }
+      // console.log(images);
+      console.log(data);
+      const res = await fetch("/api/products/create", {
+        method: "POST",
+        body: JSON.stringify(data),
       });
-    });
-    console.log(JSON.parse(JSON.stringify(data)));
+      console.log(res);
+    } catch (error) {}
     setSubmitting(false);
   };
   // Price
@@ -164,11 +190,33 @@ const ProductCatelogueForm = () => {
           {variants.fields.map((item, i) => (
             <React.Fragment key={item.id}>
               <FormField
+                label="Color"
                 type="color"
                 uni={`variants.${i}.color`}
                 register={register}
                 error={errors.variants && errors.variants[i]?.color?.message}
               />
+              <div className="flex gap-4 items-center">
+                <FormField
+                  label={"Product price"}
+                  type="number"
+                  uni={`variants.${i}.price`}
+                  placeholder="Product Price"
+                  register={register}
+                  error={errors.variants && errors.variants[i]?.price?.message}
+                />
+                <FormField
+                  label="Discouted price"
+                  type="number"
+                  uni={`variants.${i}.discountedPrice`}
+                  register={register}
+                  placeholder="Discounted Price"
+                  error={
+                    errors.variants &&
+                    errors.variants[i]?.discountedPrice?.message
+                  }
+                />
+              </div>
               <ImageForm
                 index={i}
                 value={{
@@ -176,7 +224,7 @@ const ProductCatelogueForm = () => {
                   imageList: item.imageList,
                 }}
                 update={variants.update}
-                control={control}
+                parentControl={control}
               />
               {i !== variants.fields.length - 1 && (
                 <hr className="border-muted my-4" />

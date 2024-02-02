@@ -4,12 +4,8 @@ import { User, users } from "@/db/schema/users";
 import { genSalt, hash } from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
+import { generateJWT } from "@/utils/api/helpers";
 
-const generateJWT = (data: object) => {
-  const jwtSecret = process.env.JWT_SECRET as string;
-  const jwtExpiry = process.env.JWT_LIFETIME as string;
-  return jwt.sign(data, jwtSecret, { expiresIn: jwtExpiry });
-};
 const passwordEncrypter = async (password: string) => {
   const salt = await genSalt(10);
   const hashVal = await hash(password, salt);

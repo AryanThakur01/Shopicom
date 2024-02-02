@@ -15,20 +15,27 @@ interface IImageForm {
   value: {
     color: string;
     imageList: Array<{
-      value?: FileList;
+      value?: FileList | string;
     }>;
-    price: number;
-    discountedPrice: number;
+    price: string;
+    discountedPrice: string;
   };
-  control: Control<TFormInput>;
+  parentControl: Control<TFormInput>;
 }
-const ImageForm: React.FC<IImageForm> = ({ update, index, value }) => {
+const ImageForm: React.FC<IImageForm> = ({
+  update,
+  index,
+  value,
+  parentControl,
+}) => {
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
   const { register, control } = useForm({
     defaultValues: { imageList: value.imageList },
   });
   const { fields } = useFieldArray({ control, name: "imageList" });
   const fieldWatch = useWatch({ control });
+  const variantVals = useWatch({ control: parentControl, name: "variants" });
+
   const imageUploader = (e: React.ChangeEvent<HTMLInputElement>, i: number) => {
     const file = e.target.files;
     if (!file) return;
@@ -36,7 +43,7 @@ const ImageForm: React.FC<IImageForm> = ({ update, index, value }) => {
     const tempImg = [...fieldWatch.imageList];
     tempImg[i].value = file;
     update(index, {
-      ...value,
+      ...variantVals[index],
       imageList: tempImg,
     });
   };
@@ -50,7 +57,10 @@ const ImageForm: React.FC<IImageForm> = ({ update, index, value }) => {
     for (let i = 0; i < imageCount; i++) {
       const element = fieldWatch.imageList[i].value;
       if (element) {
-        const url = URL.createObjectURL(element[0]);
+        let url: string =
+          typeof element[0] === "string"
+            ? element[0]
+            : URL.createObjectURL(element[0]);
         imageList.push(url);
       } else {
         imageList.push("");

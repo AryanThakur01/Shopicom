@@ -1,5 +1,5 @@
 {
-  "id": "361cd7ff-2482-45ff-966b-118556499de0",
+  "id": "24fbc591-1cb5-4d9b-9e94-bbbd0345fa66",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
@@ -37,7 +37,15 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {
+        "users_email_unique": {
+          "name": "users_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "email"
+          ]
+        }
+      }
     }
   },
   "enums": {},
