@@ -94,8 +94,10 @@ const ProductCatelogueForm = () => {
         method: "POST",
         body: JSON.stringify(data),
       });
-      console.log(res);
-    } catch (error) {}
+      console.log("RES: ", await res.text());
+    } catch (error) {
+      console.log("ERROR: ", error);
+    }
     setSubmitting(false);
   };
   // Price

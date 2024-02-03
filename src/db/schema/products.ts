@@ -74,5 +74,5 @@ export type property = typeof properties.$inferSelect;
 export type newProperty = typeof properties.$inferInsert;
 export type variant = typeof variants.$inferSelect;
 export type newVariant = typeof variants.$inferInsert;
-export type image = typeof images.$inferInsert;
-export type newImage = typeof images.$inferSelect;
+export type image = typeof images.$inferSelect;
+export type newImage = typeof images.$inferInsert;

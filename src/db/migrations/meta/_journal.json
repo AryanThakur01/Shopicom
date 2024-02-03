@@ -36,6 +36,20 @@
       "when": 1706895223938,
       "tag": "0004_melodic_blue_marvel",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1706981086165,
+      "tag": "0005_great_wendigo",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1706984165490,
+      "tag": "0006_superb_deadpool",
+      "breakpoints": true
     }
   ]
 }
