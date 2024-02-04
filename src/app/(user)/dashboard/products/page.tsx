@@ -1,13 +1,9 @@
 import ProductList from "@/components/dashboard/products/ProductList";
-import { cookies } from "next/headers";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import React from "react";
 import { LuPlus } from "react-icons/lu";
 
 const page = () => {
-  const token = cookies().get("Session_Token")?.value;
-  if (!token) redirect("/login");
   return (
     <div className="bg-card p-4 rounded-lg">
       <div className="flex justify-between items-center">
@@ -22,7 +18,7 @@ const page = () => {
           </Link>
         </div>
       </div>
-      <ProductList token={token} />
+      <ProductList />
     </div>
   );
 };

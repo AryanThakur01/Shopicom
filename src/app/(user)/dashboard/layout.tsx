@@ -6,7 +6,7 @@ interface IDashboard {
 }
 const layout: React.FC<IDashboard> = ({ children }) => {
   return (
-    <main className="grid md:grid-cols-5 grid-cols-4 container my-10 gap-4">
+    <main className="grid md:grid-cols-5 grid-cols-4 px-2 md:container my-10 gap-4">
       <AsideMenu />
       <section className="col-span-4">{children}</section>
     </main>

@@ -1,31 +1,30 @@
-import { db } from "@/db";
-import { images, products, variants } from "@/db/schema/products";
+"use client";
+
 import { IProductProps } from "@/types/products";
-import { jwtDecoder } from "@/utils/api/helpers";
-import { productJoinMerger } from "@/utils/products";
-import { eq, inArray } from "drizzle-orm";
 import Image from "next/image";
-import { redirect } from "next/navigation";
-import React, { FC, ReactNode } from "react";
+import React, { FC, ReactNode, useMemo, useState } from "react";
 
-interface IProductList {
-  token: string;
-}
+interface IProductList {}
 
-const ProductList: FC<IProductList> = async ({ token }) => {
-  const jwtPayload = jwtDecoder(token);
-  if (typeof jwtPayload === "string") redirect("/login");
+const ProductList: FC<IProductList> = () => {
+  const [productList, setProductList] = useState<IProductProps[]>([]);
+  const [productFetching, setProductFetching] = useState(false);
+  const [selectedVariant, setSelectedVariant] = useState<number[]>([]);
+  const fetchProducts = async () => {
+    setProductFetching(true);
+    try {
+      const res = await fetch("/api/products/read/myproducts", {
+        method: "GET",
+      });
+      const products = await res.json();
+      setProductList(products);
+    } catch (error) {
+      console.log("ERROR FETCHING DATA");
+    }
+    setProductFetching(false);
+  };
 
-  const allProducts = await db
-    .select()
-    .from(products)
-    .where(eq(products.sellerId, jwtPayload.id))
-    .innerJoin(variants, eq(products.id, variants.productId))
-    .innerJoin(images, eq(variants.id, images.variantId));
-  const productList: IProductProps[] = productJoinMerger(
-    allProducts,
-    jwtPayload.id,
-  );
+  useMemo(fetchProducts, []);
 
   return (
     <div>
@@ -34,13 +33,21 @@ const ProductList: FC<IProductList> = async ({ token }) => {
         <div className="col-span-2 text-start">
           <h3>PRODUCT</h3>
         </div>
-        <h3>STOCK</h3>
-        <h3>ORDERS</h3>
+        <h3 className="md:block hidden">STOCK</h3>
+        <h3 className="md:block hidden">ORDERS</h3>
         <h3>COLOR</h3>
       </Tr>
-      <Tr className={`my-4`}>
-        {productList.map((item) => (
-          <React.Fragment key={item.id}>
+      {productFetching ? (
+        <>
+          <TrLoadingSkeleton />
+          <TrLoadingSkeleton />
+          <TrLoadingSkeleton />
+          <TrLoadingSkeleton />
+          <TrLoadingSkeleton />
+        </>
+      ) : (
+        productList.map((item) => (
+          <Tr className="my-4" key={item.id}>
             <div className="col-span-2 flex items-center gap-4 text-foreground">
               <div className="h-12 w-12 bg-purple-500 rounded overflow-hidden">
                 <Image
@@ -50,8 +57,10 @@ const ProductList: FC<IProductList> = async ({ token }) => {
                   width={100}
                 />
               </div>
-              <div className="flex flex-col gap-1">
-                <p>{item.name}</p>
+              <div className="flex flex-col gap-1 max-w-[60%] text-start">
+                <p className="md:text-base 2xl:text-lg text-xs truncate">
+                  {item.name}
+                </p>
                 <div className="flex gap-2 text-xs">
                   <p className="line-through text-muted-foreground">
                     ₹ {item.variants[0].price}
@@ -60,11 +69,12 @@ const ProductList: FC<IProductList> = async ({ token }) => {
                 </div>
               </div>
             </div>
-            <p>--</p>
-            <p>--</p>
-            <div className="flex gap-4 place-self-center">
-              {item.variants.map((_, i) => (
+            <p className="md:block hidden">--</p>
+            <p className="md:block hidden">--</p>
+            <div className="grid grid-cols-4 gap-4 place-self-center">
+              {item.variants.map((sub, i) => (
                 <p
+                  key={sub.id}
                   className="place-self-center rounded-full h-6 w-6"
                   style={{
                     backgroundColor: `${item.variants[i].color}`,
@@ -72,9 +82,9 @@ const ProductList: FC<IProductList> = async ({ token }) => {
                 ></p>
               ))}
             </div>
-          </React.Fragment>
-        ))}
-      </Tr>
+          </Tr>
+        ))
+      )}
     </div>
   );
 };
@@ -92,11 +102,24 @@ const Tr: React.FC<ITr> = ({ children, isHead, className }) => {
         " " +
         className +
         " " +
-        "grid grid-cols-5 gap-y-4 mt-4 rounded text-muted-foreground px-6 p-2 text-center items-center"
+        "grid md:grid-cols-5 grid-cols-3 gap-2 gap-y-4 mt-4 rounded text-muted-foreground md:mx-6 p-2 text-center items-center"
       }
     >
       {children}
     </div>
+  );
+};
+const TrLoadingSkeleton = () => {
+  return (
+    <Tr>
+      <div className="col-span-2 flex items-center gap-4 text-foreground">
+        <div className="h-12 w-12 bg-muted rounded animate-pulse" />
+        <div className="max-w-[60%] bg-muted w-full h-12 rounded animate-pulse" />
+      </div>
+      <p className="md:block hidden h-12 animate-pulse bg-muted w-20 justify-self-center rounded"></p>
+      <p className="md:block hidden h-12 animate-pulse bg-muted w-20 justify-self-center rounded"></p>
+      <div className="place-self-center h-8 animate-pulse w-8 rounded-full bg-muted"></div>
+    </Tr>
   );
 };
 
