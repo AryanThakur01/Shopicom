@@ -8,6 +8,7 @@ import { LuLoader, LuLock, LuMail } from "react-icons/lu";
 import * as zod from "zod";
 import { FaApple, FaGoogle } from "react-icons/fa";
 import { XIcon } from "@/components/CustomIcons";
+import { useRouter } from "next/navigation";
 
 interface IFormInput {
   email: string;
@@ -20,6 +21,7 @@ const schema = zod.object({
 
 const Register = () => {
   const [submitting, setSubmitting] = useState(false);
+  const router = useRouter();
   const {
     handleSubmit,
     register,
@@ -33,12 +35,16 @@ const Register = () => {
   });
   const submitHandler: SubmitHandler<IFormInput> = async (data) => {
     setSubmitting(true);
-    const body = { ...data };
-    const res = await fetch("/api/register", {
-      method: "POST",
-      body: JSON.stringify(body),
-    });
-    console.log(await res.text());
+    try {
+      const body = { ...data };
+      const res = await fetch("/api/register", {
+        method: "POST",
+        body: JSON.stringify(body),
+      });
+      router.push("/dashboard");
+    } catch (error) {
+      console.log(error);
+    }
     setSubmitting(false);
   };
   return (

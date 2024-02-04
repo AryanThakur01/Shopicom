@@ -42,6 +42,8 @@ export const variants = pgTable("variants", {
   color: text("color"),
   price: integer("price"),
   discountedPrice: integer("discountedPrice"),
+  stock: integer("stock"),
+  orders: integer("orders").default(0),
   productId: integer("product_id")
     .references(() => products.id, { onDelete: "cascade" })
     .notNull(),

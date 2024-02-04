@@ -19,6 +19,8 @@ interface IImageForm {
     }>;
     price: string;
     discountedPrice: string;
+    stock: string;
+    orders: string;
   };
   parentControl: Control<TFormInput>;
 }

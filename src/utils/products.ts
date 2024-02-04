@@ -19,7 +19,7 @@ const getDefaultProduct = (
     variants: [
       {
         ...allProducts[index].variants,
-        imageList: [allProducts[index].images],
+        imageList: [allProducts[index].images || { value: "" }],
       },
     ],
     sellerId: sellerId,
@@ -39,11 +39,13 @@ export const productJoinMerger = (
   for (let i = 1; i < allProducts.length; i++) {
     if (productList[j].id === allProducts[i].products.id) {
       if (productList[j].variants[k].id === allProducts[i].variants.id)
-        productList[j].variants[k].imageList.push(allProducts[i].images);
+        productList[j].variants[k].imageList.push(
+          allProducts[i].images || { value: null },
+        );
       else {
         productList[j].variants.push({
           ...allProducts[i].variants,
-          imageList: [allProducts[i].images],
+          imageList: [allProducts[i].images || { value: null }],
         });
         k++;
       }

@@ -50,6 +50,13 @@
       "when": 1706984165490,
       "tag": "0006_superb_deadpool",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1707052427095,
+      "tag": "0007_volatile_wallop",
+      "breakpoints": true
     }
   ]
 }

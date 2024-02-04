@@ -14,5 +14,7 @@ export interface IProductProps {
     imageList: newImage[];
     discountedPrice?: number | null | undefined;
     productId: number;
+    stock: number;
+    orders: number;
   }[];
 }

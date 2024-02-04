@@ -3,6 +3,8 @@
 import { IProductProps } from "@/types/products";
 import Image from "next/image";
 import React, { FC, ReactNode, useMemo, useState } from "react";
+import * as ToggleGroup from "@radix-ui/react-toggle-group";
+import * as Popover from "@radix-ui/react-popover";
 
 interface IProductList {}
 
@@ -17,6 +19,8 @@ const ProductList: FC<IProductList> = () => {
         method: "GET",
       });
       const products = await res.json();
+      console.log(products);
+      setSelectedVariant([...Array(products.length)].map(() => 0));
       setProductList(products);
     } catch (error) {
       console.log("ERROR FETCHING DATA");
@@ -46,44 +50,89 @@ const ProductList: FC<IProductList> = () => {
           <TrLoadingSkeleton />
         </>
       ) : (
-        productList.map((item) => (
-          <Tr className="my-4" key={item.id}>
-            <div className="col-span-2 flex items-center gap-4 text-foreground">
-              <div className="h-12 w-12 bg-purple-500 rounded overflow-hidden">
-                <Image
-                  src={`${item.variants[0].imageList[0].value}`}
-                  alt="IMG"
-                  height={100}
-                  width={100}
-                />
-              </div>
-              <div className="flex flex-col gap-1 max-w-[60%] text-start">
-                <p className="md:text-base 2xl:text-lg text-xs truncate">
-                  {item.name}
-                </p>
-                <div className="flex gap-2 text-xs">
-                  <p className="line-through text-muted-foreground">
-                    ₹ {item.variants[0].price}
-                  </p>
-                  <p>₹ {item.variants[0].discountedPrice}</p>
+        <>
+          {productList.length > 0 ? (
+            productList.map((item, i) => (
+              <Tr className="my-4" key={item.id}>
+                <div className="col-span-2 flex items-center gap-4 text-foreground">
+                  <div className="h-12 w-12 bg-purple-500 rounded overflow-hidden">
+                    <Image
+                      src={`${
+                        item.variants[selectedVariant[i]].imageList[0].value
+                      }`}
+                      alt="?"
+                      className="text-4xl"
+                      height={100}
+                      width={100}
+                    />
+                  </div>
+                  <div className="flex flex-col gap-1 max-w-[60%] text-start">
+                    <p className="md:text-base 2xl:text-lg text-xs truncate">
+                      {item.name}
+                    </p>
+                    <div className="flex gap-2 text-xs">
+                      <p className="line-through text-muted-foreground">
+                        ₹ {item.variants[selectedVariant[i]].price}
+                      </p>
+                      <p>
+                        ₹ {item.variants[selectedVariant[i]].discountedPrice}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-            <p className="md:block hidden">--</p>
-            <p className="md:block hidden">--</p>
-            <div className="grid grid-cols-4 gap-4 place-self-center">
-              {item.variants.map((sub, i) => (
-                <p
-                  key={sub.id}
-                  className="place-self-center rounded-full h-6 w-6"
-                  style={{
-                    backgroundColor: `${item.variants[i].color}`,
-                  }}
-                ></p>
-              ))}
-            </div>
-          </Tr>
-        ))
+                <p className="md:block hidden">
+                  {item.variants[selectedVariant[i]].stock}
+                </p>
+                <p className="md:block hidden">
+                  {item.variants[selectedVariant[i]].orders}
+                </p>
+                <Popover.Root>
+                  <Popover.Trigger asChild>
+                    <button
+                      className="h-8 w-8 mx-auto rounded-full hover:ring-muted hover:ring"
+                      style={{
+                        backgroundColor: `${
+                          item.variants[selectedVariant[i]].color
+                        }`,
+                      }}
+                    ></button>
+                  </Popover.Trigger>
+                  <Popover.Portal>
+                    <Popover.Content className="" sideOffset={5}>
+                      <ToggleGroup.Root
+                        className="bg-muted flex gap-4 place-self-center p-2 rounded w-fit px-4"
+                        type="single"
+                      >
+                        {item.variants.map((sub, subI) => (
+                          <ToggleGroup.Item
+                            value={i.toString()}
+                            key={sub.id}
+                            onClick={() => {
+                              const copiedVariants = [...selectedVariant];
+                              copiedVariants[i] = subI;
+                              setSelectedVariant([...copiedVariants]);
+                            }}
+                          >
+                            <div
+                              className="place-self-center rounded-full h-6 w-6"
+                              style={{
+                                backgroundColor: `${item.variants[subI].color}`,
+                              }}
+                            />
+                          </ToggleGroup.Item>
+                        ))}
+                      </ToggleGroup.Root>
+                    </Popover.Content>
+                  </Popover.Portal>
+                </Popover.Root>
+              </Tr>
+            ))
+          ) : (
+            <p className="min-h-96 flex items-center justify-center text-muted-foreground text-xl">
+              No Products Found
+            </p>
+          )}
+        </>
       )}
     </div>
   );

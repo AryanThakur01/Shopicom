@@ -6,6 +6,7 @@ import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import * as zod from "zod";
 import { LuLoader, LuTrash } from "react-icons/lu";
 import ImageForm from "./ImageForm";
+import { useRouter } from "next/navigation";
 
 const schema = zod.object({
   name: zod.string().min(3),
@@ -20,8 +21,10 @@ const schema = zod.object({
         imageList: zod.array(
           zod.object({ value: zod.custom<FileList | string>().optional() }),
         ),
-        price: zod.string(),
-        discountedPrice: zod.string(),
+        price: zod.string().min(1),
+        discountedPrice: zod.string().min(1),
+        stock: zod.string().min(1),
+        orders: zod.string().min(1),
       }),
     )
     .max(8),
@@ -29,6 +32,7 @@ const schema = zod.object({
 export type TFormInput = zod.infer<typeof schema>;
 
 const ProductCatelogueForm = () => {
+  const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const defaultValues = {
     name: "",
@@ -40,6 +44,8 @@ const ProductCatelogueForm = () => {
         imageList: [{}, {}, {}, {}, {}],
         price: "",
         discountedPrice: "",
+        stock: "",
+        orders: "0",
       },
     ],
   };
@@ -74,9 +80,10 @@ const ProductCatelogueForm = () => {
   const submitHandler: SubmitHandler<TFormInput> = async (data) => {
     setSubmitting(true);
     try {
-      const images: { value: string }[] = [];
+      console.log(data);
       for (let i = 0; i < data.variants.length; i++) {
         const variantImages = data.variants[i].imageList;
+        const images: { value: string }[] = [];
         for (let j = 0; j < variantImages.length; j++) {
           if (!variantImages[j].value) delete variantImages[j];
           else {
@@ -88,24 +95,18 @@ const ProductCatelogueForm = () => {
         }
         data.variants[i].imageList = images;
       }
-      // console.log(images);
       console.log(data);
       const res = await fetch("/api/products/create", {
         method: "POST",
         body: JSON.stringify(data),
       });
       console.log("RES: ", await res.text());
+      router.push("/dashboard/products");
     } catch (error) {
       console.log("ERROR: ", error);
     }
     setSubmitting(false);
   };
-  // Price
-  // Variants
-  // -------> Sizes
-  // -------> Colors
-  // Stars
-  // Stock
   return (
     <>
       <form
@@ -198,6 +199,25 @@ const ProductCatelogueForm = () => {
                 register={register}
                 error={errors.variants && errors.variants[i]?.color?.message}
               />
+              <div className="flex gap-4 items-center">
+                <FormField
+                  label={"Stock"}
+                  type="number"
+                  uni={`variants.${i}.stock`}
+                  placeholder="Stock"
+                  register={register}
+                  error={errors.variants && errors.variants[i]?.stock?.message}
+                />
+                <FormField
+                  label={"Orders"}
+                  type="number"
+                  uni={`variants.${i}.orders`}
+                  placeholder="Orders"
+                  value="0"
+                  register={register}
+                  error={errors.variants && errors.variants[i]?.orders?.message}
+                />
+              </div>
               <div className="flex gap-4 items-center">
                 <FormField
                   label={"Product price"}

@@ -17,6 +17,7 @@ interface IFormField {
   children?: ReactNode;
   inputClass?: string;
   labelClass?: string;
+  value?: string;
 }
 
 const FormField: React.FC<IFormField> = ({
@@ -32,6 +33,7 @@ const FormField: React.FC<IFormField> = ({
   children,
   inputClass,
   labelClass,
+  value,
 }) => {
   return (
     <div className={containerClass}>
@@ -44,6 +46,7 @@ const FormField: React.FC<IFormField> = ({
         <select
           {...register(uni)}
           className="w-full mb-4 rounded bg-background p-2 px-8"
+          value={value}
         >
           {children}
         </select>
@@ -54,6 +57,7 @@ const FormField: React.FC<IFormField> = ({
           {...register(uni)}
           id={uni}
           className={"min-h-10 " + inputClass}
+          value={value}
         />
       )}
       {(type === "text" ||
@@ -80,6 +84,7 @@ const FormField: React.FC<IFormField> = ({
               />
             ) : (
               <input
+                value={value}
                 type={type}
                 className={
                   "w-full bg-transparent px-4 outline-none text-foreground placeholder:text-muted-foreground " +

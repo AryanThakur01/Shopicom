@@ -2,22 +2,21 @@ import { db } from "@/db";
 import {
   images,
   newImage,
-  newProduct,
   newProperty,
   products,
   properties,
   variants,
 } from "@/db/schema/products";
-import { IProductProps, TFormInput } from "@/types/products";
+import { IProductProps } from "@/types/products";
 import { NextRequest, NextResponse } from "next/server";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import { JwtPayload } from "jsonwebtoken";
 import { jwtDecoder } from "@/utils/api/helpers";
 
 export const POST = async (req: NextRequest) => {
   try {
     const token = req.cookies.get("Session_Token")?.value;
     if (!token) throw new Error("Token Not Found");
-    const payload: string | JwtPayload = jwtDecoder(token, req);
+    const payload: string | JwtPayload = jwtDecoder(token);
     if (typeof payload === "string")
       throw new Error("session token either string or has no expiry");
     if (!payload.id || !payload.role)
@@ -30,11 +29,11 @@ export const POST = async (req: NextRequest) => {
     const newProduct = await db
       .insert(products)
       .values({
-        name: body.name,
+        ...body,
         sellerId: payload.id,
-        description: body.description,
       })
       .returning();
+    // console.log(newProduct);
 
     const insertProperties: newProperty[] = body.properties.map((item) => ({
       ...item,
@@ -52,6 +51,8 @@ export const POST = async (req: NextRequest) => {
           productId: newProduct[0].id,
           discountedPrice: Number(variant.discountedPrice),
           price: Number(variant.price),
+          orders: Number(variant.orders),
+          stock: Number(variant.stock),
           color: variant.color,
         })
         .returning();
