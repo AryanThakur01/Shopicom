@@ -35,6 +35,7 @@ const AsideMenu = () => {
   ];
   return (
     <aside className="text-xl px-4 flex flex-col gap-4">
+      <h2 className="text-2xl font-semibold">SHOPICOM</h2>
       {menuList.map((item) => (
         <AsideButton {...item} key={item.text} />
       ))}

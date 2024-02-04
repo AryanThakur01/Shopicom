@@ -1,8 +1,7 @@
 "use client";
-import Image from "next/image";
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode } from "react";
 import { UseFormRegister } from "react-hook-form";
-import { LuAlertCircle, LuPlus, LuPlusCircle } from "react-icons/lu";
+import { LuAlertCircle } from "react-icons/lu";
 
 interface IFormField {
   type: string;
