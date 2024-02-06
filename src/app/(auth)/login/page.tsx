@@ -5,10 +5,9 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LuLoader, LuLock, LuMail } from "react-icons/lu";
 import * as zod from "zod";
-import { FaApple, FaGoogle } from "react-icons/fa";
-import { XIcon } from "@/components/CustomIcons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import OAuthLogin from "@/components/auth/OAuthLogin";
 
 interface IFormInput {
   email: string;
@@ -96,15 +95,7 @@ const Login = () => {
           <hr className="border border-border w-full" />
         </div>
         <div className="grid grid-cols-3 gap-4">
-          <button className="bg-muted rounded-lg h-10 drop-shadow-md">
-            <FaApple className="mx-auto" />
-          </button>
-          <button className="bg-muted rounded-lg h-10">
-            <FaGoogle className="mx-auto" />
-          </button>
-          <button className="bg-muted rounded-lg h-10 drop-shadow-md">
-            <XIcon />
-          </button>
+          <OAuthLogin />
         </div>
       </div>
     </section>

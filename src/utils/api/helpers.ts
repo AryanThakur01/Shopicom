@@ -1,6 +1,5 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { cookies } from "next/headers";
-import { NextRequest } from "next/server";
 
 interface IJwtGenerateData {
   id: number;
