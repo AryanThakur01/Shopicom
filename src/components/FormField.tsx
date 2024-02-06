@@ -17,6 +17,7 @@ interface IFormField {
   inputClass?: string;
   labelClass?: string;
   value?: string;
+  errorBox?: boolean;
 }
 
 const FormField: React.FC<IFormField> = ({
@@ -33,6 +34,7 @@ const FormField: React.FC<IFormField> = ({
   inputClass,
   labelClass,
   value,
+  errorBox,
 }) => {
   return (
     <div className={containerClass}>
@@ -102,7 +104,9 @@ const FormField: React.FC<IFormField> = ({
           </label>
         </>
       )}
-      <p className="h-4 text-xs px-4 text-destructive mt-1">{error}</p>
+      {errorBox && (
+        <p className="h-4 text-xs px-4 text-destructive mt-1">{error}</p>
+      )}
     </div>
   );
 };

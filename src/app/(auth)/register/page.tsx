@@ -41,6 +41,7 @@ const Register = () => {
         method: "POST",
         body: JSON.stringify(body),
       });
+      console.log(await res.json());
       router.push("/dashboard");
     } catch (error) {
       console.log(error);

@@ -10,7 +10,7 @@ export const generateJWT = (data: IJwtGenerateData) => {
   const jwtExpiry = process.env.JWT_LIFETIME as string;
   return jwt.sign(data, jwtSecret, { expiresIn: jwtExpiry });
 };
-export const jwtDecoder = (token: string): string | JwtPayload => {
+export const jwtDecoder = (token: string): JwtPayload => {
   const jwtSecret = process.env.JWT_SECRET as string;
   const payload = jwt.verify(token, jwtSecret, { ignoreExpiration: true });
   if (typeof payload === "string" || !payload.exp)
@@ -24,5 +24,5 @@ export const jwtDecoder = (token: string): string | JwtPayload => {
     cookies().set("Session_Token", newToken);
   }
 
-  return payload;
+  return payload as JwtPayload;
 };

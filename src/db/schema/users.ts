@@ -22,7 +22,8 @@ export const users = pgTable("users", {
   // ------------------------
 
   // ----- personal ---------
-  name: text("name"),
+  firstName: text("first_name"),
+  lastName: text("last_name"),
   profilePic: text("profile_picture"),
   // ------------------------
 });

@@ -20,7 +20,7 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
       .from(products)
       .where(eq(products.sellerId, jwtPayload.id))
       .innerJoin(variants, eq(products.id, variants.productId))
-      .leftJoin(images, eq(variants.id, images.variantId));
+      .innerJoin(images, eq(variants.id, images.variantId));
     if (allProducts.length === 0) {
       return new NextResponse(JSON.stringify([]));
     }

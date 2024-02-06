@@ -16,9 +16,8 @@ export const POST = async (req: NextRequest) => {
   try {
     const token = req.cookies.get("Session_Token")?.value;
     if (!token) throw new Error("Token Not Found");
-    const payload: string | JwtPayload = jwtDecoder(token);
-    if (typeof payload === "string")
-      throw new Error("session token either string or has no expiry");
+
+    const payload = jwtDecoder(token);
     if (!payload.id || !payload.role)
       throw new Error("Session Token role or id missing");
     if (payload.role !== "seller")
