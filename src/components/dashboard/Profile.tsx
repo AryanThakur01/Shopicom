@@ -1,5 +1,5 @@
 "use client";
-import React, { FC, useEffect, useMemo, useRef, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import {
   LuBell,
   LuLoader2,
@@ -15,13 +15,40 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import FormField from "../FormField";
 import Image from "next/image";
 import { imageProcessor } from "@/utils/helpers/blobToStr";
+import { ReduxState, useDispatch, useSelector } from "@/lib/redux/store";
+import { userDataAsync } from "@/lib/redux";
 
 const Profile = () => {
+  const user = useSelector((state: ReduxState) => state.user.value);
+  const userStatus = useSelector((state: ReduxState) => state.user.status);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(userDataAsync());
+  }, []);
   return (
     <>
       <h2 className="text-2xl font-semibold">Profile</h2>
-      <div className="mx-auto h-32 w-32 bg-muted mt-8 rounded-full"></div>
-      <h1 className="text-center text-xl mt-4">Aryan Thakur</h1>
+      <div className="mx-auto h-32 w-32 bg-muted mt-8 rounded-full overflow-hidden">
+        {userStatus === "loading" ? (
+          <div className="bg-card h-full w-full animate-pulse" />
+        ) : user.profilePic ? (
+          <Image
+            src={user.profilePic}
+            alt={user.firstName}
+            height={400}
+            width={400}
+          />
+        ) : (
+          <LuUser />
+        )}
+      </div>
+      {userStatus === "loading" ? (
+        <div className="rounded mx-auto w-40 mt-4 h-8 animate-pulse bg-card" />
+      ) : (
+        <h1 className="text-center text-xl mt-4 min-h-8">
+          {user.firstName} {user.lastName}
+        </h1>
+      )}
       <div className="flex gap-4 justify-center my-4 text-muted-foreground">
         <ProfileDialog>
           <button className="rounded-full p-4 hover:bg-muted bg-card hover:text-foreground">
@@ -45,16 +72,17 @@ interface IProfileDialog {
 interface IFormInput {
   firstName: string;
   lastName: string;
-  profilePic: FileList;
+  profilePic: FileList | string;
 }
 const schema = zod.object({
   firstName: zod.string(),
   lastName: zod.string(),
-  profilePic: zod.custom<FileList>(),
+  profilePic: zod.custom<FileList | string>(),
 });
 const ProfileDialog: FC<IProfileDialog> = ({ children }) => {
   const [usrImg, setUsrImg] = useState<string>();
   const [loading, setLoading] = useState(false);
+  const user = useSelector((state: ReduxState) => state.user.value);
   const {
     handleSubmit,
     register,
@@ -66,20 +94,14 @@ const ProfileDialog: FC<IProfileDialog> = ({ children }) => {
     defaultValues: {
       firstName: "",
       lastName: "",
+      profilePic: "",
     },
   });
-  const fetchProfileInfo = async () => {
-    try {
-      const res = await fetch("http://localhost:3000/api/user/getprofile");
-      const user = await res.json();
-      console.log(user);
-      if (user.firstName) setValue("firstName", user.firstName);
-      if (user.lastName) setValue("lastName", user.lastName);
-      if (user.profilePic) setUsrImg(user.profilePic);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  useEffect(() => {
+    if (user.firstName) setValue("firstName", user.firstName);
+    if (user.lastName) setValue("lastName", user.lastName);
+    if (user.profilePic) setUsrImg(user.profilePic);
+  }, [user]);
   const formWatch = useWatch({ control });
   const submitHandler: SubmitHandler<IFormInput> = async (data) => {
     setLoading(true);
@@ -96,7 +118,11 @@ const ProfileDialog: FC<IProfileDialog> = ({ children }) => {
     setLoading(false);
   };
   useEffect(() => {
-    if (formWatch.profilePic && formWatch.profilePic[0]) {
+    if (
+      formWatch.profilePic &&
+      typeof formWatch.profilePic !== "string" &&
+      formWatch.profilePic[0]
+    ) {
       const reader = new FileReader();
       reader.readAsDataURL(formWatch.profilePic[0]);
       reader.onload = (e) => {
@@ -105,9 +131,6 @@ const ProfileDialog: FC<IProfileDialog> = ({ children }) => {
       };
     }
   }, [formWatch]);
-  useEffect(() => {
-    fetchProfileInfo();
-  }, []);
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>{children}</Dialog.Trigger>
@@ -156,7 +179,6 @@ const ProfileDialog: FC<IProfileDialog> = ({ children }) => {
                   placeholder="First name"
                   uni="firstName"
                   register={register}
-                  // icon={<LuUser className="size-5" />}
                   label="First Name"
                   labelClass="text-muted-foreground"
                 />
@@ -165,7 +187,6 @@ const ProfileDialog: FC<IProfileDialog> = ({ children }) => {
                   placeholder="Last Name"
                   uni="lastName"
                   register={register}
-                  // icon={<LuUser className="size-5" />}
                   label="Last Name"
                   labelClass="text-muted-foreground"
                 />

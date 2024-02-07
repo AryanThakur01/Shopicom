@@ -1,5 +1,5 @@
-import { fetchUser } from "./slices";
+import { userSlice } from "./slices";
 
 export const reducer = {
-  fetchUser,
+  user: userSlice.reducer,
 };
