@@ -7,6 +7,7 @@ import * as zod from "zod";
 import { LuLoader, LuTrash } from "react-icons/lu";
 import ImageForm from "./ImageForm";
 import { useRouter } from "next/navigation";
+import { imageProcessor } from "@/utils/helpers/blobToStr";
 
 const schema = zod.object({
   name: zod.string().min(3),
@@ -60,23 +61,6 @@ const ProductCatelogueForm = () => {
   });
   const propTable = useFieldArray({ control, name: "properties" });
   const variants = useFieldArray({ control, name: "variants" });
-  const imageProcessor = async (image: File | string): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const fReader = new FileReader();
-      if (typeof image === "string") {
-        resolve(image);
-        return;
-      }
-      fReader.readAsDataURL(image);
-      fReader.onload = (e) => {
-        if (e.target?.result && typeof e.target.result === "string")
-          resolve(e.target.result);
-        else {
-          reject("Unsopperted File Format");
-        }
-      };
-    });
-  };
   const submitHandler: SubmitHandler<TFormInput> = async (data) => {
     setSubmitting(true);
     try {

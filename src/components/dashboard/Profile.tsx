@@ -1,15 +1,22 @@
 "use client";
 import React, { FC, useEffect, useMemo, useRef, useState } from "react";
-import { LuBell, LuMail, LuPencilLine, LuUser, LuX } from "react-icons/lu";
+import {
+  LuBell,
+  LuLoader2,
+  LuMail,
+  LuPencilLine,
+  LuUser,
+  LuX,
+} from "react-icons/lu";
 import * as Dialog from "@radix-ui/react-dialog";
 import * as zod from "zod";
-import { useForm, useWatch } from "react-hook-form";
+import { SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import FormField from "../FormField";
 import Image from "next/image";
+import { imageProcessor } from "@/utils/helpers/blobToStr";
 
 const Profile = () => {
-  const fetchUser = () => {};
   return (
     <>
       <h2 className="text-2xl font-semibold">Profile</h2>
@@ -36,17 +43,18 @@ interface IProfileDialog {
   children: React.ReactNode;
 }
 interface IFormInput {
-  firstname: string;
-  lastname: string;
-  image: FileList;
+  firstName: string;
+  lastName: string;
+  profilePic: FileList;
 }
 const schema = zod.object({
-  firstname: zod.string(),
-  lastname: zod.string(),
-  image: zod.custom<FileList>(),
+  firstName: zod.string(),
+  lastName: zod.string(),
+  profilePic: zod.custom<FileList>(),
 });
 const ProfileDialog: FC<IProfileDialog> = ({ children }) => {
-  const [usrImg, setUsrImg] = useState("");
+  const [usrImg, setUsrImg] = useState<string>();
+  const [loading, setLoading] = useState(false);
   const {
     handleSubmit,
     register,
@@ -56,8 +64,8 @@ const ProfileDialog: FC<IProfileDialog> = ({ children }) => {
   } = useForm<IFormInput>({
     resolver: zodResolver(schema),
     defaultValues: {
-      firstname: "",
-      lastname: "",
+      firstName: "",
+      lastName: "",
     },
   });
   const fetchProfileInfo = async () => {
@@ -65,19 +73,32 @@ const ProfileDialog: FC<IProfileDialog> = ({ children }) => {
       const res = await fetch("http://localhost:3000/api/user/getprofile");
       const user = await res.json();
       console.log(user);
-      if (user.firstName) setValue("firstname", user.firstName);
-      if (user.lastName) setValue("lastname", user.lastName);
+      if (user.firstName) setValue("firstName", user.firstName);
+      if (user.lastName) setValue("lastName", user.lastName);
       if (user.profilePic) setUsrImg(user.profilePic);
     } catch (error) {
       console.log(error);
     }
   };
   const formWatch = useWatch({ control });
-  const submitHandler = async () => {};
+  const submitHandler: SubmitHandler<IFormInput> = async (data) => {
+    setLoading(true);
+    try {
+      const image = await imageProcessor(data.profilePic[0] || usrImg || "");
+      const user = await fetch("/api/user/updateprofile", {
+        method: "POST",
+        body: JSON.stringify({ ...data, profilePic: image }),
+      });
+      console.log(await user.json());
+    } catch (error) {
+      console.log(error);
+    }
+    setLoading(false);
+  };
   useEffect(() => {
-    if (formWatch.image && formWatch.image[0]) {
+    if (formWatch.profilePic && formWatch.profilePic[0]) {
       const reader = new FileReader();
-      reader.readAsDataURL(formWatch.image[0]);
+      reader.readAsDataURL(formWatch.profilePic[0]);
       reader.onload = (e) => {
         if (typeof e.target?.result !== "string") return;
         setUsrImg(e.target.result);
@@ -107,7 +128,7 @@ const ProfileDialog: FC<IProfileDialog> = ({ children }) => {
           >
             <div className="flex md:flex-row flex-col items-center md:gap-2 gap-4">
               <label
-                htmlFor="image"
+                htmlFor="profilePic"
                 className={
                   "outline-white grid h-40 w-40 bg-background rounded border border-muted overflow-hidden "
                 }
@@ -115,7 +136,7 @@ const ProfileDialog: FC<IProfileDialog> = ({ children }) => {
                 <div className="h-0">
                   <input
                     type="file"
-                    {...register("image")}
+                    {...register("profilePic")}
                     className="h-40 w-full opacity-0 cursor-pointer relative z-10"
                   />
                 </div>
@@ -133,7 +154,7 @@ const ProfileDialog: FC<IProfileDialog> = ({ children }) => {
                 <FormField
                   type="text"
                   placeholder="First name"
-                  uni="firstname"
+                  uni="firstName"
                   register={register}
                   // icon={<LuUser className="size-5" />}
                   label="First Name"
@@ -142,7 +163,7 @@ const ProfileDialog: FC<IProfileDialog> = ({ children }) => {
                 <FormField
                   type="text"
                   placeholder="Last Name"
-                  uni="lastname"
+                  uni="lastName"
                   register={register}
                   // icon={<LuUser className="size-5" />}
                   label="Last Name"
@@ -153,8 +174,13 @@ const ProfileDialog: FC<IProfileDialog> = ({ children }) => {
             <button
               type="submit"
               className="bg-primary p-2 rounded w-40 ml-auto"
+              disabled={loading}
             >
-              Update
+              {loading ? (
+                <LuLoader2 className="animate-spin duration-300 mx-auto text-xl" />
+              ) : (
+                "Update"
+              )}
             </button>
           </form>
         </Dialog.Content>
