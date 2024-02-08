@@ -9,7 +9,7 @@ import {
   LuShoppingBasket,
 } from "react-icons/lu";
 import { usePathname } from "next/navigation";
-import { getServerSession } from "@/utils/serverActions/session";
+import { ISession, getServerSession } from "@/utils/serverActions/session";
 import { useSelector } from "@/lib/redux";
 import Cookies from "js-cookie";
 
@@ -37,11 +37,6 @@ const AsideMenu: React.FC<IAsideMenu> = ({}) => {
       icon: <LuShoppingBasket />,
       text: "Orders",
       link: "/dashboard/orders",
-    },
-    {
-      icon: <LuSettings />,
-      text: "Settings",
-      link: "/dashboard/settings",
     },
   ];
   return (
