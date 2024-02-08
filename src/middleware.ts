@@ -7,7 +7,7 @@ const privateRoutes = ["/dashboard/*"];
 
 export async function middleware(request: NextRequest) {
   const url = new URL(request.url, request.url);
-  const cookie = cookies().get("Session_Token");
+  const cookie = cookies().get("Session_Token")?.value;
 
   if (hiddenRoutes.includes(url.pathname) && !!cookie)
     return NextResponse.redirect(new URL("/", request.url));

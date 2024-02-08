@@ -1,4 +1,4 @@
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import { userDataAsync } from ".";
 
 export interface IUserValue {
@@ -26,11 +26,7 @@ export const initialState: UserSliceState = {
 export const userSlice = createSlice({
   name: "User",
   initialState,
-  reducers: {
-    update: (state, action: PayloadAction<typeof initialState.value>) => {
-      state.value = action.payload;
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder.addCase(userDataAsync.pending, (state) => {
       state.status = "loading";

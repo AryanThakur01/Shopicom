@@ -1,5 +1,6 @@
 "use client";
-import { useDispatch, useSelector, userDataAsync } from "@/lib/redux";
+import { useSelector } from "@/lib/redux";
+import { ISession, getServerSession } from "@/utils/serverActions/session";
 import * as Dialog from "@radix-ui/react-dialog";
 import Link from "next/link";
 import React, { FC, ReactNode, useEffect, useState } from "react";
@@ -13,6 +14,8 @@ import {
   LuX,
 } from "react-icons/lu";
 import { twMerge } from "tailwind-merge";
+import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 
 const Nav = () => {
   return (
@@ -39,29 +42,17 @@ const Nav = () => {
   );
 };
 
-interface INavButton {
-  children: ReactNode;
-  className?: string;
-}
-const NavButton: React.FC<INavButton> = ({ children, className }) => {
-  return (
-    <div
-      className={twMerge(
-        "flex justify-center items-center text-xl text-muted-foreground hover:text-foreground transition-all duration-500 p-1",
-        className,
-      )}
-    >
-      {children}
-    </div>
-  );
-};
-
 interface IProfileDialog {
   children: React.ReactNode;
 }
 const Drawer: FC<IProfileDialog> = ({ children }) => {
+  const [session, setSession] = useState<ISession | null>();
   const user = useSelector((state) => state.user.value);
-  const status = useSelector((state) => state.user.status);
+  const router = useRouter();
+  useEffect(() => {
+    const token = Cookies.get("Session_Token");
+    if (token) getServerSession(token).then((s) => setSession(s));
+  }, [user]);
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>{children}</Dialog.Trigger>
@@ -80,29 +71,55 @@ const Drawer: FC<IProfileDialog> = ({ children }) => {
           </div>
           <div className="text-2xl flex flex-col gap-1 justify-between text-muted-foreground p-4 font-semibold">
             <NavLink linkText="Home" href="/" />
-            {user.role === "admin" && (
-              <NavLink linkText="Dashboard" href="/dashboard" />
-            )}
+            {session && <NavLink linkText="Dashboard" href="/dashboard" />}
           </div>
           <div className="mb-8 mt-auto px-4">
-            {status === "idle" && !user.isLoggedin ? (
+            {session ? (
+              <button
+                className="block w-full border border-border p-2 bg-background rounded"
+                onClick={() => {
+                  Cookies.remove("Session_Token");
+                  setSession(null);
+                  router.push("/");
+                }}
+              >
+                <Dialog.Close className="flex items-center w-full gap-4">
+                  <LuLogOut />
+                  <span>Logout</span>
+                </Dialog.Close>
+              </button>
+            ) : (
               <Link
                 href="/login"
-                className="flex justify-start items-center gap-4 border border-border p-2 bg-background rounded"
+                className="block border border-border p-2 bg-background rounded"
               >
-                <LuLogIn />
-                <span>Login</span>
+                <Dialog.Close className="flex gap-4 items-center w-full">
+                  <LuLogIn />
+                  <span>Login</span>
+                </Dialog.Close>
               </Link>
-            ) : (
-              <button className="flex justify-start items-center gap-4 border border-border p-2 bg-background rounded">
-                <LuLogOut />
-                <span>Logout</span>
-              </button>
             )}
           </div>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>
+  );
+};
+
+interface INavButton {
+  children: ReactNode;
+  className?: string;
+}
+const NavButton: React.FC<INavButton> = ({ children, className }) => {
+  return (
+    <div
+      className={twMerge(
+        "flex justify-center items-center text-xl text-muted-foreground hover:text-foreground transition-all duration-500 p-1",
+        className,
+      )}
+    >
+      {children}
+    </div>
   );
 };
 
@@ -112,14 +129,13 @@ interface INavLink {
 }
 const NavLink: FC<INavLink> = ({ href, linkText }) => {
   return (
-    <Link
-      className="hover:text-foreground flex justify-between group items-center"
-      href={href}
-    >
-      <Dialog.Close>{linkText}</Dialog.Close>
-      <span className="hidden group-hover:inline">
-        <LuChevronRight />
-      </span>
+    <Link className="hover:text-foreground group" href={href}>
+      <Dialog.Close className="flex justify-between items-center w-full">
+        {linkText}
+        <span className="hidden group-hover:inline">
+          <LuChevronRight />
+        </span>
+      </Dialog.Close>
     </Link>
   );
 };

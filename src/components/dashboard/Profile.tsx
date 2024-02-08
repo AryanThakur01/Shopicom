@@ -37,6 +37,7 @@ const Profile = () => {
             alt={user.firstName}
             height={400}
             width={400}
+            className="min-h-full min-w-full object-contain"
           />
         ) : (
           <LuUser />

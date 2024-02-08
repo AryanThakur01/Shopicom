@@ -1,7 +1,7 @@
 import Profile from "@/components/dashboard/Profile";
 import React from "react";
 
-const Dashboard = () => {
+const Dashboard = async () => {
   return (
     <div className="flex md:flex-row flex-col-reverse justify-between gap-4">
       <div className=""></div>

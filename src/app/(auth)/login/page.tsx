@@ -43,6 +43,7 @@ const Login = () => {
         method: "POST",
         body: JSON.stringify(body),
       });
+      if (!res.ok) throw new Error("Recheck Credentials");
       dispatch(userDataAsync());
       router.push("/");
     } catch (error) {

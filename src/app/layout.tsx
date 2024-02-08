@@ -3,6 +3,7 @@ import { Ubuntu } from "next/font/google";
 import "./globals.css";
 import Nav from "@/components/Nav";
 import { Providers } from "@/lib/Providers";
+import { cookies } from "next/headers";
 
 const ubuntu = Ubuntu({
   weight: ["300", "400", "500", "700"],
