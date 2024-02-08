@@ -12,20 +12,22 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
     const payload = jwtDecoder(token);
     if (!payload.id || !payload.role)
       throw new Error("Session Token role or id missing");
-    if (payload.role !== "seller")
-      throw new Error("You Don't have a seller account make one to continue");
 
     const profile = await db
       .select({
         profilePic: users.profilePic,
         firstName: users.firstName,
         lastName: users.lastName,
+        role: users.role,
       })
       .from(users)
       .where(eq(users.id, payload.id));
 
     return new NextResponse(JSON.stringify(profile[0]));
   } catch (error) {
-    return new NextResponse("");
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
   }
 };

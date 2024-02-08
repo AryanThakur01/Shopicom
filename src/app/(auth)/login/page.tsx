@@ -8,6 +8,7 @@ import * as zod from "zod";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import OAuthLogin from "@/components/auth/OAuthLogin";
+import { useDispatch, userDataAsync } from "@/lib/redux";
 
 interface IFormInput {
   email: string;
@@ -32,6 +33,8 @@ const Login = () => {
       password: "",
     },
   });
+  const dispatch = useDispatch();
+
   const submitHandler: SubmitHandler<IFormInput> = async (data) => {
     setSubmitting(true);
     try {
@@ -40,8 +43,8 @@ const Login = () => {
         method: "POST",
         body: JSON.stringify(body),
       });
-      console.log(await res.text());
-      router.push("/dashboard");
+      dispatch(userDataAsync());
+      router.push("/");
     } catch (error) {
       console.log(error);
     }

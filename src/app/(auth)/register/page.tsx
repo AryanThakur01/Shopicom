@@ -8,6 +8,7 @@ import { LuLoader, LuLock, LuMail } from "react-icons/lu";
 import * as zod from "zod";
 import { useRouter, useSearchParams } from "next/navigation";
 import OAuthLogin from "@/components/auth/OAuthLogin";
+import { useDispatch, userDataAsync } from "@/lib/redux";
 
 interface IFormInput {
   email: string;
@@ -33,6 +34,8 @@ const Register = () => {
       password: "",
     },
   });
+  const dispatch = useDispatch();
+
   const submitHandler: SubmitHandler<IFormInput> = async (data) => {
     setSubmitting(true);
     try {
@@ -41,7 +44,7 @@ const Register = () => {
         method: "POST",
         body: JSON.stringify(body),
       });
-      console.log(await res.json());
+      dispatch(userDataAsync());
       router.push("/dashboard");
     } catch (error) {
       console.log(error);

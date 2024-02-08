@@ -5,16 +5,20 @@ export interface IUserValue {
   firstName: string;
   lastName: string;
   profilePic: string;
+  isLoggedin: boolean;
+  role: "admin" | "customer" | "seller";
 }
 export interface UserSliceState {
   value: IUserValue;
   status: "idle" | "loading" | "failed";
 }
-const initialState: UserSliceState = {
+export const initialState: UserSliceState = {
   value: {
     firstName: "",
     lastName: "",
     profilePic: "",
+    role: "customer",
+    isLoggedin: false,
   },
   status: "idle",
 };
