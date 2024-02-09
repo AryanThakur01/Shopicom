@@ -4,9 +4,9 @@ import { users } from "./users";
 
 // Product Table Definition and relations
 export const products = pgTable("products", {
-  id: serial("id").primaryKey(),
-  name: text("name"),
-  description: text("description"),
+  id: serial("id").primaryKey().notNull(),
+  name: text("name").notNull(),
+  description: text("description").notNull(),
   sellerId: integer("seller_id")
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
@@ -23,8 +23,8 @@ export const productsRelations = relations(products, ({ one, many }) => ({
 // Product-Properties Table Definition and relations
 export const properties = pgTable("properties", {
   id: serial("id").primaryKey(),
-  key: text("key"),
-  value: text("value"),
+  key: text("key").notNull(),
+  value: text("value").notNull(),
   productId: integer("product_id")
     .references(() => products.id, { onDelete: "cascade" })
     .notNull(),
@@ -39,11 +39,11 @@ export const propertiesRelations = relations(properties, ({ one }) => ({
 // Product-Variants Table Definition and relations
 export const variants = pgTable("variants", {
   id: serial("id").primaryKey(),
-  color: text("color"),
-  price: integer("price"),
-  discountedPrice: integer("discountedPrice"),
-  stock: integer("stock"),
-  orders: integer("orders").default(0),
+  color: text("color").notNull(),
+  price: integer("price").notNull(),
+  discountedPrice: integer("discountedPrice").notNull(),
+  stock: integer("stock").notNull(),
+  orders: integer("orders").notNull(),
   productId: integer("product_id")
     .references(() => products.id, { onDelete: "cascade" })
     .notNull(),
@@ -58,7 +58,7 @@ export const variantRelations = relations(variants, ({ one, many }) => ({
 
 export const images = pgTable("images", {
   id: serial("id").primaryKey(),
-  value: text("value"),
+  value: text("value").notNull(),
   variantId: integer("variant_id")
     .references(() => variants.id, { onDelete: "cascade" })
     .notNull(),

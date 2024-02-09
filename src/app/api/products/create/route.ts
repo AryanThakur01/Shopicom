@@ -7,9 +7,8 @@ import {
   properties,
   variants,
 } from "@/db/schema/products";
-import { IProductProps } from "@/types/products";
+import { TFormInput } from "@/types/products";
 import { NextRequest, NextResponse } from "next/server";
-import { JwtPayload } from "jsonwebtoken";
 import { jwtDecoder } from "@/utils/api/helpers";
 
 export const POST = async (req: NextRequest) => {
@@ -23,7 +22,7 @@ export const POST = async (req: NextRequest) => {
     if (payload.role !== "seller" && payload.role !== "admin")
       throw new Error("You Don't have a seller account make one to continue");
 
-    const body: IProductProps = await req.json();
+    const body: TFormInput = await req.json();
     /* INSERT: New Product */
     const newProduct = await db
       .insert(products)
@@ -56,7 +55,7 @@ export const POST = async (req: NextRequest) => {
         })
         .returning();
       const insertImages: newImage[] = variant.imageList.map((img) => ({
-        value: img.value,
+        value: typeof img.value === "string" ? img.value : "",
         variantId: prodVariants[0].id,
       }));
       let prodImages = await db.insert(images).values(insertImages).returning();

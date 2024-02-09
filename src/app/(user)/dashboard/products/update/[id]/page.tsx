@@ -4,8 +4,8 @@ import { images, products, variants } from "@/db/schema/products";
 import { jwtDecoder } from "@/utils/api/helpers";
 import { productJoinMerger } from "@/utils/products";
 import { and, eq } from "drizzle-orm";
-import { redirect } from "next/dist/server/api-utils";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import React from "react";
 
 interface IPage {

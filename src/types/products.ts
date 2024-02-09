@@ -1,18 +1,18 @@
 export { type TFormInput } from "@/components/dashboard/products/create/ProductCatelogueForm";
-import { newImage, newProduct, newProperty } from "@/db/schema/products";
+import { image, newProperty } from "@/db/schema/products";
 
 export interface IProductProps {
-  id?: number | undefined;
-  name?: string | null | undefined;
-  description?: string | null | undefined;
+  id: number;
+  name: string;
+  description: string;
   sellerId: number;
   properties: newProperty[];
   variants: {
-    id?: number | undefined;
-    color?: string | null | undefined;
-    price?: number | null | undefined;
-    imageList: newImage[];
-    discountedPrice?: number | null | undefined;
+    id: number;
+    color: string;
+    price: number;
+    imageList: image[];
+    discountedPrice: number;
     productId: number;
     stock: number;
     orders: number;

@@ -1,6 +1,4 @@
 "use server";
-
-import { JwtPayload } from "jsonwebtoken";
 import { jwtDecoder } from "../api/helpers";
 
 export interface ISession {

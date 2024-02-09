@@ -3,7 +3,7 @@ import { db } from "@/db";
 import { User, users } from "@/db/schema/users";
 import { genSalt, hash } from "bcryptjs";
 import { cookies } from "next/headers";
-import { generateJWT, jwtDecoder } from "@/utils/api/helpers";
+import { generateJWT } from "@/utils/api/helpers";
 import jwt from "jsonwebtoken";
 
 const passwordEncrypter = async (password: string) => {
