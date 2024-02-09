@@ -1,5 +1,5 @@
 "use client";
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import FormField from "@/components/FormField";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
@@ -8,6 +8,7 @@ import { LuLoader, LuTrash } from "react-icons/lu";
 import ImageForm from "./ImageForm";
 import { useRouter } from "next/navigation";
 import { imageProcessor } from "@/utils/helpers/blobToStr";
+import { IProductProps } from "@/types/products";
 
 const schema = zod.object({
   name: zod.string().min(3),
@@ -32,7 +33,8 @@ const schema = zod.object({
 });
 export type TFormInput = zod.infer<typeof schema>;
 
-const ProductCatelogueForm = () => {
+interface IProductCatelogueForm {}
+const ProductCatelogueForm: React.FC<IProductCatelogueForm> = ({}) => {
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const defaultValues = {
@@ -54,6 +56,7 @@ const ProductCatelogueForm = () => {
     control,
     handleSubmit,
     register,
+    setValue,
     formState: { errors },
   } = useForm<TFormInput>({
     resolver: zodResolver(schema),
@@ -135,7 +138,7 @@ const ProductCatelogueForm = () => {
             {propTable.fields.map((item, i) => (
               <div
                 key={item.id}
-                className="grid grid-cols-3 md:gap-8 2xl:gap-16 gap-8"
+                className="my-4 grid grid-cols-3 md:gap-8 2xl:gap-16 gap-8"
               >
                 <FormField
                   type="text"
@@ -200,6 +203,7 @@ const ProductCatelogueForm = () => {
                   value="0"
                   register={register}
                   error={errors.variants && errors.variants[i]?.orders?.message}
+                  containerClass="hidden"
                 />
               </div>
               <div className="flex gap-4 items-center">

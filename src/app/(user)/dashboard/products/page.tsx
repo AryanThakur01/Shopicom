@@ -11,6 +11,7 @@ const page = async () => {
   if (!cookie) redirect("/");
   const session = await getServerSession(cookie);
   if (session.role === "seller") redirect("/dashboard");
+
   return (
     <>
       <div className="bg-card p-4 rounded-lg">

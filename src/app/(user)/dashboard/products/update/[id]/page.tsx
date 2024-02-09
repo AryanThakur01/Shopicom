@@ -1,34 +1,23 @@
-import ProductCatelogueForm from "@/components/dashboard/products/create/ProductCatelogueForm";
-import { db } from "@/db";
-import { images, products, variants } from "@/db/schema/products";
-import { jwtDecoder } from "@/utils/api/helpers";
-import { productJoinMerger } from "@/utils/products";
-import { and, eq } from "drizzle-orm";
+import { dbDriver } from "@/db";
+import { getServerSession } from "@/utils/serverActions/session";
+import { drizzle } from "drizzle-orm/postgres-js";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import React from "react";
 
-interface IPage {
-  params: { id: string };
-}
-const page: React.FC<IPage> = async ({ params }) => {
-  const token = cookies().get("Session_Token")?.value;
-  if (!token) redirect("/login");
-  const payload = jwtDecoder(token);
+const page = async ({ params }: { params: { id: string } }) => {
+  const cookie = cookies().get("Session_Token")?.value;
+  if (!cookie) redirect("/");
+  const session = await getServerSession(cookie);
+  if (session.role === "customer") redirect("/dashboard");
 
-  // const dbRes = await db
-  //   .select()
-  //   .from(products)
-  //   .where(and(eq(products.id, params.id), eq(products.sellerId, payload.id)))
-  //   .innerJoin(variants, eq(products.id, variants.productId))
-  //   .innerJoin(images, eq(variants.id, images.variantId));
-  // const product = productJoinMerger(dbRes, payload.id);
-  return (
-    <div>
-      {/* <p>{JSON.stringify(product[0].description)}</p> */}
-      <div>{/* <ProductCatelogueForm /> */}</div>
-    </div>
-  );
+  const product = await dbDriver.query.products.findMany({
+    with: {
+      // variants: true,
+      properties: true,
+    },
+  });
+  return <div>{console.log(product)}</div>;
 };
 
 export default page;

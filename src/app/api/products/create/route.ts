@@ -1,4 +1,4 @@
-import { db } from "@/db";
+import { queryClient } from "@/db";
 import {
   images,
   newImage,
@@ -10,9 +10,11 @@ import {
 import { TFormInput } from "@/types/products";
 import { NextRequest, NextResponse } from "next/server";
 import { jwtDecoder } from "@/utils/api/helpers";
+import { drizzle } from "drizzle-orm/postgres-js";
 
 export const POST = async (req: NextRequest) => {
   try {
+    const db = drizzle(queryClient);
     const token = req.cookies.get("Session_Token")?.value;
     if (!token) throw new Error("Token Not Found");
 

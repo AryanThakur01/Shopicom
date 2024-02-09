@@ -6,11 +6,11 @@ import postgres from "postgres";
 
 // for migrations
 const migrationClient = postgres(process.env.POSTGRES_URL || "", { max: 1 });
-const dbDriver = drizzle(migrationClient, {
+export const dbDriver = drizzle(migrationClient, {
   schema: { ...users, ...products },
 });
 migrate(dbDriver, { migrationsFolder: "src/db/migrations" });
 
 // for query purposes
-const queryClient = postgres(process.env.POSTGRES_URL || "");
+export const queryClient = postgres(process.env.POSTGRES_URL || "");
 export const db = drizzle(queryClient);

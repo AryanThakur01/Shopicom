@@ -153,7 +153,19 @@ interface ITr {
   productId?: string;
 }
 const Tr: React.FC<ITr> = ({ children, isHead, className, productId }) => {
-  return (
+  return isHead ? (
+    <div
+      className={
+        (isHead ? "bg-muted " : "") +
+        " " +
+        className +
+        " " +
+        "grid md:grid-cols-5 grid-cols-3 gap-2 gap-y-4 mt-4 rounded text-muted-foreground md:mx-6 p-2 text-center items-center"
+      }
+    >
+      {children}
+    </div>
+  ) : (
     <Link
       href={"/dashboard/products/update/" + productId}
       className={

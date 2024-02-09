@@ -1,10 +1,11 @@
 import { User, users } from "@/db/schema/users";
 import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
-import { db } from "@/db";
+import { queryClient } from "@/db";
 import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { compare } from "bcryptjs";
+import { drizzle } from "drizzle-orm/postgres-js";
 
 const generateJWT = (data: object) => {
   const jwtSecret = process.env.JWT_SECRET as string;
@@ -14,6 +15,7 @@ const generateJWT = (data: object) => {
 
 export const POST = async (req: NextRequest) => {
   try {
+    const db = drizzle(queryClient);
     // Collect the info provided by user
     const data: User = await req.json();
     if (!data.email || !data.password)

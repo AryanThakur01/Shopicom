@@ -37,6 +37,10 @@ export const productJoinMerger = (
   let j = 0;
   let k = 0;
   for (let i = 1; i < allProducts.length; i++) {
+    // console.log(allProducts.length);
+    // console.log(productList[j], allProducts[i].properties);
+    // if (productList[j].id === allProducts[i].properties.productId)
+    //   productList[j].properties.push(allProducts[i].properties);
     if (productList[j].id === allProducts[i].products.id) {
       if (productList[j].variants[k].id === allProducts[i].variants.id)
         productList[j].variants[k].imageList.push(

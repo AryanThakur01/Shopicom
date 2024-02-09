@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/db";
+import { queryClient } from "@/db";
 import { User, users } from "@/db/schema/users";
 import { genSalt, hash } from "bcryptjs";
 import { cookies } from "next/headers";
 import { generateJWT } from "@/utils/api/helpers";
 import jwt from "jsonwebtoken";
+import { drizzle } from "drizzle-orm/postgres-js";
 
 const passwordEncrypter = async (password: string) => {
   const salt = await genSalt(10);
@@ -14,6 +15,7 @@ const passwordEncrypter = async (password: string) => {
 
 export const POST = async (req: NextRequest) => {
   try {
+    const db = drizzle(queryClient);
     // Collect the info provided by user
     const data: User = await req.json();
     data.role = "customer";
