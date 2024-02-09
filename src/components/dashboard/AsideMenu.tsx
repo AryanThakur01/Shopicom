@@ -2,12 +2,7 @@
 
 import React, { ReactNode, useEffect, useState } from "react";
 import Link from "next/link";
-import {
-  LuLayoutDashboard,
-  LuSettings,
-  LuShirt,
-  LuShoppingBasket,
-} from "react-icons/lu";
+import { LuLayoutDashboard, LuShirt, LuShoppingBasket } from "react-icons/lu";
 import { usePathname } from "next/navigation";
 import { ISession, getServerSession } from "@/utils/serverActions/session";
 import { useSelector } from "@/lib/redux";
@@ -31,7 +26,7 @@ const AsideMenu: React.FC<IAsideMenu> = ({}) => {
       icon: <LuShirt />,
       text: "Products",
       link: "/dashboard/products",
-      accessRole: "seller",
+      accessRole: ["seller", "admin"],
     },
     {
       icon: <LuShoppingBasket />,
@@ -47,7 +42,7 @@ const AsideMenu: React.FC<IAsideMenu> = ({}) => {
           (!item.accessRole ||
             (session &&
               item.accessRole &&
-              item.accessRole === session.role)) && (
+              item.accessRole.includes(session.role))) && (
             <AsideButton {...item} key={item.text} />
           ),
       )}

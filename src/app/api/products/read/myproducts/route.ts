@@ -21,9 +21,7 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
       .where(eq(products.sellerId, jwtPayload.id))
       .innerJoin(variants, eq(products.id, variants.productId))
       .innerJoin(images, eq(variants.id, images.variantId));
-    if (allProducts.length === 0) {
-      return new NextResponse(JSON.stringify([]));
-    }
+    if (allProducts.length === 0) return new NextResponse(JSON.stringify([]));
     const productList: IProductProps[] = productJoinMerger(
       allProducts,
       jwtPayload.id,

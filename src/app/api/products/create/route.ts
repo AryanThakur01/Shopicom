@@ -20,7 +20,7 @@ export const POST = async (req: NextRequest) => {
     const payload = jwtDecoder(token);
     if (!payload.id || !payload.role)
       throw new Error("Session Token role or id missing");
-    if (payload.role !== "seller")
+    if (payload.role !== "seller" && payload.role !== "admin")
       throw new Error("You Don't have a seller account make one to continue");
 
     const body: IProductProps = await req.json();
