@@ -60,14 +60,17 @@ const ProductList: FC<IProductList> = () => {
                     key={item.id}
                     productId={item.id?.toString()}
                   >
-                    <div className="col-span-2 flex items-center gap-4 text-foreground">
-                      <div className="h-12 w-12 bg-purple-500 rounded overflow-hidden">
+                    <Link
+                      href={"/dashboard/products/update/" + item.id}
+                      className="cursor-pointer col-span-2 flex items-center gap-4 text-foreground"
+                    >
+                      <div className="h-12 w-12 rounded overflow-hidden flex items-center">
                         <Image
                           src={`${
-                            item.variants[selectedVariant[i]].imageList[0].value
+                            item.variants[selectedVariant[i]].images[0].value
                           }`}
                           alt="?"
-                          className="text-4xl"
+                          className="text-4xl object-center min-h-full"
                           height={100}
                           width={100}
                         />
@@ -86,7 +89,7 @@ const ProductList: FC<IProductList> = () => {
                           </p>
                         </div>
                       </div>
-                    </div>
+                    </Link>
                     <p className="md:block hidden">
                       {item.variants[selectedVariant[i]].stock}
                     </p>
@@ -153,31 +156,18 @@ interface ITr {
   productId?: string;
 }
 const Tr: React.FC<ITr> = ({ children, isHead, className, productId }) => {
-  return isHead ? (
+  return (
     <div
       className={
         (isHead ? "bg-muted " : "") +
         " " +
         className +
         " " +
-        "grid md:grid-cols-5 grid-cols-3 gap-2 gap-y-4 mt-4 rounded text-muted-foreground md:mx-6 p-2 text-center items-center"
+        "cursor-default grid md:grid-cols-5 grid-cols-3 gap-2 gap-y-4 mt-4 rounded text-muted-foreground md:mx-6 p-2 text-center items-center"
       }
     >
       {children}
     </div>
-  ) : (
-    <Link
-      href={"/dashboard/products/update/" + productId}
-      className={
-        (isHead ? "bg-muted " : "") +
-        " " +
-        className +
-        " " +
-        "grid md:grid-cols-5 grid-cols-3 gap-2 gap-y-4 mt-4 rounded text-muted-foreground md:mx-6 p-2 text-center items-center hover:bg-background"
-      }
-    >
-      {children}
-    </Link>
   );
 };
 const TrLoadingSkeleton = () => {

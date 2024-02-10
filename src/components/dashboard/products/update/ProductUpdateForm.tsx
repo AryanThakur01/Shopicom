@@ -5,37 +5,25 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import * as zod from "zod";
 import { LuLoader, LuTrash } from "react-icons/lu";
-import ImageForm from "./ImageForm";
+// import ImageForm from "./ImageForm";
 import { useRouter } from "next/navigation";
 import { imageProcessor } from "@/utils/helpers/blobToStr";
+import { IProductProps } from "@/types/products";
 
 const schema = zod.object({
-  id: zod.number().optional(),
-  name: zod.string().min(3),
-  description: zod.string().min(10),
-  sellerId: zod.number().optional(),
+  general: zod.object({
+    name: zod.string().min(3),
+    description: zod.string().min(10),
+  }),
   properties: zod
-    .array(
-      zod.object({
-        id: zod.number().optional(),
-        productId: zod.number().optional(),
-        key: zod.string(),
-        value: zod.string(),
-      }),
-    )
+    .array(zod.object({ key: zod.string(), value: zod.string() }))
     .max(8),
   variants: zod
     .array(
       zod.object({
-        id: zod.number().optional(),
-        productId: zod.number().optional(),
         color: zod.string(),
         images: zod.array(
-          zod.object({
-            id: zod.number().optional(),
-            variantId: zod.number().optional(),
-            value: zod.custom<FileList | string>().optional(),
-          }),
+          zod.object({ value: zod.custom<FileList | string>().optional() }),
         ),
         price: zod.string().min(1),
         discountedPrice: zod.string().min(1),
@@ -47,28 +35,15 @@ const schema = zod.object({
 });
 export type TFormInput = zod.infer<typeof schema>;
 
-interface IProductCatelogueForm {
-  product?: TFormInput;
-  id?: string;
-}
-const ProductCatelogueForm: React.FC<IProductCatelogueForm> = ({
-  product,
-  id,
-}) => {
+interface IProductUpdateForm {}
+const ProductUpdateForm: React.FC<IProductUpdateForm> = () => {
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
-  const defaultVariants = product?.variants.map((item) => {
-    return {
-      ...item,
-      orders: item.orders.toString(),
-      price: item.price.toString(),
-      discountedPrice: item.discountedPrice.toString(),
-      stock: item.orders.toString(),
-    };
-  });
-  const defaultValues = { ...product, variants: defaultVariants } || {
-    name: "",
-    description: "",
+  const defaultValues = {
+    general: {
+      name: "",
+      description: "",
+    },
     properties: [{ key: "", value: "" }],
     variants: [
       {
@@ -85,6 +60,7 @@ const ProductCatelogueForm: React.FC<IProductCatelogueForm> = ({
     control,
     handleSubmit,
     register,
+    setValue,
     formState: { errors },
   } = useForm<TFormInput>({
     resolver: zodResolver(schema),
@@ -96,49 +72,24 @@ const ProductCatelogueForm: React.FC<IProductCatelogueForm> = ({
     setSubmitting(true);
     try {
       for (let i = 0; i < data.variants.length; i++) {
-        const variantImages = data.variants[i].images;
-        const images: typeof variantImages = [];
+        const variantImages = data.variants[i].imageList;
+        const images: { value: string }[] = [];
         for (let j = 0; j < variantImages.length; j++) {
           if (!variantImages[j].value) delete variantImages[j];
           else {
-            if (typeof variantImages[j].value === "string") continue;
             const fileBlobList = variantImages[j].value;
             if (!fileBlobList) throw new Error("Improper file format");
             const image = await imageProcessor(fileBlobList[0]);
-            images.push({ ...variantImages[j], value: image });
+            images.push({ value: image });
           }
         }
-        data.variants[i].images = images;
+        data.variants[i].imageList = images;
       }
-      if (!product) {
-        const res = await fetch("/api/products/create", {
-          method: "POST",
-          body: JSON.stringify(data),
-        });
-        console.log("RES: ", await res.text());
-      } else {
-        const body = {
-          general: { ...data },
-          properties: data.properties,
-          variants: data.variants.map((item) => {
-            return {
-              ...item,
-              discountedPrice: Number(item.discountedPrice),
-              orders: Number(item.orders),
-              price: Number(item.price),
-              stock: Number(item.stock),
-            };
-          }),
-        };
-        delete body.general.variants;
-        delete body.general.properties;
-        console.log(body);
-        const res = await fetch("/api/products/update", {
-          method: "POST",
-          body: JSON.stringify(body),
-        });
-        console.log("RES: ", await res.text());
-      }
+      const res = await fetch(`/api/products/create`, {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+      console.log("RES: ", await res.text());
       router.push("/dashboard/products");
     } catch (error) {
       console.log("ERROR: ", error);
@@ -279,15 +230,15 @@ const ProductCatelogueForm: React.FC<IProductCatelogueForm> = ({
                   }
                 />
               </div>
-              <ImageForm
-                index={i}
-                value={{
-                  ...item,
-                  images: item.images,
-                }}
-                update={variants.update}
-                parentControl={control}
-              />
+              {/* <ImageForm */}
+              {/*   index={i} */}
+              {/*   value={{ */}
+              {/*     ...item, */}
+              {/*     imageList: item.imageList, */}
+              {/*   }} */}
+              {/*   update={variants.update} */}
+              {/*   parentControl={control} */}
+              {/* /> */}
               {i !== variants.fields.length - 1 && (
                 <hr className="border-muted my-4" />
               )}
@@ -342,4 +293,4 @@ const SectionContainer: React.FC<ISectionContainer> = ({
   );
 };
 
-export default ProductCatelogueForm;
+export default ProductUpdateForm;

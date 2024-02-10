@@ -56,7 +56,7 @@ export const POST = async (req: NextRequest) => {
           color: variant.color,
         })
         .returning();
-      const insertImages: newImage[] = variant.imageList.map((img) => ({
+      const insertImages: newImage[] = variant.images.map((img) => ({
         value: typeof img.value === "string" ? img.value : "",
         variantId: prodVariants[0].id,
       }));

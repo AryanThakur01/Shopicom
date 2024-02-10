@@ -1,5 +1,5 @@
 export { type TFormInput } from "@/components/dashboard/products/create/ProductCatelogueForm";
-import { image, newProperty } from "@/db/schema/products";
+import { image, newProperty, product, property } from "@/db/schema/products";
 
 export interface IProductProps {
   id: number;
@@ -11,7 +11,7 @@ export interface IProductProps {
     id: number;
     color: string;
     price: number;
-    imageList: image[];
+    images: image[];
     discountedPrice: number;
     productId: number;
     stock: number;

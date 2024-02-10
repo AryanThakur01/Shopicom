@@ -14,8 +14,10 @@ interface IImageForm {
   index: number;
   value: {
     color: string;
-    imageList: Array<{
+    images: Array<{
       value?: FileList | string;
+      id?: number;
+      variantId?: number;
     }>;
     price: string;
     discountedPrice: string;
@@ -32,43 +34,45 @@ const ImageForm: React.FC<IImageForm> = ({
 }) => {
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
   const { register, control } = useForm({
-    defaultValues: { imageList: value.imageList },
+    defaultValues: { images: value.images },
   });
-  const { fields } = useFieldArray({ control, name: "imageList" });
+  const { fields } = useFieldArray({ control, name: "images" });
   const fieldWatch = useWatch({ control });
   const variantVals = useWatch({ control: parentControl, name: "variants" });
 
   const imageUploader = (e: React.ChangeEvent<HTMLInputElement>, i: number) => {
     const file = e.target.files;
     if (!file) return;
-    if (!fieldWatch.imageList) return;
-    const tempImg = [...fieldWatch.imageList];
+    if (!fieldWatch.images) return;
+    const tempImg = [...fieldWatch.images];
     tempImg[i].value = file;
     update(index, {
       ...variantVals[index],
-      imageList: tempImg,
+      images: tempImg,
     });
   };
   useEffect(() => {
-    if (!fieldWatch.imageList) return;
+    if (!fieldWatch.images) return;
 
-    const imageCount = fieldWatch.imageList.length;
+    const imageCount = fieldWatch.images.length;
     if (imageCount < 0) return;
 
-    const imageList = [];
+    // console.log("Field: ", fieldWatch);
+
+    const images = [];
     for (let i = 0; i < imageCount; i++) {
-      const element = fieldWatch.imageList[i].value;
+      const element = fieldWatch.images[i].value;
       if (element) {
         let url: string =
-          typeof element[0] === "string"
-            ? element[0]
+          typeof element === "string"
+            ? element
             : URL.createObjectURL(element[0]);
-        imageList.push(url);
+        images.push(url);
       } else {
-        imageList.push("");
+        images.push("");
       }
     }
-    setUploadedImages(imageList);
+    setUploadedImages(images);
   }, [fieldWatch]);
   return (
     <>
@@ -76,7 +80,7 @@ const ImageForm: React.FC<IImageForm> = ({
         {fields.map((item, i) => (
           <label
             key={item.id}
-            htmlFor={`imageList.${i}.value`}
+            htmlFor={`images.${i}.value`}
             className={
               (uploadedImages[i] && "place-items-center ") +
               "outline-white grid h-40 w-40 bg-background rounded border border-muted overflow-hidden "
@@ -86,7 +90,7 @@ const ImageForm: React.FC<IImageForm> = ({
               <input
                 key={item.id}
                 type="file"
-                {...register(`imageList.${i}.value`)}
+                {...register(`images.${i}.value`)}
                 className="h-40 w-full opacity-0 cursor-pointer relative z-10"
                 onChange={(e) => imageUploader(e, i)}
               />
