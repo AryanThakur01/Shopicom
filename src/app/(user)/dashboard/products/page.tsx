@@ -7,7 +7,7 @@ import { LuPlus } from "react-icons/lu";
 const page = async () => {
   return (
     <>
-      <div className="bg-card p-4 rounded-lg">
+      <div className="md:bg-card p-4 rounded-lg">
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-bold">Product List</h2>
           <div className="flex gap-4">

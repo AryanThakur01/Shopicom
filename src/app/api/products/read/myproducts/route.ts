@@ -14,6 +14,8 @@ export const GET = async (req: NextRequest, _: NextResponse) => {
 
     const jwtPayload = jwtDecoder(token);
     if (typeof jwtPayload === "string") throw new Error("Incorrect token");
+
+    const page: number = Number(url.searchParams.get("page"));
     if (!prodId) {
       const allProducts = await dbDriver.query.products.findMany({
         with: {
@@ -25,6 +27,7 @@ export const GET = async (req: NextRequest, _: NextResponse) => {
           },
         },
         limit: 10,
+        offset: !page ? 0 : (page - 1) * 10,
       });
       return new NextResponse(JSON.stringify(allProducts));
     }
