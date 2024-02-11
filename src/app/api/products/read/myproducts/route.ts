@@ -24,6 +24,7 @@ export const GET = async (req: NextRequest, _: NextResponse) => {
             },
           },
         },
+        limit: 10,
       });
       return new NextResponse(JSON.stringify(allProducts));
     }

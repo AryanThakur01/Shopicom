@@ -1,17 +1,10 @@
 import ProductList from "@/components/dashboard/products/ProductList";
-import { getServerSession } from "@/utils/serverActions/session";
-import { cookies } from "next/headers";
+import withAuth from "@/components/withAuth";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import React from "react";
 import { LuPlus } from "react-icons/lu";
 
 const page = async () => {
-  const cookie = cookies().get("Session_Token")?.value;
-  if (!cookie) redirect("/");
-  const session = await getServerSession(cookie);
-  if (session.role === "seller") redirect("/dashboard");
-
   return (
     <>
       <div className="bg-card p-4 rounded-lg">
@@ -33,4 +26,4 @@ const page = async () => {
   );
 };
 
-export default page;
+export default withAuth(page, ["seller", "admin"]);

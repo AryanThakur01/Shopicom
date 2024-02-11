@@ -1,4 +1,5 @@
 import Profile from "@/components/dashboard/Profile";
+import withAuth from "@/components/withAuth";
 import React from "react";
 
 const Dashboard = async () => {
@@ -12,4 +13,4 @@ const Dashboard = async () => {
   );
 };
 
-export default Dashboard;
+export default withAuth(Dashboard, ["customer", "seller", "admin"]);

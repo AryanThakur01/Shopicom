@@ -18,6 +18,7 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 
 const Nav = () => {
+  const router = useRouter();
   return (
     <nav className="flex flex-col container h-12 bg-black/40 backdrop-blur-xl sticky top-0">
       <div className="my-auto flex items-center">
@@ -58,7 +59,7 @@ const Drawer: FC<IProfileDialog> = ({ children }) => {
       <Dialog.Trigger asChild>{children}</Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className="absolute top-0 bg-black opacity-80 h-screen w-screen animate-open-opacity" />
-        <Dialog.Content className="overflow-hidden flex flex-col min-w-96 max-w-[80vw] absolute h-screen right-0 top-0 bg-card p-1 border-l border-border shadow-2xl animate-open-from-r">
+        <Dialog.Content className="overflow-hidden flex flex-col min-w-96 max-w-[80vw] absolute z-50 h-screen right-0 top-0 bg-card p-1 border-l border-border shadow-2xl animate-open-from-r">
           <div className="flex justify-between items-center px-4 py-2">
             <Dialog.Close asChild>
               <button
@@ -75,29 +76,25 @@ const Drawer: FC<IProfileDialog> = ({ children }) => {
           </div>
           <div className="mb-8 mt-auto px-4">
             {session ? (
-              <button
-                className="block w-full border border-border p-2 bg-background rounded"
+              <Dialog.Close
+                className="w-full border border-border p-2 bg-background rounded flex items-center gap-4 px-4"
                 onClick={() => {
                   Cookies.remove("Session_Token");
                   setSession(null);
                   router.push("/");
                 }}
               >
-                <Dialog.Close className="flex items-center w-full gap-4">
-                  <LuLogOut />
-                  <span>Logout</span>
-                </Dialog.Close>
-              </button>
+                <LuLogOut />
+                <span>Logout</span>
+              </Dialog.Close>
             ) : (
-              <Link
-                href="/login"
-                className="block border border-border p-2 bg-background rounded"
+              <Dialog.Close
+                onClick={() => router.push("/login")}
+                className="gap-4 items-center w-full bg-background rounded flex p-2 px-4"
               >
-                <Dialog.Close className="flex gap-4 items-center w-full">
-                  <LuLogIn />
-                  <span>Login</span>
-                </Dialog.Close>
-              </Link>
+                <LuLogIn />
+                <span>Login</span>
+              </Dialog.Close>
             )}
           </div>
         </Dialog.Content>
@@ -128,15 +125,17 @@ interface INavLink {
   linkText: string;
 }
 const NavLink: FC<INavLink> = ({ href, linkText }) => {
+  const router = useRouter();
   return (
-    <Link className="hover:text-foreground group" href={href}>
-      <Dialog.Close className="flex justify-between items-center w-full">
-        {linkText}
-        <span className="hidden group-hover:inline">
-          <LuChevronRight />
-        </span>
-      </Dialog.Close>
-    </Link>
+    <Dialog.Close
+      onClick={() => router.push(href)}
+      className="hover:text-foreground group flex justify-between items-center w-full"
+    >
+      {linkText}
+      <span className="hidden group-hover:inline">
+        <LuChevronRight />
+      </span>
+    </Dialog.Close>
   );
 };
 

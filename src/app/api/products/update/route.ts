@@ -79,16 +79,22 @@ export const POST = async (req: NextRequest) => {
     for (const variant of body.variants) {
       const imgList = [...(variant.images || [])];
       delete variant.images;
-      const newVariant = await db
-        .update(variants)
-        .set({ ...variant })
-        .where(
-          and(
-            eq(variants.id, variant.id),
-            eq(variants.productId, newProduct[0].id),
-          ),
-        )
-        .returning();
+      const newVariant = variant.id
+        ? await db
+            .update(variants)
+            .set({ ...variant })
+            .where(
+              and(
+                eq(variants.id, variant.id),
+                eq(variants.productId, newProduct[0].id),
+              ),
+            )
+            .returning()
+        : await db
+            .insert(variants)
+            .values({ ...variant, productId: newProduct[0].id })
+            .returning();
+
       for (const img of imgList) {
         if (img.id)
           await db
@@ -100,7 +106,10 @@ export const POST = async (req: NextRequest) => {
                 eq(images.variantId, newVariant[0].id),
               ),
             );
-        else await db.insert(images).values({ ...img });
+        else
+          await db
+            .insert(images)
+            .values({ ...img, variantId: newVariant[0].id });
       }
     }
 

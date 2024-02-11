@@ -1,10 +1,8 @@
 import ProductCatelogueForm from "@/components/dashboard/products/create/ProductCatelogueForm";
+import withAuth from "@/components/withAuth";
 import { dbDriver } from "@/db";
 import { products } from "@/db/schema/products";
-import { getServerSession } from "@/utils/serverActions/session";
 import { eq } from "drizzle-orm";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 import React from "react";
 
 interface IPage {
@@ -13,11 +11,6 @@ interface IPage {
   };
 }
 const page: React.FC<IPage> = async ({ params }) => {
-  const cookie = cookies().get("Session_Token")?.value;
-  if (!cookie) redirect("/");
-  const session = await getServerSession(cookie);
-  if (session.role === "customer" || !params.id) redirect("/dashboard");
-
   const product = await dbDriver.query.products.findMany({
     with: {
       variants: {
@@ -34,4 +27,4 @@ const page: React.FC<IPage> = async ({ params }) => {
   );
 };
 
-export default page;
+export default withAuth(page, ["admin", "seller"]);

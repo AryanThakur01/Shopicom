@@ -1,5 +1,5 @@
 "use client";
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { ReactNode, useState } from "react";
 import FormField from "@/components/FormField";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
@@ -7,8 +7,10 @@ import * as zod from "zod";
 import { LuLoader, LuTrash } from "react-icons/lu";
 import ImageForm from "./ImageForm";
 import { useRouter } from "next/navigation";
-import { imageProcessor } from "@/utils/helpers/blobToStr";
+import { imageProcessor, processAllImages } from "@/utils/helpers/blobToStr";
+import { IProductProps } from "@/types/products";
 
+// -------------------- zod Schema for validation --------------------------
 const schema = zod.object({
   id: zod.number().optional(),
   name: zod.string().min(3),
@@ -46,9 +48,10 @@ const schema = zod.object({
     .max(8),
 });
 export type TFormInput = zod.infer<typeof schema>;
+// -------------------------------------------------------------------------
 
 interface IProductCatelogueForm {
-  product?: TFormInput;
+  product?: IProductProps;
   id?: string;
 }
 const ProductCatelogueForm: React.FC<IProductCatelogueForm> = ({
@@ -57,30 +60,33 @@ const ProductCatelogueForm: React.FC<IProductCatelogueForm> = ({
 }) => {
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
-  const defaultVariants = product?.variants.map((item) => {
-    return {
-      ...item,
-      orders: item.orders.toString(),
-      price: item.price.toString(),
-      discountedPrice: item.discountedPrice.toString(),
-      stock: item.orders.toString(),
-    };
-  });
-  const defaultValues = { ...product, variants: defaultVariants } || {
-    name: "",
-    description: "",
-    properties: [{ key: "", value: "" }],
-    variants: [
-      {
-        color: "#c2362d",
-        images: [{}, {}, {}, {}, {}],
-        price: "",
-        discountedPrice: "",
-        stock: "",
-        orders: "0",
-      },
-    ],
+  const newVariant = {
+    color: "#c2362d",
+    images: [{}, {}, {}, {}, {}],
+    price: "",
+    discountedPrice: "",
+    stock: "",
+    orders: "0",
   };
+  const defaultVariants = product
+    ? product.variants.map((item) => {
+        return {
+          ...item,
+          orders: item.orders.toString(),
+          price: item.price.toString(),
+          discountedPrice: item.discountedPrice.toString(),
+          stock: item.orders.toString(),
+        };
+      })
+    : [newVariant];
+  const defaultValues = product
+    ? { ...product, variants: defaultVariants }
+    : {
+        name: "",
+        description: "",
+        properties: [{ key: "", value: "" }],
+        variants: defaultVariants,
+      };
   const {
     control,
     handleSubmit,
@@ -95,21 +101,7 @@ const ProductCatelogueForm: React.FC<IProductCatelogueForm> = ({
   const submitHandler: SubmitHandler<TFormInput> = async (data) => {
     setSubmitting(true);
     try {
-      for (let i = 0; i < data.variants.length; i++) {
-        const variantImages = data.variants[i].images;
-        const images: typeof variantImages = [];
-        for (let j = 0; j < variantImages.length; j++) {
-          if (!variantImages[j].value) delete variantImages[j];
-          else {
-            if (typeof variantImages[j].value === "string") continue;
-            const fileBlobList = variantImages[j].value;
-            if (!fileBlobList) throw new Error("Improper file format");
-            const image = await imageProcessor(fileBlobList[0]);
-            images.push({ ...variantImages[j], value: image });
-          }
-        }
-        data.variants[i].images = images;
-      }
+      await processAllImages(data);
       if (!product) {
         const res = await fetch("/api/products/create", {
           method: "POST",
@@ -117,8 +109,10 @@ const ProductCatelogueForm: React.FC<IProductCatelogueForm> = ({
         });
         console.log("RES: ", await res.text());
       } else {
+        console.log(data);
+        const { properties, variants, ...general } = data;
         const body = {
-          general: { ...data },
+          general,
           properties: data.properties,
           variants: data.variants.map((item) => {
             return {
@@ -130,8 +124,6 @@ const ProductCatelogueForm: React.FC<IProductCatelogueForm> = ({
             };
           }),
         };
-        delete body.general.variants;
-        delete body.general.properties;
         console.log(body);
         const res = await fetch("/api/products/update", {
           method: "POST",
@@ -223,7 +215,7 @@ const ProductCatelogueForm: React.FC<IProductCatelogueForm> = ({
           ctaFunction={
             variants.fields.length < 8
               ? () => {
-                  variants.append(defaultValues.variants);
+                  defaultValues.variants && variants.append(newVariant);
                 }
               : undefined
           }
@@ -310,6 +302,7 @@ const ProductCatelogueForm: React.FC<IProductCatelogueForm> = ({
   );
 };
 
+// --------------------------- Container For Section -------------------------
 interface ISectionContainer {
   title: string;
   children: ReactNode;
@@ -341,5 +334,6 @@ const SectionContainer: React.FC<ISectionContainer> = ({
     </div>
   );
 };
+// ---------------------------------------------------------------------------
 
 export default ProductCatelogueForm;

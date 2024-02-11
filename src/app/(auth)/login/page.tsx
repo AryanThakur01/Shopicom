@@ -28,10 +28,7 @@ const Login = () => {
     formState: { errors },
   } = useForm<IFormInput>({
     resolver: zodResolver(schema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
+    defaultValues: { email: "", password: "" },
   });
   const dispatch = useDispatch();
 
@@ -39,10 +36,8 @@ const Login = () => {
     setSubmitting(true);
     try {
       const body = { ...data };
-      const res = await fetch("/api/login", {
-        method: "POST",
-        body: JSON.stringify(body),
-      });
+      const config = { method: "POST", body: JSON.stringify(body) };
+      const res = await fetch("/api/login", config);
       if (!res.ok) throw new Error("Recheck Credentials");
       dispatch(userDataAsync());
       router.push("/");

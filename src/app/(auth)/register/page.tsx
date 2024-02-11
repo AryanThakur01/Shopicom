@@ -29,10 +29,7 @@ const Register = () => {
     formState: { errors },
   } = useForm<IFormInput>({
     resolver: zodResolver(schema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
+    defaultValues: { email: "", password: "" },
   });
   const dispatch = useDispatch();
 
@@ -40,10 +37,9 @@ const Register = () => {
     setSubmitting(true);
     try {
       const body = { ...data };
-      const res = await fetch("/api/register", {
-        method: "POST",
-        body: JSON.stringify(body),
-      });
+      const config = { method: "POST", body: JSON.stringify(body) };
+      const res = await fetch("/api/register", config);
+      if (!res.ok) throw new Error("Some Error Occured");
       dispatch(userDataAsync());
       router.push("/dashboard");
     } catch (error) {
