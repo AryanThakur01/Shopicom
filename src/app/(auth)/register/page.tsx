@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { LuLoader, LuLock, LuMail } from "react-icons/lu";
 import * as zod from "zod";
 import { useRouter, useSearchParams } from "next/navigation";
-import OAuthLogin from "@/components/auth/OAuthLogin";
+// import OAuthLogin from "@/components/auth/OAuthLogin";
 import { useDispatch, userDataAsync } from "@/lib/redux";
 
 interface IFormInput {
@@ -20,7 +20,7 @@ const schema = zod.object({
 });
 
 const Register = () => {
-  const params = useSearchParams();
+  // const params = useSearchParams();
   const [submitting, setSubmitting] = useState(false);
   const router = useRouter();
   const {
@@ -95,7 +95,7 @@ const Register = () => {
           <hr className="border border-border w-full" />
         </div>
         <div className="grid grid-cols-3 gap-4">
-          <OAuthLogin googleCallback={params.get("callbackUrl")} />
+          {/* <OAuthLogin googleCallback={params.get("callbackUrl")} /> */}
         </div>
       </div>
     </section>

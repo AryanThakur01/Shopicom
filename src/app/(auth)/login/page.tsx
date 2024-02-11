@@ -7,7 +7,7 @@ import { LuLoader, LuLock, LuMail } from "react-icons/lu";
 import * as zod from "zod";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import OAuthLogin from "@/components/auth/OAuthLogin";
+// import OAuthLogin from "@/components/auth/OAuthLogin";
 import { useDispatch, userDataAsync } from "@/lib/redux";
 
 interface IFormInput {
@@ -93,9 +93,9 @@ const Login = () => {
           <p>OR</p>
           <hr className="border border-border w-full" />
         </div>
-        <div className="grid grid-cols-3 gap-4">
-          <OAuthLogin />
-        </div>
+        {/* <div className="grid grid-cols-3 gap-4"> */}
+        {/*   <OAuthLogin /> */}
+        {/* </div> */}
       </div>
     </section>
   );
