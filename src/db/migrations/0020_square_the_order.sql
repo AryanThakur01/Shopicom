@@ -1,2 +1,0 @@
-ALTER TABLE "categories" ADD CONSTRAINT "categories_product_id_unique" UNIQUE("product_id");--> statement-breakpoint
-ALTER TABLE "categories" ADD CONSTRAINT "categories_product_id_tag_unique" UNIQUE NULLS NOT DISTINCT("product_id","tag");

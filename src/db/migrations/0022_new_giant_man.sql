@@ -1,1 +1,0 @@
-ALTER TABLE "categories" DROP CONSTRAINT "categories_product_id_tag_unique";
