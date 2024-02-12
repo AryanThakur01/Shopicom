@@ -22,6 +22,7 @@ const page: React.FC<IPage> = async ({ params }) => {
   });
   return (
     <>
+      <h1 className="text-3xl font-bold">Update The Product Details</h1>
       <ProductCatelogueForm product={{ ...product[0] }} id={params.id} />
     </>
   );

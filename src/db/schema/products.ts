@@ -1,5 +1,12 @@
 import { relations } from "drizzle-orm";
-import { integer, pgTable, serial, text } from "drizzle-orm/pg-core";
+import {
+  boolean,
+  integer,
+  pgTable,
+  serial,
+  text,
+  unique,
+} from "drizzle-orm/pg-core";
 import { users } from "./users";
 
 // Product Table Definition and relations
@@ -18,6 +25,24 @@ export const productsRelations = relations(products, ({ one, many }) => ({
   }),
   properties: many(properties),
   variants: many(variants),
+  categories: many(categories),
+}));
+
+// Product-categorization Table
+export const categories = pgTable("categories", {
+  id: serial("id").primaryKey(),
+  tag: text("tag", {
+    enum: ["sponsored", "best seller"],
+  }).notNull(),
+  productId: integer("product_id")
+    .references(() => products.id, { onDelete: "cascade" })
+    .notNull(),
+});
+export const categoriesRelations = relations(categories, ({ one }) => ({
+  product: one(products, {
+    fields: [categories.productId],
+    references: [products.id],
+  }),
 }));
 
 // Product-Properties Table Definition and relations
@@ -72,9 +97,15 @@ export const imagesRelations = relations(images, ({ one }) => ({
 
 export type product = typeof products.$inferSelect;
 export type newProduct = typeof products.$inferInsert;
+
 export type property = typeof properties.$inferSelect;
 export type newProperty = typeof properties.$inferInsert;
+
 export type variant = typeof variants.$inferSelect;
 export type newVariant = typeof variants.$inferInsert;
+
 export type image = typeof images.$inferSelect;
 export type newImage = typeof images.$inferInsert;
+
+export type category = typeof categories.$inferSelect;
+export type newCategory = typeof categories.$inferInsert;
