@@ -17,6 +17,7 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
 
     const profile = await db
       .select({
+        id: users.id,
         profilePic: users.profilePic,
         firstName: users.firstName,
         lastName: users.lastName,

@@ -45,7 +45,7 @@ const BestSellers = () => {
 
   // const bestSeller = await fetchSponsored();
   return (
-    <section className="my-20 container py-8 bg-muted">
+    <section className="mt-20 container py-8 bg-muted">
       <h2 className="text-4xl text-muted-foreground font-bold">Best Sellers</h2>
       <hr className="my-8 border-border" />
       <div>
@@ -61,10 +61,10 @@ const BestSellers = () => {
                 <LuChevronLeft />
               </button>
               <div className="overflow-hidden" ref={emblaRef}>
-                <div className="flex gap-8 h-fit">
+                <div className="flex gap-[2%] h-fit">
                   {bestSeller.map((item, i) => (
                     <div
-                      className="lg:flex-[0_0_33%] md:flex-[0_0_60%] sm:flex-[0_0_80%] flex-[0_0_96%] h-fit"
+                      className="lg:flex-[0_0_31%] md:flex-[0_0_60%] sm:flex-[0_0_80%] flex-[0_0_96%] h-fit"
                       key={item.id}
                     >
                       <ProductCard

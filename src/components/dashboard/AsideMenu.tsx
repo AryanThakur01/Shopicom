@@ -13,8 +13,7 @@ const AsideMenu: React.FC<IAsideMenu> = ({}) => {
   const [session, setSession] = useState<ISession | null>();
   const user = useSelector((state) => state.user.value);
   useEffect(() => {
-    const token = Cookies.get("Session_Token");
-    if (token) getServerSession(token).then((s) => setSession(s));
+    setSession({ id: user.id, role: user.role });
   }, [user]);
   const menuList = [
     {

@@ -1,5 +1,6 @@
 import * as users from "./schema/users";
 import * as products from "./schema/products";
+import * as dynamicContent from "./schema/dynamicContent";
 import { drizzle } from "drizzle-orm/postgres-js";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
 import postgres from "postgres";
@@ -7,7 +8,7 @@ import postgres from "postgres";
 // for migrations
 const migrationClient = postgres(process.env.POSTGRES_URL || "", { max: 1 });
 export const dbDriver = drizzle(migrationClient, {
-  schema: { ...users, ...products },
+  schema: { ...users, ...products, ...dynamicContent },
 });
 migrate(dbDriver, { migrationsFolder: "src/db/migrations" });
 

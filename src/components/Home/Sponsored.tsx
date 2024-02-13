@@ -27,7 +27,7 @@ const Sponsored = async () => {
   return (
     <section className="container my-10">
       <p className="my-4 text-muted-foreground">• sponsored</p>
-      <div className="grid lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-8">
+      <div className="grid md:grid-cols-3 xl:grid-cols-4 sm:grid-cols-2 grid-cols-1 gap-8">
         {sponsored.map((item) => (
           <ProductCard
             src={item.product.variants[0].images[0].value}

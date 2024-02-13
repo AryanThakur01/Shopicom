@@ -1,3 +1,4 @@
+import BannerUploader from "@/components/dashboard/BannerUploader";
 import Profile from "@/components/dashboard/Profile";
 import withAuth from "@/components/withAuth";
 import React from "react";
@@ -5,7 +6,9 @@ import React from "react";
 const Dashboard = async () => {
   return (
     <div className="flex md:flex-row flex-col-reverse justify-between gap-4">
-      <div className=""></div>
+      <div className="container md:px-2">
+        <BannerUploader />
+      </div>
       <aside className="md:w-1/3 w-full px-6">
         <Profile />
       </aside>

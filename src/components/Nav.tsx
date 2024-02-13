@@ -18,7 +18,6 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 
 const Nav = () => {
-  const router = useRouter();
   return (
     <nav className="flex flex-col container h-12 bg-black/40 backdrop-blur-xl sticky top-0 z-30">
       <div className="my-auto flex items-center">

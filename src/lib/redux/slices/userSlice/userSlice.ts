@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { userDataAsync } from ".";
 
 export interface IUserValue {
+  id: number;
   firstName: string;
   lastName: string;
   profilePic: string;
