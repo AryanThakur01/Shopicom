@@ -4,6 +4,8 @@ import { db } from "@/db";
 import { contents } from "@/db/schema/dynamicContent";
 import { eq } from "drizzle-orm";
 import Carousel from "../Carousel";
+import Image from "next/image";
+import Link from "next/link";
 
 const Banner = async () => {
   // const [emblaRef, emblaApi] = useEmblaCarousel();
@@ -26,11 +28,26 @@ const Banner = async () => {
           {banners.map((item, i) => (
             <div
               key={item.id}
-              className="flex-[0_0_95%] h-[80vh] bg-card mx-2 rounded-xl"
+              className="flex-[0_0_95%] h-[80vh] bg-card mx-2 rounded-xl flex flex-col overflow-hidden"
               style={{
                 background: `url(${item.image})no-repeat center center/cover`,
               }}
-            />
+            >
+              <div className="mt-auto bg-card p-4 min-h-20 flex justify-between items-center">
+                <div>
+                  <h1 className="text-4xl">{item.title}</h1>
+                  <h2 className="my-4">{item.content}</h2>
+                </div>
+                {item.link && (
+                  <Link
+                    href={item.link}
+                    className="bg-success w-20 p-1 text-center rounded text-xl"
+                  >
+                    Visit
+                  </Link>
+                )}
+              </div>
+            </div>
           ))}
         </div>
       </Carousel>
