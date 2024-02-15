@@ -1,9 +1,17 @@
-"use client";
-import React, { useEffect } from "react";
-import useEmblaCarousel from "embla-carousel-react";
+import React from "react";
+// import useEmblaCarousel from "embla-carousel-react";
+import { db } from "@/db";
+import { contents } from "@/db/schema/dynamicContent";
+import { eq } from "drizzle-orm";
+import Carousel from "../Carousel";
 
-const Banner = () => {
-  const [emblaRef, emblaApi] = useEmblaCarousel();
+const Banner = async () => {
+  // const [emblaRef, emblaApi] = useEmblaCarousel();
+
+  const banners = await db
+    .select()
+    .from(contents)
+    .where(eq(contents.tag, "home_banner"));
 
   // useEffect(() => {
   //   if (emblaApi) {
@@ -13,18 +21,19 @@ const Banner = () => {
   const CarouselContent = [{}, {}, {}, {}, {}, {}];
   return (
     <section className="my-4 container">
-      <div className="overflow-hidden" ref={emblaRef}>
+      <Carousel>
         <div className="flex">
-          {CarouselContent.map((_, i) => (
+          {banners.map((item, i) => (
             <div
-              key={"Carousel-" + i}
+              key={item.id}
               className="flex-[0_0_95%] h-[80vh] bg-card mx-2 rounded-xl"
-            >
-              {i}
-            </div>
+              style={{
+                background: `url(${item.image})no-repeat center center/cover`,
+              }}
+            />
           ))}
         </div>
-      </div>
+      </Carousel>
     </section>
   );
 };

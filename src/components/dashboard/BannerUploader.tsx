@@ -7,14 +7,14 @@ import {
   LuImagePlus,
   LuLoader,
   LuMegaphone,
+  LuX,
 } from "react-icons/lu";
 import { imageProcessor } from "@/utils/helpers/blobToStr";
 import { NewContent } from "@/db/schema/dynamicContent";
 
 const BannerUploader = () => {
   const [emblaRef, emblaApi] = useEmblaCarousel();
-  const [banners, setBanners] = useState<NewContent[]>();
-  const [bannerLength, setBannerLength] = useState(0);
+  const [banners, setBanners] = useState<NewContent[]>([]);
 
   const getBanners = async () => {
     try {
@@ -42,7 +42,7 @@ const BannerUploader = () => {
       <div className="border border-border rounded-lg">
         <div className="min-h-72 p-2 flex">
           <button
-            className="md:block hidden text-2xl hover:scale-150 transition-all"
+            className="md:block hidden text-2xl hover:scale-150 transition-all h-40 my-auto"
             onClick={() => {
               emblaApi?.scrollPrev();
             }}
@@ -56,20 +56,27 @@ const BannerUploader = () => {
                   className="flex-[0_0_95%] rounded-xl flex flex-col group animate-open-pop"
                   key={"banner-" + i}
                 >
+                  {/* <div className="h-0 flex justify-end relative z-20"> */}
+                  {/*   <button */}
+                  {/*     className="m-2 p-1 text-xl border h-fit rounded-full" */}
+                  {/*     onClick={() => { */}
+                  {/*       const tempBanners = [...banners]; */}
+                  {/*       // const prevBanner = [...tempBanners.slice(0, i)]; */}
+                  {/*       // const nextBanner = [...tempBanners.slice(i + 1)]; */}
+                  {/*       // console.log(prevBanner, nextBanner); */}
+                  {/*       // setBanners([...nextBanner]); */}
+                  {/*     }} */}
+                  {/*   > */}
+                  {/*     <LuX /> */}
+                  {/*   </button> */}
+                  {/* </div> */}
                   <Banner data={item} />
                 </div>
               ))}
-              {Array.apply(null, Array(bannerLength)).map((_, i) => (
-                <div
-                  className="flex-[0_0_95%] rounded-xl flex flex-col group animate-open-from-l"
-                  key={"newBanner" + i}
-                >
-                  <Banner />
-                </div>
-              ))}
               <button
-                className="cursor-pointer flex-[0_0_95%] h-80 bg-card mx-2 rounded-xl flex flex-col"
-                onClick={() => setBannerLength(bannerLength + 1)}
+                className="cursor-pointer flex-[0_0_95%] h-80 bg-card rounded-xl flex flex-col"
+                // onClick={() => setBannerLength(bannerLength + 1)}
+                onClick={() => setBanners([...banners, { tag: "home_banner" }])}
               >
                 <span className="mx-auto my-auto">
                   <LuMegaphone className="text-8xl" />
@@ -78,7 +85,7 @@ const BannerUploader = () => {
             </div>
           </div>
           <button
-            className="md:block hidden text-2xl hover:scale-150 transition-all"
+            className="md:block hidden text-2xl hover:scale-150 transition-all h-40 my-auto"
             onClick={() => {
               emblaApi?.scrollNext();
             }}
@@ -159,7 +166,7 @@ const Banner: React.FC<IBanner> = ({ data }) => {
         {imgSrc ? (
           <>
             <span
-              className="flex flex-col justify-center h-full p-1 hover:opacity-65 hover:blur-[1px] transition-all"
+              className="flex flex-col justify-center h-full p-1 hover:opacity-90 hover:blur-[1px] transition-all"
               style={{
                 background: `url(${imgSrc})no-repeat center center/cover`,
               }}
@@ -201,12 +208,6 @@ const Banner: React.FC<IBanner> = ({ data }) => {
             disabled={loading}
           >
             {loading ? <LuLoader className="mx-auto animate-spin" /> : "Upload"}
-          </button>
-          <button
-            className="bg-destructive h-10 rounded w-32 font-bold"
-            disabled={loading}
-          >
-            {loading ? <LuLoader className="mx-auto animate-spin" /> : "Delete"}
           </button>
         </div>
       </div>
