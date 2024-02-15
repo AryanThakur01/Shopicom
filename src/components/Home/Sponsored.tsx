@@ -30,6 +30,7 @@ const Sponsored = async () => {
       <div className="grid md:grid-cols-3 xl:grid-cols-4 sm:grid-cols-2 grid-cols-1 gap-8">
         {sponsored.map((item) => (
           <ProductCard
+            key={item.id}
             src={item.product.variants[0].images[0].value}
             name={item.product.name}
             tag={item.tag}

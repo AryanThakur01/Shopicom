@@ -15,6 +15,7 @@ export interface UserSliceState {
 }
 export const initialState: UserSliceState = {
   value: {
+    id: 0,
     firstName: "",
     lastName: "",
     profilePic: "",

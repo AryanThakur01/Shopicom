@@ -13,7 +13,7 @@ const AsideMenu: React.FC<IAsideMenu> = ({}) => {
   const [session, setSession] = useState<ISession | null>();
   const user = useSelector((state) => state.user.value);
   useEffect(() => {
-    setSession({ id: user.id, role: user.role });
+    setSession({ id: `${user.id}`, role: user.role });
   }, [user]);
   const menuList = [
     {
