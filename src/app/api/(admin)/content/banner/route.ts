@@ -1,8 +1,10 @@
 import { db } from "@/db";
-import { contents } from "@/db/schema/dynamicContent";
+import { NewContent, contents } from "@/db/schema/dynamicContent";
 import { jwtDecoder } from "@/utils/api/helpers";
+import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
+const tag = "home_banner";
 export const POST = async (req: NextRequest) => {
   try {
     const token = req.cookies.get("Session_Token")?.value;
@@ -13,18 +15,26 @@ export const POST = async (req: NextRequest) => {
       throw new Error("Session Token role or id missing");
     if (payload.role !== "admin") throw new Error("ADMIN ONLY ROUTE");
 
-    const body: string = await req.text();
-
-    const image = await db
-      .insert(contents)
-      .values({ tag: "home_banner", image: body })
-      .returning();
-    return NextResponse.json({ data: image }, { status: 200 });
+    const body: NewContent = await req.json();
+    if (body.id) {
+      const banner = await db
+        .update(contents)
+        .set({ ...body })
+        .where(eq(contents.id, body.id))
+        .returning();
+      return NextResponse.json({ data: banner }, { status: 200 });
+    } else {
+      const banner = await db
+        .insert(contents)
+        .values({ ...body, tag })
+        .returning();
+      return NextResponse.json({ data: banner }, { status: 200 });
+    }
   } catch (error) {
     if (error instanceof Error)
       return NextResponse.json({ error }, { status: 400 });
     return NextResponse.json(
-      { error: "Error: /api/content/banner/create" },
+      { error: "Error: /api/content/banner - get" },
       { status: 500 },
     );
   }
@@ -33,17 +43,14 @@ export const POST = async (req: NextRequest) => {
 // TESTING
 export const GET = async () => {
   try {
-    const res = await db
-      .insert(contents)
-      .values({ tag: "home_banner", title: "NEXTJS" })
-      .returning();
-    return NextResponse.json({ data: res }, { status: 400 });
+    const res = await db.select().from(contents);
+    return NextResponse.json({ data: res }, { status: 200 });
   } catch (error) {
     console.log(error);
     if (error instanceof Error)
       return NextResponse.json({ error }, { status: 400 });
     return NextResponse.json(
-      { error: "Error: /api/content/create" },
+      { error: "Error: /api/content/banner - get" },
       { status: 500 },
     );
   }

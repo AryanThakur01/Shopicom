@@ -5,44 +5,35 @@ import {
   LuChevronLeft,
   LuChevronRight,
   LuImagePlus,
-  LuTrash,
+  LuLoader,
+  LuMegaphone,
 } from "react-icons/lu";
-import Image from "next/image";
 import { imageProcessor } from "@/utils/helpers/blobToStr";
+import { NewContent } from "@/db/schema/dynamicContent";
 
 const BannerUploader = () => {
-  // const [images, setImages] = useState<Array<FileList>>([]);
   const [emblaRef, emblaApi] = useEmblaCarousel();
-  const [imgSrc, setImgSrc] = useState<Array<string>>([]);
+  const [banners, setBanners] = useState<NewContent[]>();
+  const [bannerLength, setBannerLength] = useState(0);
 
-  const newImgRef = useRef<HTMLInputElement | null>(null);
-
-  const insertImg = async () => {
-    if (!newImgRef.current?.files) return;
-
-    const img = await imageProcessor(newImgRef.current?.files[0]);
-    setImgSrc([...imgSrc, img]);
-    const res = await fetch("/api/content/banner/create?", {
-      body: img,
-      method: "POST",
-    });
-    console.log(await res.json());
+  const getBanners = async () => {
+    try {
+      const res = await fetch("api/content/banner", { method: "GET" });
+      if (!res.ok) {
+        const body = await res.json();
+        console.log(body);
+        throw new Error(`${body}`);
+      }
+      const { data }: { data: NewContent[] } = await res.json();
+      setBanners(data);
+    } catch (error) {
+      console.log("ERROR-FrontEnd", error);
+    }
   };
-  useEffect(() => {
-    console.log(imgSrc);
-  }, [imgSrc]);
 
-  // const processAllImages = async () => {
-  //   const imgStrList = [];
-  //   for (const img of images) {
-  //     const imgStr = await imageProcessor(img[0]);
-  //     imgStrList.push(imgStr);
-  //   }
-  //   setImgSrc([...imgStrList]);
-  // };
-  // useEffect(() => {
-  //   processAllImages();
-  // }, [images]);
+  useEffect(() => {
+    getBanners();
+  }, []);
 
   return (
     <div>
@@ -59,79 +50,31 @@ const BannerUploader = () => {
             <LuChevronLeft />
           </button>
           <div className="overflow-hidden w-full" ref={emblaRef}>
-            <div className="flex">
-              {imgSrc.map((_, i) => (
-                <>
-                  <label
-                    htmlFor={`banner${i}`}
-                    key={"Carousel-" + i}
-                    className="cursor-pointer flex-[0_0_95%] max-h-80 bg-black mx-2 rounded-xl flex flex-col overflow-hidden group"
-                  >
-                    <input
-                      type="file"
-                      name={`banner${i}`}
-                      id={`banner${i}`}
-                      className="hidden"
-                      // onChange={(e) => {
-                      //   const tempImg = [...images];
-                      //   if (!e.target.files) return;
-                      //   tempImg[i] = e.target.files;
-                      //   setImages([...tempImg]);
-                      // }}
-                    />
-                    {!imgSrc[i] ? (
-                      <span className="mx-auto my-auto">
-                        <LuImagePlus className="text-8xl" />
-                      </span>
-                    ) : (
-                      <>
-                        <div className="relative top-1/2 h-0 z-10">
-                          <button
-                            className="hover:scale-110 transition-all p-2 text-xl hidden group-hover:block rounded bg-destructive/80 backdrop-blur-sm hover:bg-destructive mx-auto"
-                            // onClick={() => {
-                            //   const tempImgBlobs = [...images];
-                            //   setImages([
-                            //     ...tempImgBlobs.slice(0, i),
-                            //     ...tempImgBlobs.slice(i + 1),
-                            //   ]);
-                            // }}
-                          >
-                            <LuTrash className="mx-auto" />
-                          </button>
-                        </div>
-                        <span
-                          className="flex flex-col justify-center h-full p-1 group-hover:opacity-65 group-hover:blur-[1px]"
-                          style={{
-                            background: `url(${imgSrc[i]})no-repeat center center/cover`,
-                          }}
-                        />
-                      </>
-                    )}
-                  </label>
-                </>
+            <div className="flex gap-2">
+              {banners?.map((item, i) => (
+                <div
+                  className="flex-[0_0_95%] rounded-xl flex flex-col group animate-open-pop"
+                  key={"banner-" + i}
+                >
+                  <Banner data={item} />
+                </div>
               ))}
-              <label
-                htmlFor={`banner${imgSrc.length + 1}`}
-                key={"Carousel-" + (imgSrc.length + 1)}
-                className="cursor-pointer flex-[0_0_95%] min-h-80 bg-card mx-2 rounded-xl flex flex-col"
+              {Array.apply(null, Array(bannerLength)).map((_, i) => (
+                <div
+                  className="flex-[0_0_95%] rounded-xl flex flex-col group animate-open-from-l"
+                  key={"newBanner" + i}
+                >
+                  <Banner />
+                </div>
+              ))}
+              <button
+                className="cursor-pointer flex-[0_0_95%] h-80 bg-card mx-2 rounded-xl flex flex-col"
+                onClick={() => setBannerLength(bannerLength + 1)}
               >
-                <input
-                  type="file"
-                  name={`banner${imgSrc.length + 1}`}
-                  id={`banner${imgSrc.length + 1}`}
-                  className="hidden"
-                  ref={newImgRef}
-                  onChange={insertImg}
-                  // onChange={(e) => {
-                  //   if (e.target.files !== null) {
-                  //     setImages([...images, e.target.files]);
-                  //   }
-                  // }}
-                />
                 <span className="mx-auto my-auto">
-                  <LuImagePlus className="text-8xl" />
+                  <LuMegaphone className="text-8xl" />
                 </span>
-              </label>
+              </button>
             </div>
           </div>
           <button
@@ -144,13 +87,130 @@ const BannerUploader = () => {
           </button>
         </div>
       </div>
-      {/* <div className="flex"> */}
-      {/*   <button className="bg-primary my-4 mx-auto text-foreground font-bold p-2 w-32 rounded text-xl"> */}
-      {/*     Update */}
-      {/*   </button> */}
-      {/* </div> */}
     </div>
   );
 };
 
+interface IBanner {
+  data?: NewContent;
+}
+const Banner: React.FC<IBanner> = ({ data }) => {
+  const [title, setTitle] = useState<string | null | undefined>("");
+  const [description, setDescription] = useState<string | null | undefined>("");
+  const [link, setLink] = useState<string | null | undefined>("");
+  const [imgSrc, setImgSrc] = useState<string | null | undefined>("");
+  const [loading, setLoading] = useState(false);
+
+  const imgRef = useRef<HTMLInputElement>(null);
+
+  const uploadBanner = async () => {
+    setLoading(true);
+    try {
+      const body: NewContent = {
+        tag: "home_banner",
+        link: link,
+        image: imgSrc,
+        content: description,
+        title: title,
+      };
+      if (data?.id) body.id = data.id;
+      const res = await fetch("/api/content/banner", {
+        method: "POST",
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) {
+        const { error } = await res.json();
+        throw new Error(error);
+      }
+      await res.json();
+    } catch (error) {
+      console.log(error);
+    }
+    setLoading(false);
+  };
+  const imageSelector = async () => {
+    try {
+      const imgBlob = imgRef.current?.files?.item(0);
+      if (!imgBlob) throw new Error("Image Format Error");
+      const img = await imageProcessor(imgBlob);
+      if (!img) throw new Error("Image Conversion Error");
+      setImgSrc(img);
+    } catch (error) {}
+  };
+  useEffect(() => {
+    if (!data) return;
+    setImgSrc(data.image);
+    setTitle(data.title);
+    setDescription(data.content);
+    setLink(data.link);
+    setImgSrc(data.image);
+  }, []);
+  return (
+    <>
+      <label className="cursor-pointer w-full min-h-80 bg-black rounded-xl flex flex-col overflow-hidden group">
+        <input
+          ref={imgRef}
+          type="file"
+          name="image"
+          id="image"
+          className="hidden"
+          onChange={imageSelector}
+        />
+        {imgSrc ? (
+          <>
+            <span
+              className="flex flex-col justify-center h-full p-1 hover:opacity-65 hover:blur-[1px] transition-all"
+              style={{
+                background: `url(${imgSrc})no-repeat center center/cover`,
+              }}
+            />
+          </>
+        ) : (
+          <>
+            <LuImagePlus className="text-8xl mx-auto my-auto" />
+          </>
+        )}
+      </label>
+      <div className="py-6 px-2 grid md:grid-cols-2 gap-8">
+        <input
+          type="text"
+          className="bg-background border-b border-b-border w-full px-4 p-1 outline-none focus:border-b-success"
+          placeholder="Title"
+          value={title ? title : ""}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+        <input
+          type="text"
+          className="bg-background border-b border-b-border w-full px-4 p-1 outline-none focus:border-b-success"
+          placeholder="Link"
+          value={link ? link : ""}
+          onChange={(e) => setLink(e.target.value)}
+        />
+        <input
+          type="text"
+          className="md:col-span-2 bg-background border-b border-b-border w-full px-4 p-1 outline-none focus:border-b-success"
+          placeholder="Description"
+          value={description ? description : ""}
+          onChange={(e) => setDescription(e.target.value)}
+        />
+        <div />
+        <div className="flex justify-end gap-4">
+          <button
+            className="bg-success h-10 rounded w-32 font-bold"
+            onClick={uploadBanner}
+            disabled={loading}
+          >
+            {loading ? <LuLoader className="mx-auto animate-spin" /> : "Upload"}
+          </button>
+          <button
+            className="bg-destructive h-10 rounded w-32 font-bold"
+            disabled={loading}
+          >
+            {loading ? <LuLoader className="mx-auto animate-spin" /> : "Delete"}
+          </button>
+        </div>
+      </div>
+    </>
+  );
+};
 export default BannerUploader;

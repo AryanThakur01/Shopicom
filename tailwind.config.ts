@@ -35,6 +35,10 @@ const config: Config = {
         },
       },
       keyframes: {
+        "open-from-l": {
+          from: { transform: "translateX(-100%)" },
+          to: { transform: "translateX(0rem)" },
+        },
         "open-from-r": {
           from: { transform: "translateX(100%)" },
           to: { transform: "translateX(0rem)" },
@@ -50,6 +54,7 @@ const config: Config = {
       },
       animation: {
         "open-from-r": "open-from-r 0.2s linear",
+        "open-from-l": "open-from-l 0.2s linear",
         "open-pop": "open-pop 0.2s ease-out",
         "open-opacity": "open-opacity 0.2s ease-out",
       },
