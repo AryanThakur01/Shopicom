@@ -57,8 +57,8 @@ const Drawer: FC<IProfileDialog> = ({ children }) => {
     <Dialog.Root>
       <Dialog.Trigger asChild>{children}</Dialog.Trigger>
       <Dialog.Portal>
-        <Dialog.Overlay className="absolute z-40 top-0 bg-black opacity-80 h-screen w-screen animate-open-opacity" />
-        <Dialog.Content className="overflow-hidden flex flex-col min-w-96 max-w-[80vw] absolute z-50 h-screen right-0 top-0 bg-card p-1 border-l border-border shadow-2xl animate-open-from-r">
+        <Dialog.Overlay className="fixed z-40 top-0 bg-black opacity-80 h-screen w-screen animate-open-opacity" />
+        <Dialog.Content className="overflow-hidden flex flex-col min-w-96 max-w-[80vw] fixed z-50 h-screen right-0 top-0 bg-card p-1 border-l border-border shadow-2xl animate-open-from-r">
           <div className="flex justify-between items-center px-4 py-2">
             <Dialog.Close asChild>
               <button

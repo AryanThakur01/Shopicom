@@ -137,7 +137,7 @@ const ProfileDialog: FC<IProfileDialog> = ({ children }) => {
       <Dialog.Trigger asChild>{children}</Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className="absolute top-0 bg-black opacity-80 h-screen w-screen" />
-        <Dialog.Content className="min-w-60 absolute bg-card p-4 rounded-lg -translate-x-1/2 left-1/2 top-[50vh] -translate-y-1/2 border border-border shadow-2xl">
+        <Dialog.Content className="min-w-60 absolute bg-card p-4 rounded-lg -translate-x-1/2 left-1/2 top-[50vh] -translate-y-1/2 border border-border shadow-2xl animate-open-pop">
           <div className="flex justify-between mb-8">
             <Dialog.Title className="text-xl">Edit profile</Dialog.Title>
             <Dialog.Close asChild>

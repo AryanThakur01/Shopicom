@@ -55,3 +55,30 @@ export const GET = async () => {
     );
   }
 };
+
+export const DELETE = async (req: NextRequest) => {
+  try {
+    const url = new URL(req.url);
+
+    const token = req.cookies.get("Session_Token")?.value;
+    if (!token) throw new Error("Token Not Found");
+    const payload = jwtDecoder(token);
+    if (!payload.id || !payload.role)
+      throw new Error("Session Token role or id missing");
+    if (payload.role !== "admin") throw new Error("ADMIN ONLY ROUTE");
+
+    const id = Number(url.searchParams.get("id"));
+    if (isNaN(id)) throw new Error("Pass in 'id' in the correct format");
+
+    const res = await db.delete(contents).where(eq(contents.id, id));
+    return NextResponse.json({ data: res }, { status: 200 });
+  } catch (error) {
+    console.log(error);
+    if (error instanceof Error)
+      return NextResponse.json({ error }, { status: 400 });
+    return NextResponse.json(
+      { error: "Error: /api/content/banner - get" },
+      { status: 500 },
+    );
+  }
+};

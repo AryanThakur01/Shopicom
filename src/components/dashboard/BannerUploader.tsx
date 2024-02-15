@@ -15,6 +15,7 @@ import { NewContent } from "@/db/schema/dynamicContent";
 const BannerUploader = () => {
   const [emblaRef, emblaApi] = useEmblaCarousel();
   const [banners, setBanners] = useState<NewContent[]>([]);
+  const [deleting, setDeleting] = useState(false);
 
   const getBanners = async () => {
     try {
@@ -29,6 +30,28 @@ const BannerUploader = () => {
     } catch (error) {
       console.log("ERROR-FrontEnd", error);
     }
+  };
+
+  const deleteBanner = async (id?: number, optionalIndex?: number) => {
+    setDeleting(true);
+    try {
+      if (id) {
+        const res = await fetch(`/api/content/banner?id=${id}`, {
+          method: "DELETE",
+        });
+        console.log(await res.json());
+        await getBanners();
+      } else if (optionalIndex) {
+        const tempBanners = [...banners];
+        setBanners([
+          ...tempBanners.slice(0, optionalIndex),
+          ...tempBanners.slice(optionalIndex + 1, banners.length),
+        ]);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    setDeleting(false);
   };
 
   useEffect(() => {
@@ -56,20 +79,19 @@ const BannerUploader = () => {
                   className="flex-[0_0_95%] rounded-xl flex flex-col group animate-open-pop"
                   key={"banner-" + i}
                 >
-                  {/* <div className="h-0 flex justify-end relative z-20"> */}
-                  {/*   <button */}
-                  {/*     className="m-2 p-1 text-xl border h-fit rounded-full" */}
-                  {/*     onClick={() => { */}
-                  {/*       const tempBanners = [...banners]; */}
-                  {/*       // const prevBanner = [...tempBanners.slice(0, i)]; */}
-                  {/*       // const nextBanner = [...tempBanners.slice(i + 1)]; */}
-                  {/*       // console.log(prevBanner, nextBanner); */}
-                  {/*       // setBanners([...nextBanner]); */}
-                  {/*     }} */}
-                  {/*   > */}
-                  {/*     <LuX /> */}
-                  {/*   </button> */}
-                  {/* </div> */}
+                  <div className="h-0 flex justify-end relative z-20">
+                    <button
+                      className="m-2 p-1 text-xl border h-fit rounded-full"
+                      onClick={() => deleteBanner(item.id, i)}
+                      disabled={deleting}
+                    >
+                      {deleting ? (
+                        <LuLoader className="mx-auto animate-spin" />
+                      ) : (
+                        <LuX />
+                      )}
+                    </button>
+                  </div>
                   <Banner data={item} />
                 </div>
               ))}
