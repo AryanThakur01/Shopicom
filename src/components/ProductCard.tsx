@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 
 interface IProductCard {
@@ -8,9 +9,11 @@ interface IProductCard {
   description: string;
   price: number;
   discountedPrice: number;
+  id: number;
 }
 
 const ProductCard: React.FC<IProductCard> = ({
+  id,
   src,
   name,
   price,
@@ -28,9 +31,12 @@ const ProductCard: React.FC<IProductCard> = ({
         className="w-full "
       />
       <div className="bg-card rounded-lg relative -top-2 p-4 flex flex-col text-muted-foreground min-h-72">
-        <h3 className="md:text-2xl text-xl font-bold">
+        <Link
+          href={`/products/${id}`}
+          className="md:text-2xl text-xl font-bold"
+        >
           {name[0].toUpperCase() + name.substring(1)}
-        </h3>
+        </Link>
         <p className="border border-border w-fit px-4 p-px my-2 font-light">
           {tag}
         </p>

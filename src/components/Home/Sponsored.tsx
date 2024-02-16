@@ -1,7 +1,6 @@
 import { dbDriver } from "@/db";
 import { categories } from "@/db/schema/products";
 import { eq } from "drizzle-orm";
-import Image from "next/image";
 import React from "react";
 import ProductCard from "../ProductCard";
 
@@ -31,6 +30,7 @@ const Sponsored = async () => {
         {sponsored.map((item) => (
           <ProductCard
             key={item.id}
+            id={item.product.id}
             src={item.product.variants[0].images[0].value}
             name={item.product.name}
             tag={item.tag}

@@ -1,5 +1,4 @@
 import React from "react";
-// import useEmblaCarousel from "embla-carousel-react";
 import { db } from "@/db";
 import { contents } from "@/db/schema/dynamicContent";
 import { eq } from "drizzle-orm";
@@ -8,19 +7,11 @@ import Image from "next/image";
 import Link from "next/link";
 
 const Banner = async () => {
-  // const [emblaRef, emblaApi] = useEmblaCarousel();
-
   const banners = await db
     .select()
     .from(contents)
     .where(eq(contents.tag, "home_banner"));
 
-  // useEffect(() => {
-  //   if (emblaApi) {
-  //     console.log(emblaApi.slideNodes());
-  //   }
-  // }, [emblaApi]);
-  const CarouselContent = [{}, {}, {}, {}, {}, {}];
   return (
     <section className="my-4 container">
       <Carousel>
@@ -28,15 +19,19 @@ const Banner = async () => {
           {banners.map((item, i) => (
             <div
               key={item.id}
-              className="flex-[0_0_95%] h-[80vh] bg-card mx-2 rounded-xl flex flex-col overflow-hidden"
-              style={{
-                background: `url(${item.image})no-repeat center center/cover`,
-              }}
+              className="flex-[0_0_95%] bg-card mx-2 rounded-xl flex flex-col overflow-hidden"
             >
-              <div className="mt-auto bg-card p-4 min-h-20 flex justify-between items-center">
+              <Image
+                src={`${item.image}`}
+                alt={`${item.title}`}
+                width={1920}
+                height={1080}
+                className="h-[75vh] sm:object-cover object-fill"
+              />
+              <div className="mt-auto bg-card p-4 min-h-20 flex justify-between gap-8 items-center">
                 <div>
-                  <h1 className="text-4xl">{item.title}</h1>
-                  <h2 className="my-4">{item.content}</h2>
+                  <h1 className="md:text-4xl text-2xl">{item.title}</h1>
+                  <h2 className="my-4 md:text-xl text-sm">{item.content}</h2>
                 </div>
                 {item.link && (
                   <Link
