@@ -23,13 +23,14 @@ interface IFetchedBestSellers {
 const BestSellers = () => {
   const [emblaRef, emblaApi] = useEmblaCarousel();
   const [bestSeller, setBestSeller] = useState<IFetchedBestSellers[]>();
+  const [page, setPage] = useState(0);
 
-  // useEffect(() => {
-  //   if (emblaApi) {
-  //     console.log(emblaApi.slidesInView());
-  //     console.log(emblaRef);
-  //   }
-  // }, [emblaApi]);
+  useEffect(() => {
+    if (emblaApi) {
+      console.log("Hello World");
+      console.log(emblaApi);
+    }
+  }, [emblaApi]);
   useEffect(() => {
     const fetchBestSellers = fetch("/api/products/read/bestsellers", {
       method: "GET",
@@ -37,7 +38,7 @@ const BestSellers = () => {
       try {
         const { bestSellers }: { bestSellers: IFetchedBestSellers[] } =
           await res.json();
-        console.log(bestSellers);
+        // console.log(bestSellers);
         setBestSeller(bestSellers);
       } catch (error) {}
     });
@@ -55,7 +56,9 @@ const BestSellers = () => {
               <button
                 className="h-fit my-auto text-4xl p-1 hover:text-foreground text-muted-foreground md:block hidden"
                 onClick={() => {
-                  emblaApi?.scrollPrev();
+                  if (!emblaApi) return;
+                  emblaApi.scrollPrev();
+                  setPage(emblaApi.selectedScrollSnap());
                 }}
               >
                 <LuChevronLeft />
@@ -68,6 +71,7 @@ const BestSellers = () => {
                       key={item.id}
                     >
                       <ProductCard
+                        id={item.product.id}
                         src={item.product.variants[0].images[0].value}
                         name={item.product.name}
                         tag={item.tag}
@@ -84,32 +88,29 @@ const BestSellers = () => {
               <button
                 className="h-fit my-auto text-4xl p-1 hover:text-foreground text-muted-foreground md:block hidden"
                 onClick={() => {
-                  emblaApi?.scrollNext();
+                  if (!emblaApi) return;
+                  emblaApi.scrollNext();
+                  setPage(emblaApi.selectedScrollSnap());
                 }}
               >
                 <LuChevronRight />
               </button>
             </div>
-            <div className="my-8 flex justify-center gap-2">
-              {bestSeller?.map(
-                (item, i) =>
-                  i > 0 &&
-                  i < bestSeller.length - 1 && (
-                    <button
-                      key={item.id}
-                      className={
-                        "p-1 rounded-full " +
-                        (emblaApi?.selectedScrollSnap() === 0
-                          ? "bg-primary"
-                          : "bg-white")
-                      }
-                      onClick={() => {
-                        emblaApi?.scrollTo(i);
-                      }}
-                    ></button>
-                  ),
-              )}
-            </div>
+            {/* <div className="my-8 flex justify-center gap-2"> */}
+            {/*   {bestSeller?.map( */}
+            {/*     (item, i) => */}
+            {/*       i < bestSeller.length - 2 && ( */}
+            {/*         <button */}
+            {/*           key={item.id} */}
+            {/*           className={"p-1 rounded-full " + (emblaApi?.selectedScrollSnap() === i ? "bg-primary" : "bg-white") } // prettier-ignore */}
+            {/*           onClick={() => { */}
+            {/*             emblaApi?.scrollTo(i); */}
+            {/*             setPage(i); */}
+            {/*           }} */}
+            {/*         ></button> */}
+            {/*       ), */}
+            {/*   )} */}
+            {/* </div> */}
           </>
         )}
       </div>

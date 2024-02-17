@@ -1,16 +1,22 @@
+import ActivityButtons from "@/components/products/product/ActivityButtons";
 import ImageCarousel from "@/components/products/product/ImageCarousel";
+import ProductPrice from "@/components/products/product/ProductPrice";
 import VariantSelector from "@/components/products/product/VariantSelector";
 import { dbDriver } from "@/db";
 import { products } from "@/db/schema/products";
 import { eq } from "drizzle-orm";
+import { redirect } from "next/navigation";
 import React from "react";
 
 interface IPage {
   params: { id: string };
 }
 const page: React.FC<IPage> = async ({ params }) => {
+  const productId = Number(params.id);
+  if (isNaN(productId)) redirect("/");
+
   const product = await dbDriver.query.products.findFirst({
-    where: eq(products.id, params.id),
+    where: eq(products.id, productId),
     with: {
       seller: true,
       variants: {
@@ -34,6 +40,10 @@ const page: React.FC<IPage> = async ({ params }) => {
           <p className="text-xl text-muted-foreground my-2">
             {product?.description}
           </p>
+          <ProductPrice />
+          <p className="hidden">{product?.variants[0].price}</p>
+          <p className="hidden">{product?.variants[0].discountedPrice}</p>
+          {product && <VariantSelector variants={product.variants} />}
           <div className="bg-muted rounded xl p-2 my-6">
             <Tr className="text-xl font-bold text-foreground bg-background">
               <h2>Property</h2>
@@ -41,6 +51,7 @@ const page: React.FC<IPage> = async ({ params }) => {
             </Tr>
             {product?.properties.map((item, i) => (
               <Tr
+                key={item.id}
                 className={"text-lg" + " " + (i % 2 !== 0 ? "bg-card/50" : "")}
               >
                 <p>{item.key}</p>
@@ -48,7 +59,7 @@ const page: React.FC<IPage> = async ({ params }) => {
               </Tr>
             ))}
           </div>
-          <VariantSelector variants={product?.variants} />
+          <ActivityButtons />
         </div>
       </section>
     </>
@@ -61,7 +72,7 @@ interface ITr {
   className?: string;
   productId?: string;
 }
-const Tr: React.FC<ITr> = ({ children, isHead, className, productId }) => {
+const Tr: React.FC<ITr> = ({ children, isHead, className }) => {
   return (
     <div
       className={

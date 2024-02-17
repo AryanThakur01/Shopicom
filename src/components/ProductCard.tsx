@@ -31,18 +31,17 @@ const ProductCard: React.FC<IProductCard> = ({
         className="w-full "
       />
       <div className="bg-card rounded-lg relative -top-2 p-4 flex flex-col text-muted-foreground min-h-72">
-        <Link
-          href={`/products/${id}`}
-          className="md:text-2xl text-xl font-bold"
-        >
-          {name[0].toUpperCase() + name.substring(1)}
+        <Link href={`/products/${id}`}>
+          <h3 className="md:text-2xl text-xl font-bold">
+            {name[0].toUpperCase() + name.substring(1)}
+          </h3>
+          <p className="border border-border w-fit px-4 p-px my-2 font-light">
+            {tag}
+          </p>
+          <p className="my-2 tracking-wide md:text-base text-sm font-light">
+            {description.substring(0, 100)}...
+          </p>
         </Link>
-        <p className="border border-border w-fit px-4 p-px my-2 font-light">
-          {tag}
-        </p>
-        <p className="my-2 tracking-wide md:text-base text-sm font-light">
-          {description.substring(0, 100)}...
-        </p>
         <div className="mt-auto flex justify-between">
           {/* <p className="text-sm font-light">PRICE</p> */}
           <div className="text-success">
