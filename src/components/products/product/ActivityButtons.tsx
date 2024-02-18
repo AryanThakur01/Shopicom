@@ -10,11 +10,17 @@ const ActivityButtons = () => {
   return (
     <>
       <div className="flex mt-8 text-lg justify-end gap-4">
-        <button className="bg-success md:w-40 w-1/2 rounded p-2 flex justify-center items-center gap-2">
+        <button
+          className="bg-success md:w-40 w-1/2 rounded p-2 flex justify-center items-center gap-2"
+          onClick={() => console.log(prodVariant.id)}
+        >
           <LuWallet2 />
           <span>Buy Now</span>
         </button>
-        <button className="bg-primary md:w-52 w-1/2 rounded p-2 flex justify-center items-center gap-2">
+        <button
+          className="bg-primary md:w-52 w-1/2 rounded p-2 flex justify-center items-center gap-2"
+          onClick={() => console.log(prodVariant.id)}
+        >
           <LuShoppingCart />
           <span>Add To Cart</span>
         </button>

@@ -5,6 +5,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import Link from "next/link";
 import React, { FC, ReactNode, useEffect, useState } from "react";
 import {
+  LuArrowRight,
   LuChevronRight,
   LuLogIn,
   LuLogOut,
@@ -23,14 +24,18 @@ const Nav = () => {
       <div className="my-auto flex items-center">
         <Link href="/">Shopicom</Link>
         <ul className="flex items-center gap-4 justify-end ml-auto">
+          <SearchDropDown>
+            <button>
+              <NavButton>
+                <LuSearch />
+              </NavButton>
+            </button>
+          </SearchDropDown>
           <button>
             <NavButton>
-              <LuSearch />
+              <LuShoppingBag />
             </NavButton>
           </button>
-          <NavButton>
-            <LuShoppingBag />
-          </NavButton>
           <Drawer>
             <button className="group">
               <LuMenu className="stroke-muted-foreground group-hover:stroke-foreground" />
@@ -39,6 +44,61 @@ const Nav = () => {
         </ul>
       </div>
     </nav>
+  );
+};
+
+interface ISearchDropDown {
+  children: React.ReactNode;
+}
+const SearchDropDown: React.FC<ISearchDropDown> = ({ children }) => {
+  return (
+    <>
+      <Dialog.Root>
+        <Dialog.Trigger asChild className="relative">
+          {children}
+        </Dialog.Trigger>
+        <Dialog.Portal>
+          <Dialog.Overlay className="fixed top-0 bg-black/50 backdrop-blur-lg h-screen w-screen animate-open-opacity" />
+          <Dialog.Content className="pt-12 pb-8 overflow-hidden flex flex-col w-screen fixed right-0 top-0 bg-black animate-open-from-t z-40 container min-h-[60vh]">
+            <Dialog.DialogClose className="ml-auto relative bottom-8 right-20 font-extrabold text-xl">
+              <LuX />
+            </Dialog.DialogClose>
+            <label
+              htmlFor="search"
+              className="text-xl flex gap-2 text-muted-foreground font-extrabold items-center"
+            >
+              <LuSearch className="text-muted-foreground" />
+              <input
+                name="search"
+                id="search"
+                type="text"
+                className="bg-transparent outline-none placeholder:text-muted w-full"
+                placeholder="Search shopify.com"
+              />
+            </label>
+            <div className="mt-8 text-muted-foreground pr-8">
+              <h2 className="text-sm px-1">Quick Links</h2>
+              <div className="flex flex-col gap-1 my-2 text-sm">
+                <a
+                  href="/products/2529"
+                  className="flex gap-4 items-center hover:bg-card p-1 rounded-md"
+                >
+                  <LuArrowRight />
+                  <p className="text-foreground">Shearling Baffle</p>
+                </a>
+                <a
+                  href="/products/2530"
+                  className="flex gap-4 items-center hover:bg-card p-1 rounded-md"
+                >
+                  <LuArrowRight />
+                  <p className="text-foreground">Flock Subtract</p>
+                </a>
+              </div>
+            </div>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
+    </>
   );
 };
 
@@ -57,7 +117,7 @@ const Drawer: FC<IProfileDialog> = ({ children }) => {
     <Dialog.Root>
       <Dialog.Trigger asChild>{children}</Dialog.Trigger>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed z-40 top-0 bg-black opacity-80 h-screen w-screen animate-open-opacity" />
+        <Dialog.Overlay className="fixed z-40 top-0 bg-black/50 backdrop-blur-lg h-screen w-screen animate-open-opacity" />
         <Dialog.Content className="overflow-hidden flex flex-col min-w-96 max-w-[80vw] fixed z-50 h-screen right-0 top-0 bg-card p-1 border-l border-border shadow-2xl animate-open-from-r">
           <div className="flex justify-between items-center px-4 py-2">
             <Dialog.Close asChild>
