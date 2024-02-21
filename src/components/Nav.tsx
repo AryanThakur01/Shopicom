@@ -3,10 +3,11 @@ import { useSelector } from "@/lib/redux";
 import { ISession, getServerSession } from "@/utils/serverActions/session";
 import * as Dialog from "@radix-ui/react-dialog";
 import Link from "next/link";
-import React, { FC, ReactNode, useEffect, useState } from "react";
+import React, { FC, ReactNode, useEffect, useRef, useState } from "react";
 import {
   LuArrowRight,
   LuChevronRight,
+  LuLoader2,
   LuLogIn,
   LuLogOut,
   LuMenu,
@@ -50,7 +51,30 @@ const Nav = () => {
 interface ISearchDropDown {
   children: React.ReactNode;
 }
+interface ISearchResult {
+  name: string;
+  id: number;
+}
 const SearchDropDown: React.FC<ISearchDropDown> = ({ children }) => {
+  const [search, setSearch] = useState("");
+  const [products, setProducts] = useState<ISearchResult[]>([]);
+  const [searching, setSearching] = useState(false);
+  const [searchFocused, setSearchFocused] = useState(false);
+
+  const searchProduct = async () => {
+    setSearching(true);
+    const products = await fetch(`/api/products?name=${search}`, {
+      method: "GET",
+    });
+    let { data }: { data: ISearchResult[] } = await products.json();
+    data = data.slice(0, 8);
+    setProducts(data);
+    setSearching(false);
+  };
+  useEffect(() => {
+    if (!search) return;
+    searchProduct();
+  }, [search]);
   return (
     <>
       <Dialog.Root>
@@ -63,20 +87,54 @@ const SearchDropDown: React.FC<ISearchDropDown> = ({ children }) => {
             <Dialog.DialogClose className="ml-auto relative bottom-8 right-20 font-extrabold text-xl">
               <LuX />
             </Dialog.DialogClose>
-            <label
-              htmlFor="search"
-              className="text-xl flex gap-2 text-muted-foreground font-extrabold items-center"
-            >
-              <LuSearch className="text-muted-foreground" />
-              <input
-                name="search"
-                id="search"
-                type="text"
-                className="bg-transparent outline-none placeholder:text-muted w-full"
-                placeholder="Search shopify.com"
+            <div>
+              <label
+                htmlFor="search"
+                className="text-xl flex gap-2 text-muted-foreground font-extrabold items-center py-2"
+              >
+                {searching ? (
+                  <LuLoader2 className="animate-spin" />
+                ) : (
+                  <LuSearch className="text-muted-foreground" />
+                )}
+                <input
+                  name="search"
+                  id="search"
+                  type="text"
+                  className="bg-transparent outline-none placeholder:text-muted w-full"
+                  placeholder="Search shopify.com"
+                  onChange={(e) => {
+                    setSearch(e.target.value);
+                  }}
+                  onFocus={() => setSearchFocused(true)}
+                  onBlur={() => setSearchFocused(false)}
+                />
+              </label>
+              <hr
+                className={twMerge(
+                  searchFocused
+                    ? "border-foreground"
+                    : "border-muted-foreground",
+                )}
               />
-            </label>
+            </div>
             <div className="mt-8 text-muted-foreground pr-8">
+              {!!products.length && (
+                <>
+                  <h2 className="text-sm px-1">Search Results</h2>
+                  <div className="flex flex-col gap-1 my-2 text-sm">
+                    {products.map((item) => (
+                      <a
+                        href={`/products/${item.id}`}
+                        className="flex gap-4 items-center hover:bg-card p-1 rounded-md"
+                      >
+                        <LuArrowRight />
+                        <p className="text-foreground">{item.name}</p>
+                      </a>
+                    ))}
+                  </div>
+                </>
+              )}
               <h2 className="text-sm px-1">Quick Links</h2>
               <div className="flex flex-col gap-1 my-2 text-sm">
                 <a

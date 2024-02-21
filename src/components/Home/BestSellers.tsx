@@ -25,12 +25,11 @@ const BestSellers = () => {
   const [bestSeller, setBestSeller] = useState<IFetchedBestSellers[]>();
   const [page, setPage] = useState(0);
 
-  useEffect(() => {
-    if (emblaApi) {
-      console.log("Hello World");
-      console.log(emblaApi);
-    }
-  }, [emblaApi]);
+  // useEffect(() => {
+  //   if (emblaApi) {
+  //     console.log(emblaApi);
+  //   }
+  // }, [emblaApi]);
   useEffect(() => {
     const fetchBestSellers = fetch("/api/products/read/bestsellers", {
       method: "GET",

@@ -47,6 +47,10 @@ const config: Config = {
           from: { transform: "translateX(100%)" },
           to: { transform: "translateX(0rem)" },
         },
+        "close-to-t": {
+          from: { transform: "translateY(0rem)", display: "block" },
+          to: { transform: "translateY(-100%)", display: "none" },
+        },
         "open-pop": {
           from: { scale: "0" },
           to: { scale: "1" },
@@ -58,6 +62,7 @@ const config: Config = {
       },
       animation: {
         "open-from-t": "open-from-t 0.2s linear",
+        "close-to-t": "open-from-t 0.2s linear",
         "open-from-r": "open-from-r 0.2s linear",
         "open-from-l": "open-from-l 0.2s linear",
         "open-pop": "open-pop 0.2s ease-out",
