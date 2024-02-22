@@ -4,20 +4,10 @@ import Link from "next/link";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LuLoader, LuLock, LuMail } from "react-icons/lu";
-import * as zod from "zod";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-// import OAuthLogin from "@/components/auth/OAuthLogin";
 import { useDispatch, userDataAsync } from "@/lib/redux";
-
-interface IFormInput {
-  email: string;
-  password: string;
-}
-const schema = zod.object({
-  email: zod.string().email(),
-  password: zod.string().min(8),
-});
+import { schema, type TFormInput } from "@/lib/schemas/auth";
 
 const Login = () => {
   const [submitting, setSubmitting] = useState(false);
@@ -26,13 +16,13 @@ const Login = () => {
     handleSubmit,
     register,
     formState: { errors },
-  } = useForm<IFormInput>({
+  } = useForm<TFormInput>({
     resolver: zodResolver(schema),
     defaultValues: { email: "", password: "" },
   });
   const dispatch = useDispatch();
 
-  const submitHandler: SubmitHandler<IFormInput> = async (data) => {
+  const submitHandler: SubmitHandler<TFormInput> = async (data) => {
     setSubmitting(true);
     try {
       const body = { ...data };
@@ -41,8 +31,9 @@ const Login = () => {
       if (!res.ok) throw new Error("Recheck Credentials");
       dispatch(userDataAsync());
       router.push("/");
-    } catch (error) {
-      console.log(error);
+    } catch (_) {
+      console.log(_);
+      // console.log(error);
     }
     setSubmitting(false);
   };

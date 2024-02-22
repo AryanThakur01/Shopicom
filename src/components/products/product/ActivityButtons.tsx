@@ -1,29 +1,69 @@
 "use client";
 import { useSelector } from "@/lib/redux";
-import React from "react";
-import { LuShoppingCart, LuWallet2 } from "react-icons/lu";
+import Link from "next/link";
+import React, { useState } from "react";
+import { LuMinus, LuPlus, LuShoppingCart, LuWallet2 } from "react-icons/lu";
 
-const ActivityButtons = () => {
+interface IActivityButtons {
+  productId: string;
+}
+const ActivityButtons: React.FC<IActivityButtons> = ({ productId }) => {
+  const [qty, setQty] = useState("1");
   const prodVariant = useSelector(
     (state) => state.product.initialProduct.value.variant,
   );
   return (
     <>
-      <div className="flex mt-8 text-lg justify-end gap-4">
-        <button
-          className="bg-success md:w-40 w-1/2 rounded p-2 flex justify-center items-center gap-2"
-          onClick={() => console.log(prodVariant.id)}
+      <div>
+        <div className="flex my-8 text-lg justify-end gap-4">
+          <div className="w-1/2 border border-muted flex justify-evenly">
+            <button
+              onClick={() => {
+                const quantity = Number(qty);
+                if (quantity > 1 && quantity < prodVariant.stock)
+                  setQty((quantity - 1).toString());
+              }}
+            >
+              <LuMinus />
+            </button>
+            <input
+              className="h-full w-20 rounded text-center bg-background outline-none"
+              type="number"
+              placeholder="0"
+              value={qty}
+              onChange={(e) => {
+                let val = e.target.value;
+                console.log(val);
+                if (!val) setQty("0");
+                if (val >= "0" && val <= "9") setQty(val);
+              }}
+            />
+            <button
+              onClick={() => {
+                const quantity = Number(qty);
+                if (quantity < prodVariant.stock)
+                  setQty((quantity + 1).toString());
+              }}
+            >
+              <LuPlus />
+            </button>
+          </div>
+          <button
+            className="bg-primary w-1/2 rounded p-2 flex justify-center items-center gap-2"
+            onClick={() => console.log(prodVariant.id)}
+          >
+            <LuShoppingCart />
+            <span>Add To Cart</span>
+          </button>
+        </div>
+        <Link
+          className="bg-success w-full rounded p-2 flex justify-center items-center gap-2"
+          href={`/products/checkout/${productId}`}
+          // onClick={() => console.log(prodVariant.id)}
         >
           <LuWallet2 />
           <span>Buy Now</span>
-        </button>
-        <button
-          className="bg-primary md:w-52 w-1/2 rounded p-2 flex justify-center items-center gap-2"
-          onClick={() => console.log(prodVariant.id)}
-        >
-          <LuShoppingCart />
-          <span>Add To Cart</span>
-        </button>
+        </Link>
       </div>
     </>
   );

@@ -31,11 +31,11 @@ const page: React.FC<IPage> = async ({ params }) => {
 
   return (
     <>
-      <section className="container my-8 grid md:grid-cols-3 gap-8">
-        <div>
+      <section className="container my-8 grid lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2">
           <ImageCarousel image={product?.variants[0].images} />
         </div>
-        <div className="md:col-span-2">
+        <div>
           <h1 className="text-3xl uppercase">{product?.name}</h1>
           <p className="text-xl text-muted-foreground my-2">
             {product?.description}
@@ -59,7 +59,7 @@ const page: React.FC<IPage> = async ({ params }) => {
               </Tr>
             ))}
           </div>
-          <ActivityButtons />
+          <ActivityButtons productId={params.id} />
         </div>
       </section>
     </>
