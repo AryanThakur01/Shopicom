@@ -45,6 +45,9 @@ export const GET = async (req: NextRequest, _: NextResponse) => {
     return new NextResponse(JSON.stringify(allProducts));
   } catch (error) {
     console.log("ERROR-API: /api/products/read/myproducts");
+    if (error instanceof Error)
+      return NextResponse.json({ error: error.message }, { status: 400 });
+
     return NextResponse.json(
       { error: "ERROR-API: /api/products/read/myproducts" },
       { status: 500 },

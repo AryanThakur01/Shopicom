@@ -28,6 +28,8 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
 
     return new NextResponse(JSON.stringify(profile[0]));
   } catch (error) {
+    if (error instanceof Error)
+      return NextResponse.json({ error: error.message }, { status: 400 });
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 },

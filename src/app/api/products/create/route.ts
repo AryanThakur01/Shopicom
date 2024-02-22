@@ -64,7 +64,7 @@ export const POST = async (req: NextRequest) => {
     }
     return new NextResponse("Posted");
   } catch (error) {
-    console.log(error);
+    if (error instanceof Error) return new NextResponse(error.message);
     return new NextResponse(JSON.stringify(error));
   }
 };

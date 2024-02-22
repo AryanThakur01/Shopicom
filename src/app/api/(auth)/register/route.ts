@@ -59,7 +59,7 @@ export const GET = async (req: NextRequest) => {
     cookies().set("Session_Token", authTokens.id_token);
     return NextResponse.redirect(new URL("/register", req.url));
   } catch (error) {
-    console.log(error);
+    if (error instanceof Error) return new NextResponse(error.message);
     return new NextResponse(JSON.stringify(error));
   }
 };

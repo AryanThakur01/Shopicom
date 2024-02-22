@@ -28,6 +28,7 @@ export const POST = async (req: NextRequest) => {
     console.log(newData);
     return new NextResponse(JSON.stringify(newData));
   } catch (error) {
+    if (error instanceof Error) return new NextResponse(error.message);
     return new NextResponse(JSON.stringify(error));
   }
 };
