@@ -2,6 +2,7 @@
 
 /* Core */
 import { Provider } from "react-redux";
+import { Toaster } from "react-hot-toast";
 
 /* Instruments */
 import { reduxStore, useDispatch, userDataAsync } from "./redux/";
@@ -14,6 +15,10 @@ export const Providers = (props: React.PropsWithChildren) => {
       {props.children}
     </Provider>
   );
+};
+
+export const ToasterProvider = () => {
+  return <Toaster />;
 };
 
 export const DefaultCalls = () => {

@@ -8,12 +8,7 @@ import { compare } from "bcryptjs";
 import { drizzle } from "drizzle-orm/postgres-js";
 import { schema } from "@/lib/schemas/auth";
 import { ZodError } from "zod";
-
-const generateJWT = (data: object) => {
-  const jwtSecret = process.env.JWT_SECRET as string;
-  const jwtExpiry = process.env.JWT_LIFETIME as string;
-  return jwt.sign(data, jwtSecret, { expiresIn: jwtExpiry });
-};
+import { generateJWT } from "@/utils/api/helpers";
 
 export const POST = async (req: NextRequest) => {
   try {
@@ -24,6 +19,8 @@ export const POST = async (req: NextRequest) => {
       .select({ id: users.id, role: users.role, password: users.password })
       .from(users)
       .where(eq(users.email, data.email));
+
+    if (!user.length) throw new Error("Account not found");
 
     const passwordCheck = await compare(
       data.password,
@@ -36,10 +33,10 @@ export const POST = async (req: NextRequest) => {
     return new NextResponse(JSON.stringify(authToken));
   } catch (error) {
     if (error instanceof ZodError)
-      return NextResponse.json({ error, status: 400 });
+      return NextResponse.json({ error: error.message }, { status: 400 });
     else if (error instanceof Error)
-      return NextResponse.json({ error, status: 400 });
+      return NextResponse.json({ error: error.message }, { status: 400 });
 
-    return new NextResponse(JSON.stringify(error), { status: 500 });
+    return NextResponse.json({ error: JSON.stringify(error) }, { status: 500 });
   }
 };

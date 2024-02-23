@@ -1,34 +1,32 @@
 import { NextRequest, NextResponse } from "next/server";
 import { queryClient } from "@/db";
-import { User, users } from "@/db/schema/users";
+import { users } from "@/db/schema/users";
 import { genSalt, hash } from "bcryptjs";
 import { cookies } from "next/headers";
-import { generateJWT } from "@/utils/api/helpers";
+import { generateJWT, passwordEncrypter } from "@/utils/api/helpers";
 import jwt from "jsonwebtoken";
 import { drizzle } from "drizzle-orm/postgres-js";
-
-const passwordEncrypter = async (password: string) => {
-  const salt = await genSalt(10);
-  const hashVal = await hash(password, salt);
-  return hashVal;
-};
+import { schema } from "@/lib/schemas/auth";
+import { ZodError } from "zod";
 
 export const POST = async (req: NextRequest) => {
   try {
     const db = drizzle(queryClient);
     // Collect the info provided by user
-    const data: User = await req.json();
+    const data = await req.json();
     data.role = "customer";
-    if (!data.email || !data.password || data.password.length < 8)
-      throw new Error("Email or Password missing");
+
+    schema.parse(data);
 
     data.password = await passwordEncrypter(data.password);
-    const res: User[] = await db.insert(users).values(data).returning();
+    const res = await db.insert(users).values(data).returning();
     const authToken = generateJWT({ id: res[0].id, role: res[0].role });
     cookies().set("Session_Token", authToken);
     return new NextResponse(JSON.stringify(authToken));
   } catch (error) {
-    return new NextResponse(JSON.stringify(error));
+    if (error instanceof ZodError)
+      return NextResponse.json({ error }, { status: 400 });
+    return NextResponse.json({ error: JSON.stringify(error) }, { status: 500 });
   }
 };
 

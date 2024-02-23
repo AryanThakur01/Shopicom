@@ -67,6 +67,9 @@ const Register = () => {
             icon={<LuLock className="size-5" />}
             error={errors.password?.message}
           />
+          <p className="text-xs text-muted-foreground">
+            {errors.password?.message}
+          </p>
           <button
             type="submit"
             className="bg-primary rounded-lg h-10 font-bold"

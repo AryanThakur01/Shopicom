@@ -1,3 +1,4 @@
+import { genSalt, hash } from "bcryptjs";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { cookies } from "next/headers";
 
@@ -25,4 +26,10 @@ export const jwtDecoder = (token: string): JwtPayload => {
   }
 
   return payload as JwtPayload;
+};
+
+export const passwordEncrypter = async (password: string) => {
+  const salt = await genSalt(10);
+  const hashVal = await hash(password, salt);
+  return hashVal;
 };

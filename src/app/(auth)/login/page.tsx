@@ -8,9 +8,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDispatch, userDataAsync } from "@/lib/redux";
 import { schema, type TFormInput } from "@/lib/schemas/auth";
+import { ZodError } from "zod";
 
 const Login = () => {
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
   const router = useRouter();
   const {
     handleSubmit,
@@ -28,12 +30,11 @@ const Login = () => {
       const body = { ...data };
       const config = { method: "POST", body: JSON.stringify(body) };
       const res = await fetch("/api/login", config);
-      if (!res.ok) throw new Error("Recheck Credentials");
+      if (!res.ok) throw new Error((await res.json()).error);
       dispatch(userDataAsync());
       router.push("/");
-    } catch (_) {
-      console.log(_);
-      // console.log(error);
+    } catch (error) {
+      if (error instanceof Error) setError(error.message);
     }
     setSubmitting(false);
   };
@@ -47,6 +48,7 @@ const Login = () => {
             Register Now
           </Link>
         </h2>
+        {error && <p className="h-6 text-destructive text-center">{error}</p>}
         <form
           className="my-8 flex flex-col gap-4"
           onSubmit={handleSubmit(submitHandler)}
