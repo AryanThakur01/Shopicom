@@ -15,6 +15,41 @@
       "when": 1707845845257,
       "tag": "0001_rapid_thor_girl",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1708676819304,
+      "tag": "0002_mysterious_captain_marvel",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1708679857399,
+      "tag": "0003_awesome_taskmaster",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1708679960474,
+      "tag": "0004_simple_cloak",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1708680247673,
+      "tag": "0005_yielding_terrax",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1708680347334,
+      "tag": "0006_dear_baron_zemo",
+      "breakpoints": true
     }
   ]
 }

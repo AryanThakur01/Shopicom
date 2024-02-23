@@ -29,7 +29,7 @@ export const GET = async (req: NextRequest, _: NextResponse) => {
         limit: 10,
         offset: !page ? 0 : (page - 1) * 10,
       });
-      return new NextResponse(JSON.stringify(allProducts));
+      return new NextResponse(JSON.stringify(allProducts.reverse()));
     }
     const allProducts = await dbDriver.query.products.findFirst({
       with: {

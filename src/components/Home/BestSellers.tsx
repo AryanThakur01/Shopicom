@@ -37,7 +37,6 @@ const BestSellers = () => {
       try {
         const { bestSellers }: { bestSellers: IFetchedBestSellers[] } =
           await res.json();
-        // console.log(bestSellers);
         setBestSeller(bestSellers);
       } catch (error) {}
     });

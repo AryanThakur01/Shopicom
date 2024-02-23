@@ -7,47 +7,12 @@ import * as zod from "zod";
 import { LuLoader, LuTrash } from "react-icons/lu";
 import ImageForm from "./ImageForm";
 import { useRouter } from "next/navigation";
-import { imageProcessor, processAllImages } from "@/utils/helpers/blobToStr";
+import { processAllImages } from "@/utils/helpers/blobToStr";
 import { IProductProps } from "@/types/products";
+import { productSchema } from "@/lib/schemas/products";
 
 // -------------------- zod Schema for validation --------------------------
-const schema = zod.object({
-  id: zod.number().optional(),
-  name: zod.string().min(3),
-  description: zod.string().min(10),
-  sellerId: zod.number().optional(),
-  properties: zod
-    .array(
-      zod.object({
-        id: zod.number().optional(),
-        productId: zod.number().optional(),
-        key: zod.string(),
-        value: zod.string(),
-      }),
-    )
-    .max(8),
-  variants: zod
-    .array(
-      zod.object({
-        id: zod.number().optional(),
-        productId: zod.number().optional(),
-        color: zod.string(),
-        images: zod.array(
-          zod.object({
-            id: zod.number().optional(),
-            variantId: zod.number().optional(),
-            value: zod.custom<FileList | string>().optional(),
-          }),
-        ),
-        price: zod.string().min(1),
-        discountedPrice: zod.string().min(1),
-        stock: zod.string().min(1),
-        orders: zod.string().min(1),
-      }),
-    )
-    .max(8),
-});
-export type TFormInput = zod.infer<typeof schema>;
+export type TFormInput = zod.infer<typeof productSchema>;
 // -------------------------------------------------------------------------
 
 interface IProductCatelogueForm {
@@ -75,7 +40,7 @@ const ProductCatelogueForm: React.FC<IProductCatelogueForm> = ({
           orders: item.orders.toString(),
           price: item.price.toString(),
           discountedPrice: item.discountedPrice.toString(),
-          stock: item.orders.toString(),
+          stock: item.stock.toString(),
         };
       })
     : [newVariant];
@@ -93,9 +58,10 @@ const ProductCatelogueForm: React.FC<IProductCatelogueForm> = ({
     register,
     formState: { errors },
   } = useForm<TFormInput>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(productSchema),
     defaultValues,
   });
+
   const propTable = useFieldArray({ control, name: "properties" });
   const variants = useFieldArray({ control, name: "variants" });
   const submitHandler: SubmitHandler<TFormInput> = async (data) => {
@@ -103,13 +69,11 @@ const ProductCatelogueForm: React.FC<IProductCatelogueForm> = ({
     try {
       await processAllImages(data);
       if (!product) {
-        const res = await fetch("/api/products/create", {
+        await fetch("/api/products/create", {
           method: "POST",
           body: JSON.stringify(data),
         });
-        console.log("RES: ", await res.text());
       } else {
-        console.log(data);
         const { properties, variants, ...general } = data;
         const body = {
           general,
@@ -124,14 +88,13 @@ const ProductCatelogueForm: React.FC<IProductCatelogueForm> = ({
             };
           }),
         };
-        console.log(body);
         const res = await fetch("/api/products/update", {
           method: "POST",
           body: JSON.stringify(body),
         });
-        console.log("RES: ", await res.text());
+        console.log(await res.text());
       }
-      router.push("/dashboard/products");
+      // router.push("/dashboard/products");
     } catch (error) {
       console.log("ERROR: ", error);
     }

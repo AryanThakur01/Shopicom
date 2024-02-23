@@ -12,6 +12,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { jwtDecoder } from "@/utils/api/helpers";
 import { drizzle } from "drizzle-orm/postgres-js";
 import { and, eq } from "drizzle-orm";
+import { carts } from "@/db/schema/cart";
 
 interface IReqVariant extends variant {
   images?: {
@@ -51,7 +52,6 @@ export const POST = async (req: NextRequest) => {
       );
 
     /* INSERT: New Product */
-    // console.log("BODY: ",body);
     const newProduct = await db
       .update(products)
       .set({ ...generalDetails })
@@ -116,7 +116,6 @@ export const POST = async (req: NextRequest) => {
     return new NextResponse("Posted");
   } catch (error) {
     if (error instanceof Error) return new NextResponse(error.message);
-
     return new NextResponse(JSON.stringify(error));
   }
 };

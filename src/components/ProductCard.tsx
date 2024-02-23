@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import AddToCartBtn from "./AddToCartBtn";
 
 interface IProductCard {
   src: string;
@@ -54,9 +55,10 @@ const ProductCard: React.FC<IProductCard> = ({
               </p>
             </div>
           </div>
-          <button className="bg-primary p-2 md:px-6 px-4 rounded text-foreground min-w-[50%] md:text-xl text-xl font-bold">
-            Add to cart
-          </button>
+          <AddToCartBtn productId={id} />
+          {/* <button className="bg-primary p-2 md:px-6 px-4 rounded text-foreground min-w-[50%] md:text-xl text-xl font-bold"> */}
+          {/*   Add to cart */}
+          {/* </button> */}
         </div>
       </div>
     </div>
