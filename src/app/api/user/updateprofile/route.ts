@@ -1,4 +1,4 @@
-import { queryClient } from "@/db";
+import { db, queryClient } from "@/db";
 import { users } from "@/db/schema/users";
 import { jwtDecoder } from "@/utils/api/helpers";
 import { eq } from "drizzle-orm";
@@ -7,7 +7,6 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const POST = async (req: NextRequest) => {
   try {
-    const db = drizzle(queryClient);
     const token = req.cookies.get("Session_Token")?.value;
     if (!token) throw new Error("Token Not Found");
 

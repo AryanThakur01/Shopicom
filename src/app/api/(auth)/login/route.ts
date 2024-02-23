@@ -1,7 +1,7 @@
 import { users } from "@/db/schema/users";
 import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
-import { queryClient } from "@/db";
+import { db, queryClient } from "@/db";
 import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { compare } from "bcryptjs";
@@ -12,7 +12,6 @@ import { generateJWT } from "@/utils/api/helpers";
 
 export const POST = async (req: NextRequest) => {
   try {
-    const db = drizzle(queryClient);
     const data = schema.parse(await req.json());
 
     const user = await db

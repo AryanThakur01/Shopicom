@@ -28,6 +28,7 @@ export const GET = async (req: NextRequest, _: NextResponse) => {
         },
         limit: 10,
         offset: !page ? 0 : (page - 1) * 10,
+        where: eq(products.sellerId, Number(jwtPayload.id)),
       });
       return new NextResponse(JSON.stringify(allProducts.reverse()));
     }

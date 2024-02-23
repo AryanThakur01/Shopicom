@@ -1,4 +1,4 @@
-import { queryClient } from "@/db";
+import { db, queryClient } from "@/db";
 import {
   images,
   product,
@@ -12,7 +12,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { jwtDecoder } from "@/utils/api/helpers";
 import { drizzle } from "drizzle-orm/postgres-js";
 import { and, eq } from "drizzle-orm";
-import { carts } from "@/db/schema/cart";
 
 interface IReqVariant extends variant {
   images?: {
@@ -29,7 +28,6 @@ interface IUpdatedProps {
 
 export const POST = async (req: NextRequest) => {
   try {
-    const db = drizzle(queryClient);
     const token = req.cookies.get("Session_Token")?.value;
     if (!token) throw new Error("Token Not Found");
 

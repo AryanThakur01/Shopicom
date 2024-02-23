@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { queryClient } from "@/db";
+import { db, queryClient } from "@/db";
 import { users } from "@/db/schema/users";
 import { genSalt, hash } from "bcryptjs";
 import { cookies } from "next/headers";
@@ -11,7 +11,6 @@ import { ZodError } from "zod";
 
 export const POST = async (req: NextRequest) => {
   try {
-    const db = drizzle(queryClient);
     // Collect the info provided by user
     const data = await req.json();
     data.role = "customer";
