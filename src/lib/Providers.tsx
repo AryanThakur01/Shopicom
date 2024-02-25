@@ -10,10 +10,12 @@ import { useEffect } from "react";
 
 export const Providers = (props: React.PropsWithChildren) => {
   return (
-    <Provider store={reduxStore}>
-      <DefaultCalls />
-      {props.children}
-    </Provider>
+    <>
+      <Provider store={reduxStore}>
+        <DefaultCalls />
+        {props.children}
+      </Provider>
+    </>
   );
 };
 

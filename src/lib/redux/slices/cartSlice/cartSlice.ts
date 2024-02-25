@@ -1,9 +1,9 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { cart as TCart } from "@/db/schema/carts";
 import { cartDataAsync } from ".";
+import { ICart } from "@/types/cart";
 
 export interface CartSliceState {
-  value: TCart[];
+  value: ICart[];
   status: "idle" | "loading" | "failed";
 }
 export const cartInitialState: CartSliceState = {
@@ -15,7 +15,7 @@ export const cartSlice = createSlice({
   name: "Cart",
   initialState: cartInitialState,
   reducers: {
-    setCart: (state, action: PayloadAction<TCart[]>) => {
+    setCart: (state, action: PayloadAction<ICart[]>) => {
       state.value = action.payload;
     },
   },

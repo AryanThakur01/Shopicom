@@ -1,4 +1,5 @@
 "use client";
+import AddToCartBtn from "@/components/AddToCartBtn";
 import { useSelector } from "@/lib/redux";
 import Link from "next/link";
 import React, { useState } from "react";
@@ -48,13 +49,14 @@ const ActivityButtons: React.FC<IActivityButtons> = ({ productId }) => {
               <LuPlus />
             </button>
           </div>
-          <button
-            className="bg-primary w-1/2 rounded p-2 flex justify-center items-center gap-2"
-            onClick={() => console.log(prodVariant.id)}
-          >
-            <LuShoppingCart />
-            <span>Add To Cart</span>
-          </button>
+          <AddToCartBtn productId={Number(productId)} className="w-1/2" />
+          {/* <button */}
+          {/*   className="bg-primary w-1/2 rounded p-2 flex justify-center items-center gap-2" */}
+          {/*   onClick={() => console.log(prodVariant.id)} */}
+          {/* > */}
+          {/*   <LuShoppingCart /> */}
+          {/*   <span>Add To Cart</span> */}
+          {/* </button> */}
         </div>
         <Link
           className="bg-success w-full rounded p-2 flex justify-center items-center gap-2"

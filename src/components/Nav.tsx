@@ -1,9 +1,9 @@
 "use client";
-import { useSelector } from "@/lib/redux";
+import { cartDataAsync, useDispatch, useSelector } from "@/lib/redux";
 import { ISession, getServerSession } from "@/utils/serverActions/session";
 import * as Dialog from "@radix-ui/react-dialog";
 import Link from "next/link";
-import React, { FC, ReactNode, useEffect, useRef, useState } from "react";
+import React, { FC, ReactNode, useEffect, useMemo, useState } from "react";
 import {
   LuArrowRight,
   LuChevronRight,
@@ -20,6 +20,17 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 
 const Nav = () => {
+  const dispatch = useDispatch();
+  const [cartCount, setCartCount] = useState(0);
+  const cart = useSelector((s) => s.cart.value);
+  useMemo(() => {
+    dispatch(cartDataAsync());
+  }, []);
+  useEffect(() => {
+    let tempCount = 0;
+    for (const item of cart) if (!item.isSeen) tempCount++;
+    setCartCount(tempCount);
+  }, [cart]);
   return (
     <nav className="flex flex-col container h-12 bg-black/40 backdrop-blur-xl sticky top-0 z-30">
       <div className="my-auto flex items-center">
@@ -32,11 +43,18 @@ const Nav = () => {
               </NavButton>
             </button>
           </SearchDropDown>
-          <button>
+          <Link href="/cart">
             <NavButton>
               <LuShoppingBag />
+              {cartCount && (
+                <div className="h-0 w-0 relative right-2 bottom-5">
+                  <div className="h-5 w-5 bg-muted rounded-full text-foreground text-[10px] font-bold flex justify-center items-center">
+                    {cartCount <= 99 ? cartCount : `${cartCount}+`}
+                  </div>
+                </div>
+              )}
             </NavButton>
-          </button>
+          </Link>
           <Drawer>
             <button className="group">
               <LuMenu className="stroke-muted-foreground group-hover:stroke-foreground" />

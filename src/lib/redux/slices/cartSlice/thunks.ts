@@ -1,10 +1,10 @@
-import { cart as TCart } from "@/db/schema/carts";
+import { ICart } from "@/types/cart";
 import { fetchCart, cartInitialState } from ".";
 import { createAppAsyncThunk } from "../../createAppAsynThunk";
 
 export const cartDataAsync = createAppAsyncThunk("cart/fetchCart", async () => {
   const res = await fetchCart();
-  const cart: TCart[] = await res.json();
-  if (res.ok) return { ...cart };
+  const { data }: { data: ICart[] } = await res.json();
+  if (res.ok) return data;
   return cartInitialState.value;
 });

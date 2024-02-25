@@ -16,7 +16,7 @@ const Banner = async () => {
     <section className="my-4 container">
       <Carousel>
         <div className="flex">
-          {banners.map((item, i) => (
+          {banners.map((item) => (
             <div
               key={item.id}
               className="flex-[0_0_95%] bg-card mx-2 rounded-xl flex flex-col overflow-hidden"

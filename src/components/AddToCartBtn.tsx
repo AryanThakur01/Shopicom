@@ -2,6 +2,7 @@
 import { cart as TCart } from "@/db/schema/carts";
 import { cartSlice, useDispatch, useSelector } from "@/lib/redux";
 import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { LuLoader2 } from "react-icons/lu";
 import { twMerge } from "tailwind-merge";
 
@@ -27,6 +28,12 @@ const AddToCartBtn: React.FC<IAddToCartBtn> = ({ productId, className }) => {
         if (!res.ok) throw new Error((await res.json()).error);
         const { data }: { data: TCart[] } = await res.json();
         dispatch(cartSlice.actions.setCart(data));
+      } else {
+        toast.error("Login To Add To Cart", {
+          style: {
+            borderRadius: "4px",
+          },
+        });
       }
     } catch (error) {
       console.log(error);

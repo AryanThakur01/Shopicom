@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Ubuntu } from "next/font/google";
 import "./globals.css";
 import Nav from "@/components/Nav";
-import { Providers } from "@/lib/Providers";
+import { Providers, ToasterProvider } from "@/lib/Providers";
 
 const ubuntu = Ubuntu({
   weight: ["300", "400", "500", "700"],
@@ -32,6 +32,7 @@ export default function RootLayout({
         className={ubuntu.className + " bg-background text-foreground"}
         suppressHydrationWarning={true}
       >
+        <ToasterProvider />
         <Providers>
           <Nav />
           {children}

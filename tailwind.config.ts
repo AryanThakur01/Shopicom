@@ -51,6 +51,10 @@ const config: Config = {
           from: { transform: "translateY(0rem)", display: "block" },
           to: { transform: "translateY(-100%)", display: "none" },
         },
+        "close-pop": {
+          from: { scale: "1" },
+          to: { scale: "0" },
+        },
         "open-pop": {
           from: { scale: "0" },
           to: { scale: "1" },
@@ -66,6 +70,7 @@ const config: Config = {
         "open-from-r": "open-from-r 0.2s linear",
         "open-from-l": "open-from-l 0.2s linear",
         "open-pop": "open-pop 0.2s ease-out",
+        "close-pop": "close-pop 0.2s ease-out",
         "open-opacity": "open-opacity 0.2s ease-out",
       },
     },
