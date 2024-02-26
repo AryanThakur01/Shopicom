@@ -18,6 +18,9 @@ export const cartSlice = createSlice({
     setCart: (state, action: PayloadAction<ICart[]>) => {
       state.value = action.payload;
     },
+    resetCart: (state) => {
+      state.value = cartInitialState.value;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(cartDataAsync.pending, (state) => {

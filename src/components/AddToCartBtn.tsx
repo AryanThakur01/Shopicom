@@ -1,6 +1,6 @@
 "use client";
-import { cart as TCart } from "@/db/schema/carts";
 import { cartSlice, useDispatch, useSelector } from "@/lib/redux";
+import { ICart } from "@/types/cart";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { LuLoader2 } from "react-icons/lu";
@@ -26,10 +26,10 @@ const AddToCartBtn: React.FC<IAddToCartBtn> = ({ productId, className }) => {
           body: JSON.stringify({ itemId: productId }),
         });
         if (!res.ok) throw new Error((await res.json()).error);
-        const { data }: { data: TCart[] } = await res.json();
+        const { data }: { data: ICart[] } = await res.json();
         dispatch(cartSlice.actions.setCart(data));
       } else {
-        toast.error("Login To Add To Cart", {
+        toast.error("Login For The Cart", {
           style: {
             borderRadius: "4px",
           },
@@ -41,7 +41,10 @@ const AddToCartBtn: React.FC<IAddToCartBtn> = ({ productId, className }) => {
     setStatus("idle");
   };
   useEffect(() => {
-    if (!cart.length) return;
+    if (!cart?.length) {
+      setIsSelected(false);
+      return;
+    }
     for (const item of cart) if (item.itemId === productId) setIsSelected(true);
   }, [cart]);
   return (

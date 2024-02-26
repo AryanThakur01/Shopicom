@@ -28,7 +28,11 @@ export const initialState: UserSliceState = {
 export const userSlice = createSlice({
   name: "User",
   initialState,
-  reducers: {},
+  reducers: {
+    resetUser: (state) => {
+      state.value = initialState.value;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(userDataAsync.pending, (state) => {
       state.status = "loading";

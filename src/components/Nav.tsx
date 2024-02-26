@@ -1,9 +1,15 @@
 "use client";
-import { cartDataAsync, useDispatch, useSelector } from "@/lib/redux";
+import {
+  cartDataAsync,
+  cartSlice,
+  useDispatch,
+  useSelector,
+  userSlice,
+} from "@/lib/redux";
 import { ISession, getServerSession } from "@/utils/serverActions/session";
 import * as Dialog from "@radix-ui/react-dialog";
 import Link from "next/link";
-import React, { FC, ReactNode, useEffect, useMemo, useState } from "react";
+import React, { FC, ReactNode, useEffect, useState } from "react";
 import {
   LuArrowRight,
   LuChevronRight,
@@ -23,10 +29,16 @@ const Nav = () => {
   const dispatch = useDispatch();
   const [cartCount, setCartCount] = useState(0);
   const cart = useSelector((s) => s.cart.value);
-  useMemo(() => {
-    dispatch(cartDataAsync());
-  }, []);
+  const user = useSelector((state) => state.user);
   useEffect(() => {
+    if (!!user.value.isLoggedin) dispatch(cartDataAsync());
+    else dispatch(cartSlice.actions.resetCart());
+  }, [user]);
+  useEffect(() => {
+    if (!cart || !cart.length) {
+      setCartCount(0);
+      return;
+    }
     let tempCount = 0;
     for (const item of cart) if (!item.isSeen) tempCount++;
     setCartCount(tempCount);
@@ -46,7 +58,7 @@ const Nav = () => {
           <Link href="/cart">
             <NavButton>
               <LuShoppingBag />
-              {cartCount && (
+              {!!cartCount && (
                 <div className="h-0 w-0 relative right-2 bottom-5">
                   <div className="h-5 w-5 bg-muted rounded-full text-foreground text-[10px] font-bold flex justify-center items-center">
                     {cartCount <= 99 ? cartCount : `${cartCount}+`}
@@ -185,6 +197,7 @@ const Drawer: FC<IProfileDialog> = ({ children }) => {
   const [session, setSession] = useState<ISession | null>();
   const user = useSelector((state) => state.user.value);
   const router = useRouter();
+  const dispatch = useDispatch();
   useEffect(() => {
     const token = Cookies.get("Session_Token");
     if (token) getServerSession(token).then((s) => setSession(s));
@@ -216,6 +229,7 @@ const Drawer: FC<IProfileDialog> = ({ children }) => {
                 onClick={() => {
                   Cookies.remove("Session_Token");
                   setSession(null);
+                  dispatch(userSlice.actions.resetUser());
                   router.push("/");
                 }}
               >

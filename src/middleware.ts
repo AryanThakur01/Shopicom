@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 const hiddenRoutes = ["/login", "/register"];
-const privateRoutes = ["/dashboard/*"];
+const privateRoutes = ["/dashboard/*", "/cart"];
 
 export async function middleware(request: NextRequest) {
   const url = new URL(request.url, request.url);

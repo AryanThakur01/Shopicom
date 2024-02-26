@@ -1,5 +1,5 @@
-"use client";
 import CartItems from "@/components/cart/CartItems";
+import withAuth from "@/components/withAuth";
 import React from "react";
 
 const page = () => {
@@ -11,4 +11,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default withAuth(page, ["seller", "admin", "customer"]);

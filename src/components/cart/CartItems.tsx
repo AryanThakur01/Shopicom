@@ -3,7 +3,7 @@ import { useSelector } from "@/lib/redux";
 import { ICart } from "@/types/cart";
 import Link from "next/link";
 import React, { useState } from "react";
-import { LuCheck, LuMinus, LuPlus } from "react-icons/lu";
+import { LuCheck, LuMinus, LuPlus, LuTrash } from "react-icons/lu";
 import { twMerge } from "tailwind-merge";
 
 const CartItems = () => {
@@ -35,7 +35,7 @@ const CartItems = () => {
           Delete
         </button>
       </div>
-      {cart.map((item) => (
+      {cart?.map((item) => (
         <>
           <Product item={item} />
         </>
@@ -67,8 +67,17 @@ const Product: React.FC<IProduct> = ({ item }) => {
             </p>
           </div>
         </Link>
+        <div className="mt-auto p-1 px-2 w-fit gap-4">
+          <p className="text-xs text-muted-foreground line-through">$2400</p>
+          <p className="text-2xl">$1000</p>
+        </div>
+      </div>
+      <div className="ml-auto flex flex-col items-end">
+        <button className="text-xl text-muted-foreground hover:text-foreground transition-all duration-500">
+          <LuTrash />
+        </button>
         <div className="border border-muted mt-auto p-1 px-2 w-fit flex items-center">
-          <button onClick={() => setQty(qty - 1)}>
+          <button onClick={() => qty > 1 && setQty(qty - 1)}>
             <LuMinus />
           </button>
           <input
@@ -76,6 +85,14 @@ const Product: React.FC<IProduct> = ({ item }) => {
             className="bg-transparent w-20 outline-none text-center"
             placeholder="1"
             value={qty}
+            onChange={(e) => {
+              if (e.target.value <= "0" || e.target.value >= "9") {
+                setQty(0);
+                return;
+              }
+              const v = e.target.value - "0";
+              setQty(v);
+            }}
           />
           <button onClick={() => setQty(qty + 1)}>
             <LuPlus />
