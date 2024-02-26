@@ -8,9 +8,14 @@ import { twMerge } from "tailwind-merge";
 
 interface IAddToCartBtn {
   productId: number;
+  variantId?: number;
   className?: string;
 }
-const AddToCartBtn: React.FC<IAddToCartBtn> = ({ productId, className }) => {
+const AddToCartBtn: React.FC<IAddToCartBtn> = ({
+  productId,
+  className,
+  variantId,
+}) => {
   const [isSelected, setIsSelected] = useState(false);
   const [status, setStatus] = useState<"idle" | "loading">("idle");
   const cart = useSelector((state) => state.cart.value);
@@ -23,7 +28,7 @@ const AddToCartBtn: React.FC<IAddToCartBtn> = ({ productId, className }) => {
       if (user) {
         const res = await fetch("/api/cart/add", {
           method: "POST",
-          body: JSON.stringify({ itemId: productId }),
+          body: JSON.stringify({ itemId: productId, variantId }),
         });
         if (!res.ok) throw new Error((await res.json()).error);
         const { data }: { data: ICart[] } = await res.json();
@@ -36,7 +41,11 @@ const AddToCartBtn: React.FC<IAddToCartBtn> = ({ productId, className }) => {
         });
       }
     } catch (error) {
-      console.log(error);
+      toast.error(`${error}`, {
+        style: {
+          borderRadius: "4px",
+        },
+      });
     }
     setStatus("idle");
   };

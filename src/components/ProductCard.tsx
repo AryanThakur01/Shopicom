@@ -11,6 +11,7 @@ interface IProductCard {
   price: number;
   discountedPrice: number;
   id: number;
+  variantId?: number;
 }
 
 const ProductCard: React.FC<IProductCard> = ({
@@ -21,6 +22,7 @@ const ProductCard: React.FC<IProductCard> = ({
   description,
   tag,
   discountedPrice,
+  variantId,
 }) => {
   return (
     <div className="rounded-lg overflow-hidden group bg-card border-muted border">
@@ -55,7 +57,7 @@ const ProductCard: React.FC<IProductCard> = ({
               </p>
             </div>
           </div>
-          <AddToCartBtn productId={id} />
+          <AddToCartBtn productId={id} variantId={variantId} />
           {/* <button className="bg-primary p-2 md:px-6 px-4 rounded text-foreground min-w-[50%] md:text-xl text-xl font-bold"> */}
           {/*   Add to cart */}
           {/* </button> */}

@@ -1,20 +1,19 @@
 import { boolean, integer, pgTable, serial } from "drizzle-orm/pg-core";
-import { products } from "./products";
+import { products, variants } from "./products";
 import { users } from "./users";
 import { relations } from "drizzle-orm";
 
 export const carts = pgTable("carts", {
   id: serial("id").primaryKey(),
-  itemId: integer("itemId")
-    .references(() => products.id, {
-      onDelete: "cascade",
-    })
-    .notNull(),
   isSeen: boolean("isSeen").notNull().default(false),
-  userId: integer("productId")
-    .references(() => users.id, {
-      onDelete: "cascade",
-    })
+  itemId: integer("itemId")
+    .references(() => products.id, { onDelete: "cascade" })
+    .notNull(),
+  userId: integer("userId")
+    .references(() => users.id, { onDelete: "cascade" })
+    .notNull(),
+  variantId: integer("variantId")
+    .references(() => variants.id, { onDelete: "cascade" })
     .notNull(),
 });
 
@@ -26,6 +25,10 @@ export const cartsRelations = relations(carts, ({ one }) => ({
   item: one(products, {
     fields: [carts.itemId],
     references: [products.id],
+  }),
+  variant: one(variants, {
+    fields: [carts.variantId],
+    references: [variants.id],
   }),
 }));
 

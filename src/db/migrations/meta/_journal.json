@@ -64,6 +64,20 @@
       "when": 1708687795643,
       "tag": "0008_wandering_microchip",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "5",
+      "when": 1708969667670,
+      "tag": "0009_blue_silverclaw",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1708970381541,
+      "tag": "0010_mixed_eternals",
+      "breakpoints": true
     }
   ]
 }

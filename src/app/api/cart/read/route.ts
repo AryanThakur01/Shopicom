@@ -19,6 +19,11 @@ export const GET = async (req: NextRequest) => {
       where: eq(carts.userId, userId),
       with: {
         item: true,
+        variant: {
+          with: {
+            images: true,
+          },
+        },
       },
     });
 

@@ -16,11 +16,14 @@ export const POST = async (req: NextRequest) => {
       throw new Error("You Don't have a seller account make one to continue");
 
     const body = await req.json();
-    console.log(body);
 
     await db
       .insert(carts)
-      .values({ itemId: body.itemId, userId: payload.id })
+      .values({
+        itemId: body.itemId,
+        variantId: body.variantId,
+        userId: payload.id,
+      })
       .returning();
 
     const cart = await db
@@ -32,7 +35,7 @@ export const POST = async (req: NextRequest) => {
   } catch (error) {
     console.log(error);
     if (error instanceof DrizzleError)
-      return NextResponse.json({ error: error.message }, { sttus: 400 });
+      return NextResponse.json({ error: error.message }, { status: 400 });
     if (error instanceof Error)
       return NextResponse.json({ error: error.message }, { status: 400 });
 

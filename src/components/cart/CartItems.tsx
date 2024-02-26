@@ -1,6 +1,7 @@
 "use client";
 import { useSelector } from "@/lib/redux";
 import { ICart } from "@/types/cart";
+import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
 import { LuCheck, LuMinus, LuPlus, LuTrash } from "react-icons/lu";
@@ -52,7 +53,15 @@ const Product: React.FC<IProduct> = ({ item }) => {
   const name = item.item.name;
   return (
     <div className="border border-muted-foreground p-4 rounded my-4 flex gap-4">
-      <div className="h-32 w-32 bg-card rounded"></div>
+      <div className="h-32 w-32 bg-card rounded">
+        <Image
+          src={item.variant.images[0].value}
+          alt={item.item.name}
+          width={400}
+          height={400}
+          className="w-full h-full"
+        />
+      </div>
       <div className="flex flex-col">
         <Link className="flex flex-col" href={`/products/${item.itemId}`}>
           <p className="text-xl">{name[0].toUpperCase() + name.slice(1)}</p>
@@ -61,15 +70,20 @@ const Product: React.FC<IProduct> = ({ item }) => {
               <span className="text-muted-foreground">Type: </span>
               <span>Stero</span>
             </p>
-            <p>
+            <p className="flex gap-2 items-center">
               <span className="text-muted-foreground">Color: </span>
-              <span>White</span>
+              <span
+                className="h-4 w-8 block rounded-sm"
+                style={{ backgroundColor: item.variant.color }}
+              />
             </p>
           </div>
         </Link>
         <div className="mt-auto p-1 px-2 w-fit gap-4">
-          <p className="text-xs text-muted-foreground line-through">$2400</p>
-          <p className="text-2xl">$1000</p>
+          <p className="text-xs text-muted-foreground line-through">
+            ₹ {item.variant.price}
+          </p>
+          <p className="text-2xl">₹ {item.variant.discountedPrice}</p>
         </div>
       </div>
       <div className="ml-auto flex flex-col items-end">
@@ -86,12 +100,12 @@ const Product: React.FC<IProduct> = ({ item }) => {
             placeholder="1"
             value={qty}
             onChange={(e) => {
-              if (e.target.value <= "0" || e.target.value >= "9") {
+              if (e.target.value < "0" || e.target.value > "9") {
                 setQty(0);
                 return;
               }
-              const v = e.target.value - "0";
-              setQty(v);
+              const v = e.target.value;
+              setQty(Number(v));
             }}
           />
           <button onClick={() => setQty(qty + 1)}>
