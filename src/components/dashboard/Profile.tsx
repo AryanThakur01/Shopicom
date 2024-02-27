@@ -48,6 +48,7 @@ const Profile = () => {
       ) : (
         <h1 className="text-center text-xl mt-4 min-h-8">
           {user.firstName} {user.lastName}
+          {!user.firstName && !user.lastName && "Anonymous"}
         </h1>
       )}
       <div className="flex gap-4 justify-center my-4 text-muted-foreground">

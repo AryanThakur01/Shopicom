@@ -14,6 +14,7 @@ interface IFetchedBestSellers {
     name: string;
     sellerId: number;
     variants: {
+      id: number;
       images: { value: string }[];
       price: number;
       discountedPrice: number;
@@ -25,13 +26,8 @@ const BestSellers = () => {
   const [bestSeller, setBestSeller] = useState<IFetchedBestSellers[]>();
   const [page, setPage] = useState(0);
 
-  // useEffect(() => {
-  //   if (emblaApi) {
-  //     console.log(emblaApi);
-  //   }
-  // }, [emblaApi]);
   useEffect(() => {
-    const fetchBestSellers = fetch("/api/products/read/bestsellers", {
+    fetch("/api/products/read/bestsellers", {
       method: "GET",
     }).then(async (res) => {
       try {
@@ -78,6 +74,7 @@ const BestSellers = () => {
                         discountedPrice={
                           item.product.variants[0].discountedPrice
                         }
+                        variantId={item.product.variants[0].id}
                       />
                     </div>
                   ))}
@@ -94,21 +91,6 @@ const BestSellers = () => {
                 <LuChevronRight />
               </button>
             </div>
-            {/* <div className="my-8 flex justify-center gap-2"> */}
-            {/*   {bestSeller?.map( */}
-            {/*     (item, i) => */}
-            {/*       i < bestSeller.length - 2 && ( */}
-            {/*         <button */}
-            {/*           key={item.id} */}
-            {/*           className={"p-1 rounded-full " + (emblaApi?.selectedScrollSnap() === i ? "bg-primary" : "bg-white") } // prettier-ignore */}
-            {/*           onClick={() => { */}
-            {/*             emblaApi?.scrollTo(i); */}
-            {/*             setPage(i); */}
-            {/*           }} */}
-            {/*         ></button> */}
-            {/*       ), */}
-            {/*   )} */}
-            {/* </div> */}
           </>
         )}
       </div>

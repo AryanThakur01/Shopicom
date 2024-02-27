@@ -4,50 +4,84 @@ import { cartSlice, useDispatch, useSelector } from "@/lib/redux";
 import { ICart } from "@/types/cart";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { LuCheck, LuLoader2, LuMinus, LuPlus, LuTrash } from "react-icons/lu";
+import {
+  LuCheck,
+  LuLoader2,
+  LuMinus,
+  LuPlus,
+  LuShoppingCart,
+  LuTrash,
+} from "react-icons/lu";
 import { twMerge } from "tailwind-merge";
 
 const CartItems = () => {
-  const [selectAll, setSelectAll] = useState(false);
+  // const [selectAll, setSelectAll] = useState(false);
+  const [total, setTotal] = useState(0);
+
   const cart = useSelector((state) => state.cart.value);
   const status = useSelector((state) => state.cart.status);
+  useEffect(() => {
+    let tempTotal = 0;
+    cart.map((item) => {
+      tempTotal += item.variant?.price;
+    });
+    setTotal(tempTotal);
+  }, [cart]);
+
   return (
-    <div>
-      <div className="border border-muted-foreground flex justify-between p-4 rounded container">
-        <button
-          className="my-auto flex gap-4"
-          onClick={() => setSelectAll(!selectAll)}
-        >
-          <div
-            className={twMerge(
-              "border border-muted-foreground w-4 h-4 my-auto rounded-[2px]",
-            )}
-          >
-            <LuCheck
-              className={twMerge(
-                "relative bottom-2 size-6 m-auto stroke-2 rounded-[2px] animate-open-pop",
-                !selectAll && "hidden",
-              )}
-            />
+    <div className="md:grid grid-cols-4 gap-8">
+      <div className="md:col-span-3 flex flex-col gap-4">
+        {/* <div className="border border-muted-foreground flex justify-between p-4 rounded container"> */}
+        {/*   <button */}
+        {/*     className="my-auto flex gap-4" */}
+        {/*     onClick={() => setSelectAll(!selectAll)} */}
+        {/*   > */}
+        {/*     <div */}
+        {/*       className={twMerge( */}
+        {/*         "border border-muted-foreground w-4 h-4 my-auto rounded-[2px]", */}
+        {/*       )} */}
+        {/*     > */}
+        {/*       <LuCheck */}
+        {/*         className={twMerge( */}
+        {/*           "relative bottom-2 size-6 m-auto stroke-2 rounded-[2px] animate-open-pop", */}
+        {/*           !selectAll && "hidden", */}
+        {/*         )} */}
+        {/*       /> */}
+        {/*     </div> */}
+        {/*     <p>Select All</p> */}
+        {/*   </button> */}
+        {/*   <button className="bg-foreground text-background p-2 rounded-full px-6"> */}
+        {/*     Delete */}
+        {/*   </button> */}
+        {/* </div> */}
+        {cart?.map((item) => <Product item={item} key={item.id} />)}
+        {status !== "loading" && !cart.length && (
+          <div className="border border-border rounded h-full w-full flex">
+            <div className="text-muted font-bold m-auto min-h-80 flex flex-col justify-center">
+              <LuShoppingCart className="mx-auto size-32" />
+              <p className="text-xl pointer-events-none">Your Cart Is Empty</p>
+            </div>
           </div>
-          <p>Select All</p>
-        </button>
-        <button className="bg-foreground text-background p-2 rounded-full px-6">
-          Delete
+        )}
+        {status === "loading" && (
+          <>
+            <LoadingState />
+            <LoadingState />
+          </>
+        )}
+      </div>
+      <div className="border border-border rounded p-4 md:my-0 my-4 h-fit">
+        <h2 className="md:text-xl">Summary Order</h2>
+        <div className="flex my-4 items-center justify-between">
+          <p className="text-muted-foreground text-sm">Subtotal</p>
+          <p>₹ {total.toLocaleString()}</p>
+        </div>
+        <button className="font-bold text-muted text-center w-full bg-foreground p-2 rounded">
+          Buy Now ({cart.length})
         </button>
       </div>
-      {cart?.map((item) => <Product item={item} key={item.id} />)}
-      {status === "loading" && (
-        <>
-          <LoadingState />
-          <LoadingState />
-          <LoadingState />
-          <LoadingState />
-          <LoadingState />
-        </>
-      )}
     </div>
   );
 };
@@ -58,6 +92,7 @@ interface IProduct {
 const Product: React.FC<IProduct> = ({ item }) => {
   const [qty, setQty] = useState(1);
   const [loading, setLoading] = useState(false);
+  // const [selected, setSelected] = useState(false);
   const name = item.item?.name;
   const cartItems = useSelector((state) => state.cart.value);
   const dispatch = useDispatch();
@@ -82,7 +117,24 @@ const Product: React.FC<IProduct> = ({ item }) => {
     setLoading(false);
   };
   return (
-    <div className="border border-muted-foreground p-4 rounded my-4 flex gap-4">
+    <div className="border border-border p-4 rounded flex gap-4">
+      {/* <button */}
+      {/*   className="flex gap-4 self-start h-fit" */}
+      {/*   onClick={() => setSelected(!selected)} */}
+      {/* > */}
+      {/*   <div */}
+      {/*     className={twMerge( */}
+      {/*       "border border-muted-foreground w-4 h-4 my-auto rounded-[2px]", */}
+      {/*     )} */}
+      {/*   > */}
+      {/*     <LuCheck */}
+      {/*       className={twMerge( */}
+      {/*         "relative bottom-2 size-6 m-auto stroke-2 rounded-[2px] animate-open-pop", */}
+      {/*         !selected && "hidden", */}
+      {/*       )} */}
+      {/*     /> */}
+      {/*   </div> */}
+      {/* </button> */}
       <div className="h-32 w-32 bg-card rounded overflow-hidden">
         <Image
           src={item.variant?.images[0].value}
@@ -118,10 +170,11 @@ const Product: React.FC<IProduct> = ({ item }) => {
         <button
           className="text-xl text-muted-foreground hover:text-foreground transition-all duration-500"
           onClick={dropItem}
+          disabled={loading}
         >
           {!loading ? <LuTrash /> : <LuLoader2 className="animate-spin" />}
         </button>
-        <div className="border border-muted mt-auto p-1 px-2 w-fit flex items-center">
+        <div className="border border-border rounded-sm mt-auto p-1 px-2 w-fit flex items-center">
           <button onClick={() => qty > 1 && setQty(qty - 1)}>
             <LuMinus />
           </button>
@@ -148,7 +201,7 @@ const Product: React.FC<IProduct> = ({ item }) => {
   );
 };
 const LoadingState = () => (
-  <div className="border border-muted p-4 rounded my-4 flex gap-4 animate-pulse">
+  <div className="border border-muted p-4 rounded flex gap-4 animate-pulse">
     <div className="h-32 w-32 bg-card rounded" />
     <div className="flex flex-col">
       <div className="flex flex-col gap-2">

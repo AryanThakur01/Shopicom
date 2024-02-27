@@ -1,5 +1,10 @@
 "use client";
-import { cartSlice, useDispatch, useSelector } from "@/lib/redux";
+import {
+  cartDataAsync,
+  cartSlice,
+  useDispatch,
+  useSelector,
+} from "@/lib/redux";
 import { ICart } from "@/types/cart";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -31,8 +36,7 @@ const AddToCartBtn: React.FC<IAddToCartBtn> = ({
           body: JSON.stringify({ itemId: productId, variantId }),
         });
         if (!res.ok) throw new Error((await res.json()).error);
-        const { data }: { data: ICart[] } = await res.json();
-        dispatch(cartSlice.actions.setCart(data));
+        dispatch(cartDataAsync());
       } else {
         toast.error("Login For The Cart", {
           style: {
