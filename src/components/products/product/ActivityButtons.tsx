@@ -3,13 +3,14 @@ import AddToCartBtn from "@/components/AddToCartBtn";
 import { useSelector } from "@/lib/redux";
 import Link from "next/link";
 import React, { useState } from "react";
-import { LuMinus, LuPlus, LuShoppingCart, LuWallet2 } from "react-icons/lu";
+import { LuMinus, LuPlus, LuWallet2 } from "react-icons/lu";
 
 interface IActivityButtons {
   productId: string;
 }
 const ActivityButtons: React.FC<IActivityButtons> = ({ productId }) => {
   const [qty, setQty] = useState("1");
+  const product = useSelector((state) => state.product.initialProduct.value);
   const prodVariant = useSelector(
     (state) => state.product.initialProduct.value.variant,
   );
@@ -49,19 +50,15 @@ const ActivityButtons: React.FC<IActivityButtons> = ({ productId }) => {
               <LuPlus />
             </button>
           </div>
-          <AddToCartBtn productId={Number(productId)} className="w-1/2" />
-          {/* <button */}
-          {/*   className="bg-primary w-1/2 rounded p-2 flex justify-center items-center gap-2" */}
-          {/*   onClick={() => console.log(prodVariant.id)} */}
-          {/* > */}
-          {/*   <LuShoppingCart /> */}
-          {/*   <span>Add To Cart</span> */}
-          {/* </button> */}
+          <AddToCartBtn
+            productId={Number(productId)}
+            variantId={product.variant.id}
+            className="w-1/2"
+          />
         </div>
         <Link
           className="bg-success w-full rounded p-2 flex justify-center items-center gap-2"
           href={`/products/checkout/${productId}`}
-          // onClick={() => console.log(prodVariant.id)}
         >
           <LuWallet2 />
           <span>Buy Now</span>
