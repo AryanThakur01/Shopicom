@@ -1,12 +1,5 @@
 import { relations } from "drizzle-orm";
-import {
-  boolean,
-  integer,
-  pgTable,
-  serial,
-  text,
-  unique,
-} from "drizzle-orm/pg-core";
+import { integer, pgTable, serial, text } from "drizzle-orm/pg-core";
 import { users } from "./users";
 
 // Product Table Definition and relations

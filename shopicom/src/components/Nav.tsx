@@ -221,6 +221,9 @@ const Drawer: FC<IProfileDialog> = ({ children }) => {
           <div className="text-2xl flex flex-col gap-1 justify-between text-muted-foreground p-4 font-semibold">
             <NavLink linkText="Home" href="/" />
             {session && <NavLink linkText="Dashboard" href="/dashboard" />}
+            {session?.role === "customer" && (
+              <NavLink linkText="Become A Seller" href="/selleraccount" />
+            )}
           </div>
           <div className="mb-8 mt-auto px-4">
             {session ? (
