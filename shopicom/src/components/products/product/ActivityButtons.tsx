@@ -58,7 +58,7 @@ const ActivityButtons: React.FC<IActivityButtons> = ({ productId }) => {
         </div>
         <Link
           className="bg-success w-full rounded p-2 flex justify-center items-center gap-2"
-          href={`/products/checkout/${productId}`}
+          href={`/products/checkout/${productId}/?variantId=${prodVariant.id}`}
         >
           <LuWallet2 />
           <span>Buy Now</span>

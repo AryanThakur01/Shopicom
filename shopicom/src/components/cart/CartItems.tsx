@@ -17,7 +17,6 @@ import {
 import { twMerge } from "tailwind-merge";
 
 const CartItems = () => {
-  // const [selectAll, setSelectAll] = useState(false);
   const [total, setTotal] = useState(0);
 
   const cart = useSelector((state) => state.cart.value);
@@ -78,9 +77,12 @@ const CartItems = () => {
           <p className="text-muted-foreground text-sm">Subtotal</p>
           <p>₹ {total.toLocaleString()}</p>
         </div>
-        <button className="font-bold text-muted text-center w-full bg-foreground p-2 rounded">
+        <Link
+          href={`/products/checkout/0?isCart=true`}
+          className="font-bold text-muted text-center w-full bg-foreground p-2 rounded block"
+        >
           Buy Now ({cart.length})
-        </button>
+        </Link>
       </div>
     </div>
   );
