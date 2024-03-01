@@ -1,5 +1,6 @@
 import os
 from flask import Flask
+from . import db
 
 
 def create_app(test_config=None):
@@ -19,6 +20,12 @@ def create_app(test_config=None):
     except OSError:
         print("Instance Folder Not Found!!")
         pass
+
+    db.init_app(app)
+
+    # ID ANALYZER: /api/idanalyzer
+    from . import idAnalyzer
+    app.register_blueprint(idAnalyzer.bp)
 
     @app.route("/test")
     def test():
