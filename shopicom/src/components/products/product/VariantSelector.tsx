@@ -2,7 +2,6 @@
 import { image, variant } from "@/db/schema/products";
 import { productSlice, useDispatch } from "@/lib/redux";
 import React, { useEffect, useState } from "react";
-import { LuShoppingCart, LuWallet2 } from "react-icons/lu";
 import { twMerge } from "tailwind-merge";
 
 interface IVariantWithImgs extends variant {

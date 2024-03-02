@@ -31,8 +31,8 @@ const page: React.FC<IPage> = async ({ params }) => {
 
   return (
     <>
-      <section className="container my-8 grid lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2">
+      <section className="container my-8 grid lg:grid-cols-2 gap-8">
+        <div>
           <ImageCarousel image={product?.variants[0].images} />
         </div>
         <div>

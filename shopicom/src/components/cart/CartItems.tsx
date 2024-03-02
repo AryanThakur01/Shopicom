@@ -18,15 +18,23 @@ import { twMerge } from "tailwind-merge";
 
 const CartItems = () => {
   const [total, setTotal] = useState(0);
+  const [discount, setDiscount] = useState(0);
+  const [netTotal, setNetToatal] = useState(0);
 
   const cart = useSelector((state) => state.cart.value);
   const status = useSelector((state) => state.cart.status);
   useEffect(() => {
     let tempTotal = 0;
+    let discount = 0;
+    let netTotal = 0;
     cart.map((item) => {
       tempTotal += item.variant?.price;
+      discount += item.variant?.price - item.variant?.discountedPrice;
+      netTotal += item.variant?.discountedPrice;
     });
     setTotal(tempTotal);
+    setDiscount(discount);
+    setNetToatal(netTotal);
   }, [cart]);
 
   return (
@@ -73,12 +81,35 @@ const CartItems = () => {
       </div>
       <div className="border border-border rounded p-4 md:my-0 my-4 h-fit">
         <h2 className="md:text-xl">Summary Order</h2>
-        <div className="flex my-4 items-center justify-between">
-          <p className="text-muted-foreground text-sm">Subtotal</p>
-          <p>₹ {total.toLocaleString()}</p>
+        <div className="flex flex-col gap-2 my-4">
+          <div className="flex items-center justify-between">
+            <p className="text-muted-foreground text-sm">Subtotal</p>
+            <p>₹ {total.toLocaleString()}</p>
+          </div>
+          <div className="text-muted-foreground flex items-center justify-between">
+            <p className="text-sm">Discount</p>
+            <p> ₹ {discount.toLocaleString()}</p>
+          </div>
+          <hr className="my-4 border-border" />
+          <div className="flex items-center justify-between">
+            <p className="text-success text-lg">Net Total</p>
+            <p className="text-success text-2xl">
+              ₹ {netTotal.toLocaleString()}
+            </p>
+          </div>
+          <hr className="my-4 border-border" />
+          {(discount / total) * 100 >= 20 && (
+            <p className="text-center text-success">
+              Congrats you saved{" "}
+              <b className="text-lg">
+                {((discount / total) * 100).toFixed(0)}%{" "}
+              </b>{" "}
+              on this order
+            </p>
+          )}
         </div>
         <Link
-          href={`/products/checkout/0?isCart=true`}
+          href={`/products/checkout`}
           className="font-bold text-muted text-center w-full bg-foreground p-2 rounded block"
         >
           Buy Now ({cart.length})
@@ -163,9 +194,11 @@ const Product: React.FC<IProduct> = ({ item }) => {
         </Link>
         <div className="mt-auto p-1 px-2 w-fit gap-4">
           <p className="text-xs text-muted-foreground line-through">
-            ₹ {item.variant?.price}
+            ₹ {item.variant?.price.toLocaleString()}
           </p>
-          <p className="text-2xl">₹ {item.variant?.discountedPrice}</p>
+          <p className="text-2xl">
+            ₹ {item.variant?.discountedPrice.toLocaleString()}
+          </p>
         </div>
       </div>
       <div className="ml-auto flex flex-col items-end">
@@ -187,14 +220,20 @@ const Product: React.FC<IProduct> = ({ item }) => {
             value={qty}
             onChange={(e) => {
               if (e.target.value < "0" || e.target.value > "9") {
-                setQty(0);
+                setQty(1);
                 return;
               }
               const v = e.target.value;
-              setQty(Number(v));
+              if (Number(v) < item.variant.stock) setQty(Number(v));
+              else toast.error(`Maximum Order Limit: ${item.variant.stock}`);
             }}
           />
-          <button onClick={() => setQty(qty + 1)}>
+          <button
+            onClick={() => {
+              if (item.variant.stock > qty + 1) setQty(qty + 1);
+              else toast.error(`Max Limit is: ${item.variant.stock}`);
+            }}
+          >
             <LuPlus />
           </button>
         </div>
