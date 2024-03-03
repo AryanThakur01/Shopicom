@@ -33,7 +33,7 @@ export const GET = async (req: NextRequest) => {
     });
 
     return NextResponse.json({
-      data: paymentIntent.client_secret,
+      clientSecret: paymentIntent.client_secret,
       status: "Fetched",
       amount,
     });
