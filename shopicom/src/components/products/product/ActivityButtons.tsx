@@ -14,7 +14,6 @@ const ActivityButtons: React.FC<IActivityButtons> = ({ productId }) => {
   const prodVariant = useSelector(
     (state) => state.product.initialProduct.value.variant,
   );
-  const handlePurchase = () => {};
   return (
     <>
       <div>

@@ -12,22 +12,24 @@ import toast from "react-hot-toast";
 import { twMerge } from "tailwind-merge";
 
 interface IPaymentsForm {
-  variantId: number;
-  qty: number;
+  variantId?: number;
+  qty?: number;
   className?: string;
+  cart?: boolean;
 }
 const PaymentForm: React.FC<IPaymentsForm> = ({
   qty,
   variantId,
   className,
+  cart,
 }) => {
   const [clientSecret, setClientSecret] = useState("");
 
   const stripePromise = loadStripe(stripePublicKey);
 
   useEffect(() => {
-    // Create PaymentIntent as soon as the page loads
-    fetch(`/api/checkout/?variantId=${variantId}&qty=${qty}`)
+    const query = cart ? `cart=true` : `variantId=${variantId}&qty=${qty}`;
+    fetch(`/api/checkout/?${query}`)
       .then((res) => res.json())
       .then(
         (data) => data.clientSecret && setClientSecret(`${data.clientSecret}`),
@@ -44,7 +46,7 @@ const PaymentForm: React.FC<IPaymentsForm> = ({
 
   return (
     <section className={twMerge(className)}>
-      <h2 className="text-3xl font-bold my-4">Confirm Payment</h2>
+      <h1 className="text-3xl font-bold my-4">Confirm Payment</h1>
       {clientSecret && (
         <Elements options={options} stripe={stripePromise}>
           <CheckoutForm />
@@ -122,9 +124,13 @@ const CheckoutForm = () => {
   };
 
   return (
-    <form id="payment-form" onSubmit={handleSubmit}>
+    <form id="payment-form" onSubmit={handleSubmit} className="flex flex-col">
       <PaymentElement id="payment-element" options={paymentElementOptions} />
-      <button disabled={isLoading || !stripe || !elements} id="submit">
+      <button
+        disabled={isLoading || !stripe || !elements}
+        id="submit"
+        className="my-6 ml-auto p-2 bg-primary w-32 rounded font-bold text-lg shadow-lg"
+      >
         <span id="button-text">
           {isLoading ? <div className="spinner" id="spinner"></div> : "Pay now"}
         </span>

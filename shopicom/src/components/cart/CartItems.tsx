@@ -109,7 +109,7 @@ const CartItems = () => {
           )}
         </div>
         <Link
-          href={`/products/checkout`}
+          href={`/checkout?cart=true`}
           className="font-bold text-muted text-center w-full bg-foreground p-2 rounded block"
         >
           Buy Now ({cart.length})
