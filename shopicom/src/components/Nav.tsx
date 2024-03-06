@@ -157,6 +157,7 @@ const SearchDropDown: React.FC<ISearchDropDown> = ({ children }) => {
                       <a
                         href={`/products/${item.id}`}
                         className="flex gap-4 items-center hover:bg-card p-1 rounded-md"
+                        key={item.id}
                       >
                         <LuArrowRight />
                         <p className="text-foreground">{item.name}</p>
