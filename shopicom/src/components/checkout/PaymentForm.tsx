@@ -1,15 +1,16 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { loadStripe } from "@stripe/stripe-js";
+import { StripeElementsOptions, loadStripe } from "@stripe/stripe-js";
 import {
   Elements,
   PaymentElement,
   useElements,
   useStripe,
 } from "@stripe/react-stripe-js";
-import { stripePublicKey } from "@/lib/constants";
+import { stripePublicKey, url } from "@/lib/constants";
 import toast from "react-hot-toast";
 import { twMerge } from "tailwind-merge";
+import { LuLoader2 } from "react-icons/lu";
 
 interface IPaymentsForm {
   variantId?: number;
@@ -26,15 +27,23 @@ const PaymentForm: React.FC<IPaymentsForm> = ({
   const [clientSecret, setClientSecret] = useState("");
 
   const stripePromise = loadStripe(stripePublicKey);
-
-  useEffect(() => {
+  const createPaymentIntent = () => {
     const query = cart ? `cart=true` : `variantId=${variantId}&qty=${qty}`;
     fetch(`/api/checkout/?${query}`)
       .then((res) => res.json())
       .then(
         (data) => data.clientSecret && setClientSecret(`${data.clientSecret}`),
       );
-  }, []);
+  };
+
+  // useEffect(() => {
+  //   const query = cart ? `cart=true` : `variantId=${variantId}&qty=${qty}`;
+  //   fetch(`/api/checkout/?${query}`)
+  //     .then((res) => res.json())
+  //     .then(
+  //       (data) => data.clientSecret && setClientSecret(`${data.clientSecret}`),
+  //     );
+  // }, []);
 
   const appearance: { theme: "stripe" | "night" | "flat" } = {
     theme: "night",
@@ -47,6 +56,12 @@ const PaymentForm: React.FC<IPaymentsForm> = ({
   return (
     <section className={twMerge(className)}>
       <h1 className="text-3xl font-bold my-4">Confirm Payment</h1>
+      <button
+        className="border border-border p-1 px-10 rounded hover:bg-border transition-all duration-300 mb-12"
+        onClick={createPaymentIntent}
+      >
+        Create Payment Intent
+      </button>
       {clientSecret && (
         <Elements options={options} stripe={stripePromise}>
           <CheckoutForm />
@@ -93,27 +108,31 @@ const CheckoutForm = () => {
     });
   }, [stripe]);
 
-  const handleSubmit = async () => {
-    if (!stripe || !elements) {
-      // Stripe.js hasn't yet loaded.
-      // Make sure to disable form submission until Stripe.js has loaded.
-      return;
-    }
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!stripe || !elements) return;
 
     setIsLoading(true);
 
-    const { error } = await stripe.confirmPayment({
+    const sResult = await stripe.confirmPayment({
       elements,
+      redirect: "if_required",
       confirmParams: {
-        // Make sure to change this to your payment completion page
-        return_url: "http://localhost:3000",
+        return_url: url + "/dashboard",
       },
     });
+    console.log(sResult);
+    const error = sResult.error;
 
-    if (error.type === "card_error" || error.type === "validation_error") {
-      setMessage(`${error.message}`);
+    if (
+      error &&
+      (error.type === "card_error" || error.type === "validation_error")
+    ) {
+      toast.error(`${error && error.message}`);
     } else {
-      setMessage("An unexpected error occurred.");
+      toast.success(
+        sResult.paymentIntent?.status || error?.message || "Something Wrong",
+      );
     }
 
     setIsLoading(false);
@@ -124,19 +143,19 @@ const CheckoutForm = () => {
   };
 
   return (
-    <form id="payment-form" onSubmit={handleSubmit} className="flex flex-col">
-      <PaymentElement id="payment-element" options={paymentElementOptions} />
+    <form onSubmit={(e) => handleSubmit(e)} className="flex flex-col">
+      <PaymentElement options={paymentElementOptions} />
       <button
         disabled={isLoading || !stripe || !elements}
-        id="submit"
-        className="my-6 ml-auto p-2 bg-primary w-32 rounded font-bold text-lg shadow-lg"
+        className="my-6 ml-auto p-2 bg-primary w-32 rounded font-bold text-lg shadow-lg h-12"
+        type="submit"
       >
-        <span id="button-text">
-          {isLoading ? <div className="spinner" id="spinner"></div> : "Pay now"}
-        </span>
+        {isLoading ? (
+          <LuLoader2 className="mx-auto animate-spin stroke-2" />
+        ) : (
+          "Pay now"
+        )}
       </button>
-      {/* Show any error or success messages */}
-      {message && <div id="payment-message">{message}</div>}
     </form>
   );
 };
