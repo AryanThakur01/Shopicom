@@ -26,7 +26,9 @@ const cart = async (req: NextRequest) => {
     amount += item.variant.discountedPrice;
   });
 
-  const stripe = new Stripe(process.env.STRIPE_SECRET || "");
+  const stripe = new Stripe(process.env.STRIPE_SECRET || "", {
+    apiVersion: "2023-10-16",
+  });
   return await stripe.paymentIntents.create({
     amount: amount * 100,
     currency: "inr",
@@ -41,7 +43,9 @@ const singleProduct = async (variantId: number, qty: number) => {
 
   const amount = productVariant[0].discountedPrice * qty;
 
-  const stripe = new Stripe(process.env.STRIPE_SECRET || "");
+  const stripe = new Stripe(process.env.STRIPE_SECRET || "", {
+    apiVersion: "2023-10-16",
+  });
   return await stripe.paymentIntents.create({
     amount: amount * 100,
     currency: "inr",

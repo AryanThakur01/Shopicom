@@ -7,23 +7,21 @@ export const GET = async (req: NextRequest) => {
     const qty = Number(req.nextUrl.searchParams.getAll("qty"));
     const cart = req.nextUrl.searchParams.get("cart");
 
-    if (cart) {
-      const paymentIntent = await intentGenerator.cart(req);
-      return NextResponse.json({
-        clientSecret: paymentIntent.client_secret,
-      });
-    } else if (variantId || qty) {
-      const paymentIntent = await intentGenerator.singleProduct(
-        Number(variantId),
-        Number(qty),
-      );
-
-      return NextResponse.json({ clientSecret: paymentIntent.client_secret });
-    } else {
+    if (!cart && !(variantId && qty)) {
+      console.log(cart, variantId, qty);
       throw new Error(
         `either 'cart' or "'variantId' & 'qty'" are required query`,
       );
     }
+    const paymentIntent = cart
+      ? await intentGenerator.cart(req)
+      : await intentGenerator.singleProduct(Number(variantId), Number(qty));
+
+    req.cookies.set({
+      name: "stripe_payment_session-id",
+      value: paymentIntent.id,
+    });
+    return NextResponse.json({ clientSecret: paymentIntent.client_secret });
   } catch (error) {
     if (error instanceof Error)
       return NextResponse.json({ error: error.message }, { status: 400 });

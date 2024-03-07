@@ -1,7 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { StripeElementsOptions, loadStripe } from "@stripe/stripe-js";
 import {
+  StripeElementsOptions,
+  StripePaymentElementOptions,
+  loadStripe,
+} from "@stripe/stripe-js";
+import {
+  AddressElement,
   Elements,
   PaymentElement,
   useElements,
@@ -25,24 +30,22 @@ const PaymentForm: React.FC<IPaymentsForm> = ({
   cart,
 }) => {
   const [clientSecret, setClientSecret] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const stripePromise = loadStripe(stripePublicKey);
-  const createPaymentIntent = () => {
+  const createPaymentIntent = async () => {
+    setLoading(true);
+
     const query = cart ? `cart=true` : `variantId=${variantId}&qty=${qty}`;
-    fetch(`/api/checkout/?${query}`)
-      .then((res) => res.json())
-      .then(
-        (data) => data.clientSecret && setClientSecret(`${data.clientSecret}`),
-      );
+    const res = await fetch(`/api/checkout/?${query}`);
+    const data = await res.json();
+    if (data.clientSecret) setClientSecret(`${data.clientSecret}`);
+
+    setLoading(false);
   };
 
   // useEffect(() => {
-  //   const query = cart ? `cart=true` : `variantId=${variantId}&qty=${qty}`;
-  //   fetch(`/api/checkout/?${query}`)
-  //     .then((res) => res.json())
-  //     .then(
-  //       (data) => data.clientSecret && setClientSecret(`${data.clientSecret}`),
-  //     );
+  // createPaymentIntent()
   // }, []);
 
   const appearance: { theme: "stripe" | "night" | "flat" } = {
@@ -56,12 +59,24 @@ const PaymentForm: React.FC<IPaymentsForm> = ({
   return (
     <section className={twMerge(className)}>
       <h1 className="text-3xl font-bold my-4">Confirm Payment</h1>
-      <button
-        className="border border-border p-1 px-10 rounded hover:bg-border transition-all duration-300 mb-12"
-        onClick={createPaymentIntent}
-      >
-        Create Payment Intent
-      </button>
+      {!clientSecret && (
+        <>
+          <button
+            className={twMerge(
+              "h-10 border border-border p-1 w-40 rounded transition-all duration-300 mb-12",
+              !loading && "hover:bg-border",
+            )}
+            onClick={createPaymentIntent}
+            disabled={loading}
+          >
+            {loading ? (
+              <LuLoader2 className="animate-spin mx-auto" />
+            ) : (
+              "Make Payment"
+            )}
+          </button>
+        </>
+      )}
       {clientSecret && (
         <Elements options={options} stripe={stripePromise}>
           <CheckoutForm />
@@ -138,12 +153,14 @@ const CheckoutForm = () => {
     setIsLoading(false);
   };
 
-  const paymentElementOptions: { layout: "tabs" | "accordion" | "auto" } = {
-    layout: "tabs",
+  const paymentElementOptions: StripePaymentElementOptions = {
+    layout: "accordion",
   };
 
   return (
     <form onSubmit={(e) => handleSubmit(e)} className="flex flex-col">
+      <AddressElement options={{ mode: "shipping" }} />
+      <hr className="border-border my-8" />
       <PaymentElement options={paymentElementOptions} />
       <button
         disabled={isLoading || !stripe || !elements}
