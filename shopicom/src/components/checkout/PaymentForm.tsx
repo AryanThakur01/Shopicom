@@ -44,9 +44,9 @@ const PaymentForm: React.FC<IPaymentsForm> = ({
     setLoading(false);
   };
 
-  // useEffect(() => {
-  // createPaymentIntent()
-  // }, []);
+  useEffect(() => {
+    createPaymentIntent();
+  }, []);
 
   const appearance: { theme: "stripe" | "night" | "flat" } = {
     theme: "night",
@@ -139,15 +139,19 @@ const CheckoutForm = () => {
     console.log(sResult);
     const error = sResult.error;
 
-    if (
-      error &&
-      (error.type === "card_error" || error.type === "validation_error")
-    ) {
-      toast.error(`${error && error.message}`);
+    if (error) {
+      if (
+        error &&
+        (error.type === "card_error" || error.type === "validation_error")
+      ) {
+        toast.error(`${error && error.message}`);
+      } else {
+        toast.error(error?.message || "Something Wrong");
+      }
     } else {
-      toast.success(
-        sResult.paymentIntent?.status || error?.message || "Something Wrong",
-      );
+      if (sResult.paymentIntent.status === "succeeded")
+        toast.success("Payment Succeeded");
+      else toast.error(sResult.paymentIntent.status);
     }
 
     setIsLoading(false);

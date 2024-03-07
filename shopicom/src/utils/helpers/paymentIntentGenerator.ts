@@ -14,6 +14,10 @@ const cart = async (req: NextRequest) => {
   if (!payload.id || !payload.role)
     throw new Error("Session Token role or id missing");
 
+  const stripe = new Stripe(process.env.STRIPE_SECRET || "", {
+    apiVersion: "2023-10-16",
+  });
+
   const products = await dbDriver.query.carts.findMany({
     where: eq(carts.userId, payload.id),
     with: {
@@ -26,9 +30,13 @@ const cart = async (req: NextRequest) => {
     amount += item.variant.discountedPrice;
   });
 
-  const stripe = new Stripe(process.env.STRIPE_SECRET || "", {
-    apiVersion: "2023-10-16",
-  });
+  const sessId = req.cookies.get("stripe_payment.session-id")?.value;
+  if (sessId) {
+    const sess = await stripe.paymentIntents.retrieve(sessId);
+    if (sess.amount === amount * 100 && sess.status !== "succeeded")
+      return sess;
+  }
+
   return await stripe.paymentIntents.create({
     amount: amount * 100,
     currency: "inr",

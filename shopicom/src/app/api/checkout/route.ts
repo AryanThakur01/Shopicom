@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import intentGenerator from "@/utils/helpers/paymentIntentGenerator";
+import { cookies } from "next/headers";
 
 export const GET = async (req: NextRequest) => {
   try {
@@ -17,8 +18,8 @@ export const GET = async (req: NextRequest) => {
       ? await intentGenerator.cart(req)
       : await intentGenerator.singleProduct(Number(variantId), Number(qty));
 
-    req.cookies.set({
-      name: "stripe_payment_session-id",
+    cookies().set({
+      name: "stripe_payment.session-id",
       value: paymentIntent.id,
     });
     return NextResponse.json({ clientSecret: paymentIntent.client_secret });
