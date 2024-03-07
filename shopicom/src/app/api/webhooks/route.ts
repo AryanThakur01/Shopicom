@@ -8,8 +8,7 @@ export const POST = async (req: NextRequest) => {
     const stripe = new Stripe(process.env.STRIPE_SECRET || "", {
       apiVersion: "2023-10-16",
     });
-    const endpointSecret =
-      "whsec_c193d665cfb4d8e963d2054fdcf260005ddc6d801285c146f5eb023007d52783";
+    const endpointSecret = process.env.STRIPE_END_POINT_SECRET || "";
     const body = await req.text();
     // ---------------------
 
