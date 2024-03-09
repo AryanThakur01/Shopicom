@@ -1,3 +1,6 @@
+import { db } from "@/db";
+import { orders } from "@/db/schema/orders";
+import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
@@ -25,9 +28,20 @@ export const POST = async (req: NextRequest) => {
         break;
 
       case "payment_intent.succeeded":
+        const shipping = event.data.object.shipping;
+        await db
+          .update(orders)
+          .set({
+            name: shipping?.name,
+            address: JSON.stringify(shipping?.address),
+            phone: `${shipping?.phone}`,
+            paymentStatus: event.data.object.status,
+          })
+          .where(eq(orders.paymentIntentId, event.data.object.id));
         break;
 
       case "charge.succeeded":
+        console.log("Charge Success");
         break;
 
       default:

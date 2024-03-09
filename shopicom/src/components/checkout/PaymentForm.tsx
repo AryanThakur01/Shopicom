@@ -1,10 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import {
-  StripeElementsOptions,
-  StripePaymentElementOptions,
-  loadStripe,
-} from "@stripe/stripe-js";
+import { StripePaymentElementOptions, loadStripe } from "@stripe/stripe-js";
 import {
   AddressElement,
   Elements,
@@ -59,28 +55,14 @@ const PaymentForm: React.FC<IPaymentsForm> = ({
   return (
     <section className={twMerge(className)}>
       <h1 className="text-3xl font-bold my-4">Confirm Payment</h1>
-      {!clientSecret && (
-        <>
-          <button
-            className={twMerge(
-              "h-10 border border-border p-1 w-40 rounded transition-all duration-300 mb-12",
-              !loading && "hover:bg-border",
-            )}
-            onClick={createPaymentIntent}
-            disabled={loading}
-          >
-            {loading ? (
-              <LuLoader2 className="animate-spin mx-auto" />
-            ) : (
-              "Make Payment"
-            )}
-          </button>
-        </>
-      )}
-      {clientSecret && (
-        <Elements options={options} stripe={stripePromise}>
-          <CheckoutForm />
-        </Elements>
+      {loading ? (
+        <LuLoader2 className="animate-spin mx-auto my-20 size-24" />
+      ) : (
+        clientSecret && (
+          <Elements options={options} stripe={stripePromise}>
+            <CheckoutForm />
+          </Elements>
+        )
       )}
     </section>
   );

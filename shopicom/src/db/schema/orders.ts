@@ -1,5 +1,5 @@
 import { integer, pgTable, serial, text } from "drizzle-orm/pg-core";
-import { products } from "./products";
+import { variants } from "./products";
 import { relations } from "drizzle-orm";
 
 export const orders = pgTable("orders", {
@@ -23,9 +23,9 @@ export const orders = pgTable("orders", {
       "succeeded",
     ],
   }).notNull(),
-  paymentAmount: text("payment_amount").notNull(),
+  paymentAmount: integer("payment_amount").notNull(),
 });
-export const orderRelations = relations(orders, ({ one, many }) => ({
+export const orderRelations = relations(orders, ({ many }) => ({
   orderedProducts: many(orderedProducts),
 }));
 
@@ -36,9 +36,10 @@ export const orderedProducts = pgTable("ordered_products", {
       onDelete: "cascade",
     })
     .notNull(),
-  productId: integer("product_id")
-    .references(() => products.id, { onDelete: "cascade" })
+  productVariantId: integer("product_variant_id")
+    .references(() => variants.id, { onDelete: "cascade" })
     .notNull(),
+  qty: integer("qty").notNull().default(1),
 });
 export const orderedProductsRelations = relations(
   orderedProducts,
@@ -47,9 +48,9 @@ export const orderedProductsRelations = relations(
       fields: [orderedProducts.orderId],
       references: [orders.id],
     }),
-    product: one(products, {
-      fields: [orderedProducts.productId],
-      references: [products.id],
+    product: one(variants, {
+      fields: [orderedProducts.productVariantId],
+      references: [variants.id],
     }),
   }),
 );

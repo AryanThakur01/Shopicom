@@ -5,6 +5,38 @@ import { NextRequest } from "next/server";
 import Stripe from "stripe";
 import { jwtDecoder } from "../api/helpers";
 import { carts } from "@/db/schema/carts";
+import { orderedProducts, orders } from "@/db/schema/orders";
+interface orderList {
+  variantId: number;
+  qty: number;
+}
+const createOrder = async (
+  paymentIntent: Stripe.Response<Stripe.PaymentIntent>,
+  variantsList: orderList[],
+) => {
+  const shipping = paymentIntent.shipping;
+  const address = shipping?.address;
+  const newOrder = await db
+    .insert(orders)
+    .values({
+      name: shipping?.name || "processing",
+      phone: shipping?.phone || "processing",
+      address: JSON.stringify(address) || "processing",
+      paymentAmount: paymentIntent.amount,
+      paymentStatus: paymentIntent.status,
+      paymentIntentId: paymentIntent.id,
+    })
+    .returning();
+
+  variantsList.map(
+    async (item) =>
+      await db.insert(orderedProducts).values({
+        orderId: newOrder[0].id,
+        productVariantId: item.variantId,
+        qty: item.qty,
+      }),
+  );
+};
 
 const cart = async (req: NextRequest) => {
   const token = req.cookies.get("Session_Token")?.value;
@@ -26,8 +58,10 @@ const cart = async (req: NextRequest) => {
   });
 
   let amount = 0;
+  let orderedVariants: orderList[] = [];
   products.map((item) => {
     amount += item.variant.discountedPrice;
+    orderedVariants.push({ variantId: item.variant.id, qty: 1 });
   });
 
   const sessId = req.cookies.get("stripe_payment.session-id")?.value;
@@ -37,10 +71,12 @@ const cart = async (req: NextRequest) => {
       return sess;
   }
 
-  return await stripe.paymentIntents.create({
+  const paymentIntent = await stripe.paymentIntents.create({
     amount: amount * 100,
     currency: "inr",
   });
+  createOrder(paymentIntent, orderedVariants);
+  return paymentIntent;
 };
 
 const singleProduct = async (
@@ -65,10 +101,12 @@ const singleProduct = async (
       return sess;
   }
 
-  return await stripe.paymentIntents.create({
+  const paymentIntent = await stripe.paymentIntents.create({
     amount: amount * 100,
     currency: "inr",
   });
+  createOrder(paymentIntent, [{ variantId, qty }]);
+  return paymentIntent;
 };
 
 export default { cart, singleProduct };
