@@ -43,7 +43,14 @@ const cart = async (req: NextRequest) => {
   });
 };
 
-const singleProduct = async (variantId: number, qty: number) => {
+const singleProduct = async (
+  req: NextRequest,
+  variantId: number,
+  qty: number,
+) => {
+  const stripe = new Stripe(process.env.STRIPE_SECRET || "", {
+    apiVersion: "2023-10-16",
+  });
   const productVariant = await db
     .select()
     .from(variants)
@@ -51,9 +58,13 @@ const singleProduct = async (variantId: number, qty: number) => {
 
   const amount = productVariant[0].discountedPrice * qty;
 
-  const stripe = new Stripe(process.env.STRIPE_SECRET || "", {
-    apiVersion: "2023-10-16",
-  });
+  const sessId = req.cookies.get("stripe_payment.session-id")?.value;
+  if (sessId) {
+    const sess = await stripe.paymentIntents.retrieve(sessId);
+    if (sess.amount === amount * 100 && sess.status !== "succeeded")
+      return sess;
+  }
+
   return await stripe.paymentIntents.create({
     amount: amount * 100,
     currency: "inr",

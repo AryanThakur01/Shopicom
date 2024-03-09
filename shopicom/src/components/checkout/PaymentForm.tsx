@@ -163,7 +163,13 @@ const CheckoutForm = () => {
 
   return (
     <form onSubmit={(e) => handleSubmit(e)} className="flex flex-col">
-      <AddressElement options={{ mode: "shipping" }} />
+      <AddressElement
+        options={{
+          mode: "shipping",
+          fields: { phone: "always" },
+          validation: { phone: { required: "always" } },
+        }}
+      />
       <hr className="border-border my-8" />
       <PaymentElement options={paymentElementOptions} />
       <button

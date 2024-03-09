@@ -16,7 +16,70 @@ export const GET = async (req: NextRequest) => {
     }
     const paymentIntent = cart
       ? await intentGenerator.cart(req)
-      : await intentGenerator.singleProduct(Number(variantId), Number(qty));
+      : await intentGenerator.singleProduct(
+          req,
+          Number(variantId),
+          Number(qty),
+        );
+    // paymentIntent.id;
+    // paymentIntent.status;
+    // paymentIntent.amount;
+    // paymentIntent.shipping
+    // interface Shipping {
+    //   address?: Stripe.Address;
+    //
+    //   /**
+    //    * The delivery service that shipped a physical product, such as Fedex, UPS, USPS, etc.
+    //    */
+    //   carrier?: string | null;
+    //
+    //   /**
+    //    * Recipient name.
+    //    */
+    //   name?: string;
+    //
+    //   /**
+    //    * Recipient phone (including extension).
+    //    */
+    //   phone?: string | null;
+    //
+    //   /**
+    //    * The tracking number for a physical product, obtained from the delivery service. If multiple tracking numbers were generated for this purchase, please separate them with commas.
+    //    */
+    //   tracking_number?: string | null;
+    // }
+    // interface Address {
+    //   /**
+    //    * City/District/Suburb/Town/Village.
+    //    */
+    //   city: string | null;
+    //
+    //   /**
+    //    * 2-letter country code.
+    //    */
+    //   country: string | null;
+    //
+    //   /**
+    //    * Address line 1 (Street address/PO Box/Company name).
+    //    */
+    //   line1: string | null;
+    //
+    //   /**
+    //    * Address line 2 (Apartment/Suite/Unit/Building).
+    //    */
+    //   line2: string | null;
+    //
+    //   /**
+    //    * ZIP or postal code.
+    //    */
+    //   postal_code: string | null;
+    //
+    //   /**
+    //    * State/County/Province/Region.
+    //    */
+    //   state: string | null;
+    // }
+    // products
 
     cookies().set({
       name: "stripe_payment.session-id",

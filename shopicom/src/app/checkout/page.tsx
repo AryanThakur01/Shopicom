@@ -1,4 +1,3 @@
-import CartItems from "@/components/cart/CartItems";
 import PaymentForm from "@/components/checkout/PaymentForm";
 import { ProductCard } from "@/components/checkout/ProductCard";
 import CartCheckout from "@/components/checkout/cartCheckout/CartCheckout";
@@ -6,7 +5,6 @@ import withAuth from "@/components/withAuth";
 import { dbDriver } from "@/db";
 import { products, variants } from "@/db/schema/products";
 import { eq } from "drizzle-orm";
-import Image from "next/image";
 import { redirect } from "next/navigation";
 import React from "react";
 

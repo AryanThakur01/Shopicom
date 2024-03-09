@@ -10,7 +10,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import FormField from "@/components/FormField";
 
-const page = () => {
+const Page = () => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const user = useSelector((state) => state.user.value);
@@ -55,4 +55,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
