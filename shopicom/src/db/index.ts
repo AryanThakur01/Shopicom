@@ -3,7 +3,7 @@ import * as products from "./schema/products";
 import * as dynamicContent from "./schema/dynamicContent";
 import * as carts from "./schema/carts";
 import * as orders from "./schema/orders";
-import { PostgresJsDatabase, drizzle } from "drizzle-orm/postgres-js";
+import { drizzle } from "drizzle-orm/postgres-js";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
 import postgres from "postgres";
 

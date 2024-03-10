@@ -23,6 +23,7 @@ export const POST = async (req: NextRequest) => {
     cookies().set("Session_Token", authToken);
     return new NextResponse(JSON.stringify(authToken));
   } catch (error) {
+    console.log(error);
     if (error instanceof ZodError)
       return NextResponse.json({ error }, { status: 400 });
     return NextResponse.json({ error: JSON.stringify(error) }, { status: 500 });

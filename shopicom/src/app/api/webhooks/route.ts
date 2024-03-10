@@ -1,5 +1,7 @@
 import { db } from "@/db";
 import { orders } from "@/db/schema/orders";
+import { variants } from "@/db/schema/products";
+import { cancelOrder, lockProducts } from "@/utils/api/basketItems";
 import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
@@ -22,9 +24,20 @@ export const POST = async (req: NextRequest) => {
       signature,
       endpointSecret,
     );
+    console.log(event.type);
 
+    let sessionId: string = "";
     switch (event.type) {
       case "payment_intent.created":
+        console.log("created");
+        break;
+      case "payment_intent.payment_failed":
+        sessionId = event.data.object.id;
+        cancelOrder(sessionId);
+        break;
+      case "payment_intent.requires_action":
+        sessionId = event.data.object.id;
+        lockProducts(sessionId);
         break;
 
       case "payment_intent.succeeded":

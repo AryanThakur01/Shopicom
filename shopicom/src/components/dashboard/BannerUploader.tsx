@@ -11,6 +11,7 @@ import {
 } from "react-icons/lu";
 import { imageProcessor } from "@/utils/helpers/blobToStr";
 import { NewContent } from "@/db/schema/dynamicContent";
+import toast from "react-hot-toast";
 
 const BannerUploader = () => {
   const [emblaRef, emblaApi] = useEmblaCarousel();
@@ -152,7 +153,9 @@ const Banner: React.FC<IBanner> = ({ data }) => {
         throw new Error(error);
       }
       await res.json();
+      toast.success("Banner Uploaded Successfully");
     } catch (error) {
+      if (error instanceof Error) toast.error(error.message);
       console.log(error);
     }
     setLoading(false);

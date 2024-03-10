@@ -5,7 +5,7 @@ import { NextRequest } from "next/server";
 import Stripe from "stripe";
 import { jwtDecoder } from "../api/helpers";
 import { carts } from "@/db/schema/carts";
-import { orderedProducts, orders } from "@/db/schema/orders";
+import { orders } from "@/db/schema/orders";
 interface orderList {
   variantId: number;
   qty: number;
@@ -16,26 +16,21 @@ const createOrder = async (
 ) => {
   const shipping = paymentIntent.shipping;
   const address = shipping?.address;
-  const newOrder = await db
-    .insert(orders)
-    .values({
-      name: shipping?.name || "processing",
-      phone: shipping?.phone || "processing",
-      address: JSON.stringify(address) || "processing",
-      paymentAmount: paymentIntent.amount,
-      paymentStatus: paymentIntent.status,
-      paymentIntentId: paymentIntent.id,
-    })
-    .returning();
-
-  variantsList.map(
-    async (item) =>
-      await db.insert(orderedProducts).values({
-        orderId: newOrder[0].id,
+  variantsList.map(async (item) => {
+    await db
+      .insert(orders)
+      .values({
+        name: shipping?.name || "processing",
+        phone: shipping?.phone || "processing",
+        address: JSON.stringify(address) || "processing",
+        paymentAmount: paymentIntent.amount,
+        paymentStatus: paymentIntent.status,
+        paymentIntentId: paymentIntent.id,
         productVariantId: item.variantId,
         qty: item.qty,
-      }),
-  );
+      })
+      .returning();
+  });
 };
 
 const cart = async (req: NextRequest) => {

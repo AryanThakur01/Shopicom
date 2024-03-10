@@ -31,8 +31,9 @@ export const POST = async (req: NextRequest) => {
       return NextResponse.json({ data: banner }, { status: 200 });
     }
   } catch (error) {
+    console.log(error);
     if (error instanceof Error)
-      return NextResponse.json({ error }, { status: 400 });
+      return NextResponse.json({ error: error.message }, { status: 400 });
     return NextResponse.json(
       { error: "Error: /api/content/banner - get" },
       { status: 500 },

@@ -33,7 +33,7 @@ const PaymentForm: React.FC<IPaymentsForm> = ({
     setLoading(true);
 
     const query = cart ? `cart=true` : `variantId=${variantId}&qty=${qty}`;
-    const res = await fetch(`/api/checkout/?${query}`);
+    const res = await fetch(url + `/api/checkout/?${query}`);
     const data = await res.json();
     if (data.clientSecret) setClientSecret(`${data.clientSecret}`);
 
@@ -111,29 +111,27 @@ const CheckoutForm = () => {
 
     setIsLoading(true);
 
+    // await fetch(url + "/api/checkout/lockproduct", { method: "PATCH" });
+
     const sResult = await stripe.confirmPayment({
       elements,
-      redirect: "if_required",
       confirmParams: {
-        return_url: url + "/dashboard",
+        return_url: url + "/dashboard/orders",
       },
     });
     console.log(sResult);
     const error = sResult.error;
 
     if (error) {
-      if (
-        error &&
-        (error.type === "card_error" || error.type === "validation_error")
-      ) {
+      if (error.type === "card_error" || error.type === "validation_error") {
         toast.error(`${error && error.message}`);
       } else {
         toast.error(error?.message || "Something Wrong");
       }
     } else {
-      if (sResult.paymentIntent.status === "succeeded")
-        toast.success("Payment Succeeded");
-      else toast.error(sResult.paymentIntent.status);
+      // if (sResult.paymentIntent.status === "succeeded")
+      //   toast.success("Payment Succeeded");
+      // else toast.error(sResult.paymentIntent.status);
     }
 
     setIsLoading(false);
