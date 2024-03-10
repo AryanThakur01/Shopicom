@@ -15,13 +15,20 @@ export const lockProducts = async (sessionId: string) => {
     });
   userOrders.map(async (item) => {
     const curVariant = await db
-      .select({ orders: variants.orders, stock: variants.stock })
+      .select({
+        orders: variants.orders,
+        stock: variants.stock,
+        id: variants.id,
+      })
       .from(variants)
       .where(eq(variants.id, item.variantId));
-    await db.update(variants).set({
-      orders: curVariant[0].orders + userOrders[0].qty,
-      stock: curVariant[0].stock - userOrders[0].qty,
-    });
+    await db
+      .update(variants)
+      .set({
+        orders: curVariant[0].orders + userOrders[0].qty,
+        stock: curVariant[0].stock - userOrders[0].qty,
+      })
+      .where(eq(variants.id, curVariant[0].id));
   });
 };
 
