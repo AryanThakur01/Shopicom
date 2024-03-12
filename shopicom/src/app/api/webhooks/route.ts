@@ -24,7 +24,6 @@ export const POST = async (req: NextRequest) => {
       signature,
       endpointSecret,
     );
-    console.log(event.type);
 
     let sessionId: string = "";
     switch (event.type) {

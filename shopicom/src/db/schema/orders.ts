@@ -1,6 +1,7 @@
 import { boolean, integer, pgTable, serial, text } from "drizzle-orm/pg-core";
 import { variants } from "./products";
 import { relations } from "drizzle-orm";
+import { users } from "./users";
 
 export const orders = pgTable("orders", {
   id: serial("id").primaryKey().notNull(),
@@ -9,6 +10,9 @@ export const orders = pgTable("orders", {
   name: text("name").notNull(),
   address: text("address").notNull(),
   phone: text("phone").notNull(),
+  customerId: integer("customer_id").references(() => users.id, {
+    onDelete: "cascade",
+  }),
 
   // =================== payment Related
   paymentIntentId: text("payment_intent"),
@@ -31,12 +35,19 @@ export const orders = pgTable("orders", {
     .notNull(),
   qty: integer("qty").notNull().default(1),
   isLocked: boolean("is_locked").default(false),
+  deliveryStatus: text("delivery_status", {
+    enum: ["ordered", "dispatched", "received"],
+  }).default("ordered"),
 });
 export const orderRelations = relations(orders, ({ many, one }) => ({
   // orderedProducts: many(orderedProducts),
   product: one(variants, {
     fields: [orders.productVariantId],
     references: [variants.id],
+  }),
+  customer: one(users, {
+    fields: [orders.customerId],
+    references: [users.id],
   }),
 }));
 

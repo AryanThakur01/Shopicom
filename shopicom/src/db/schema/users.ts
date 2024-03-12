@@ -1,6 +1,7 @@
 import { relations } from "drizzle-orm";
-import { integer, pgTable, serial, text } from "drizzle-orm/pg-core";
+import { pgTable, serial, text } from "drizzle-orm/pg-core";
 import { products } from "./products";
+import { orders } from "./orders";
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
@@ -29,6 +30,7 @@ export const users = pgTable("users", {
 });
 export const usersRelations = relations(users, ({ many }) => ({
   products: many(products),
+  orders: many(orders),
 }));
 
 export type User = typeof users.$inferSelect; // return type when queried

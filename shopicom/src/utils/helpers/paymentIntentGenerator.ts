@@ -6,6 +6,7 @@ import Stripe from "stripe";
 import { jwtDecoder } from "../api/helpers";
 import { carts } from "@/db/schema/carts";
 import { orders } from "@/db/schema/orders";
+import { JwtPayload } from "jsonwebtoken";
 interface orderList {
   variantId: number;
   qty: number;
@@ -13,6 +14,7 @@ interface orderList {
 const createOrder = async (
   paymentIntent: Stripe.Response<Stripe.PaymentIntent>,
   variantsList: orderList[],
+  customerId?: number,
 ) => {
   const shipping = paymentIntent.shipping;
   const address = shipping?.address;
@@ -28,6 +30,7 @@ const createOrder = async (
         paymentIntentId: paymentIntent.id,
         productVariantId: item.variantId,
         qty: item.qty,
+        customerId: customerId,
       })
       .returning();
   });
@@ -36,7 +39,6 @@ const createOrder = async (
 const cart = async (req: NextRequest) => {
   const token = req.cookies.get("Session_Token")?.value;
   if (!token) throw new Error("Token Not Found");
-
   const payload = jwtDecoder(token);
   if (!payload.id || !payload.role)
     throw new Error("Session Token role or id missing");
@@ -70,7 +72,7 @@ const cart = async (req: NextRequest) => {
     amount: amount * 100,
     currency: "inr",
   });
-  createOrder(paymentIntent, orderedVariants);
+  createOrder(paymentIntent, orderedVariants, payload.id);
   return paymentIntent;
 };
 
@@ -79,6 +81,14 @@ const singleProduct = async (
   variantId: number,
   qty: number,
 ) => {
+  const token = req.cookies.get("Session_Token")?.value;
+  let payload: JwtPayload | null = null;
+  if (token) {
+    payload = jwtDecoder(token);
+    if (!payload.id || !payload.role)
+      throw new Error("Session Token role or id missing");
+  }
+
   const stripe = new Stripe(process.env.STRIPE_SECRET || "", {
     apiVersion: "2023-10-16",
   });
@@ -100,7 +110,7 @@ const singleProduct = async (
     amount: amount * 100,
     currency: "inr",
   });
-  createOrder(paymentIntent, [{ variantId, qty }]);
+  createOrder(paymentIntent, [{ variantId, qty }], payload?.id);
   return paymentIntent;
 };
 
