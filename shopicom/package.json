@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "generate": "drizzle-kit generate:pg",
-    "webhook": "stripe listen --forward-to http://localhost:3000/api/webhooks"
+    "stripe_webhook": "stripe listen --forward-to http://localhost:3000/api/webhooks"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",

@@ -33,6 +33,9 @@ export const orders = pgTable("orders", {
   productVariantId: integer("product_variant_id")
     .references(() => variants.id, { onDelete: "cascade" })
     .notNull(),
+  sellerId: integer("seller_id")
+    .references(() => users.id, { onDelete: "cascade" })
+    .notNull(),
   qty: integer("qty").notNull().default(1),
   isLocked: boolean("is_locked").default(false),
   deliveryStatus: text("delivery_status", {
@@ -48,6 +51,12 @@ export const orderRelations = relations(orders, ({ many, one }) => ({
   customer: one(users, {
     fields: [orders.customerId],
     references: [users.id],
+    relationName: "customer_rel",
+  }),
+  seller: one(users, {
+    fields: [orders.sellerId],
+    references: [users.id],
+    relationName: "seller_rel",
   }),
 }));
 

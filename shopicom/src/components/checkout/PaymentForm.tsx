@@ -111,8 +111,6 @@ const CheckoutForm = () => {
 
     setIsLoading(true);
 
-    // await fetch(url + "/api/checkout/lockproduct", { method: "PATCH" });
-
     const sResult = await stripe.confirmPayment({
       elements,
       confirmParams: {

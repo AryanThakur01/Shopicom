@@ -52,16 +52,22 @@ const Profile = () => {
         </h1>
       )}
       <div className="flex gap-4 justify-center my-4 text-muted-foreground">
+        <button
+          disabled
+          className=" rounded-full p-4 hover:bg-muted bg-card hover:text-foreground"
+        >
+          <LuMail className="size-5 stroke-transparent" />
+        </button>
         <ProfileDialog>
           <button className="rounded-full p-4 hover:bg-muted bg-card hover:text-foreground">
             <LuPencilLine className="size-5" />
           </button>
         </ProfileDialog>
-        <button className="rounded-full p-4 hover:bg-muted bg-card hover:text-foreground">
-          <LuMail className="size-5" />
-        </button>
-        <button className="rounded-full p-4 hover:bg-muted bg-card hover:text-foreground">
-          <LuBell className="size-5" />
+        <button
+          disabled
+          className="rounded-full p-4 hover:bg-muted bg-card hover:text-foreground"
+        >
+          <LuBell className="size-5 stroke-transparent" />
         </button>
       </div>
     </>

@@ -10,6 +10,7 @@ import { JwtPayload } from "jsonwebtoken";
 interface orderList {
   variantId: number;
   qty: number;
+  sellerId: number;
 }
 const createOrder = async (
   paymentIntent: Stripe.Response<Stripe.PaymentIntent>,
@@ -31,6 +32,7 @@ const createOrder = async (
         productVariantId: item.variantId,
         qty: item.qty,
         customerId: customerId,
+        sellerId: item.sellerId,
       })
       .returning();
   });
@@ -51,6 +53,7 @@ const cart = async (req: NextRequest) => {
     where: eq(carts.userId, payload.id),
     with: {
       variant: true,
+      item: true,
     },
   });
 
@@ -58,7 +61,11 @@ const cart = async (req: NextRequest) => {
   let orderedVariants: orderList[] = [];
   products.map((item) => {
     amount += item.variant.discountedPrice;
-    orderedVariants.push({ variantId: item.variant.id, qty: 1 });
+    orderedVariants.push({
+      variantId: item.variant.id,
+      qty: 1,
+      sellerId: item.item.sellerId,
+    });
   });
 
   const sessId = req.cookies.get("stripe_payment.session-id")?.value;
@@ -110,7 +117,23 @@ const singleProduct = async (
     amount: amount * 100,
     currency: "inr",
   });
-  createOrder(paymentIntent, [{ variantId, qty }], payload?.id);
+  const product = await dbDriver.query.variants.findFirst({
+    columns: {},
+    where: eq(variants.id, variantId),
+    with: {
+      product: {
+        columns: {
+          sellerId: true,
+        },
+      },
+    },
+  });
+  if (!product) throw new Error("Single Product Checkout Failed");
+  createOrder(
+    paymentIntent,
+    [{ variantId, qty, sellerId: product.product.sellerId }],
+    payload?.id,
+  );
   return paymentIntent;
 };
 

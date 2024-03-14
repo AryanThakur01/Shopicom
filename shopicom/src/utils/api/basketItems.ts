@@ -22,6 +22,8 @@ export const lockProducts = async (sessionId: string) => {
       })
       .from(variants)
       .where(eq(variants.id, item.variantId));
+    if (curVariant[0].stock - userOrders[0].qty <= 0)
+      throw new Error("Product Out Of Stock");
     await db
       .update(variants)
       .set({

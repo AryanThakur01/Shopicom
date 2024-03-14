@@ -30,7 +30,8 @@ export const users = pgTable("users", {
 });
 export const usersRelations = relations(users, ({ many }) => ({
   products: many(products),
-  orders: many(orders),
+  orders: many(orders, { relationName: "customer_rel" }),
+  deliveryQueue: many(orders, { relationName: "seller_rel" }),
 }));
 
 export type User = typeof users.$inferSelect; // return type when queried
