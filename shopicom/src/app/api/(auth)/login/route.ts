@@ -1,11 +1,9 @@
 import { users } from "@/db/schema/users";
 import { NextRequest, NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
-import { db, queryClient } from "@/db";
+import { db } from "@/db";
 import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { compare } from "bcryptjs";
-import { drizzle } from "drizzle-orm/postgres-js";
 import { schema } from "@/lib/schemas/auth";
 import { ZodError } from "zod";
 import { generateJWT } from "@/utils/api/helpers";

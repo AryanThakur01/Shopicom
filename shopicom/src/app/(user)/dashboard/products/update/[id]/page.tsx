@@ -1,6 +1,6 @@
 import ProductCatelogueForm from "@/components/dashboard/products/create/ProductCatelogueForm";
 import withAuth from "@/components/withAuth";
-import { dbDriver } from "@/db";
+import { db } from "@/db";
 import { products } from "@/db/schema/products";
 import { eq } from "drizzle-orm";
 import React from "react";
@@ -11,7 +11,7 @@ interface IPage {
   };
 }
 const page: React.FC<IPage> = async ({ params }) => {
-  const product = await dbDriver.query.products.findMany({
+  const product = await db.query.products.findMany({
     with: {
       variants: {
         with: { images: true },

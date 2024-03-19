@@ -1,6 +1,5 @@
 import { db } from "@/db";
 import { orders } from "@/db/schema/orders";
-import { variants } from "@/db/schema/products";
 import { cancelOrder, lockProducts } from "@/utils/api/basketItems";
 import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";

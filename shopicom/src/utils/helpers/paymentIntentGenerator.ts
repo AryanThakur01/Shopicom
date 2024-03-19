@@ -1,4 +1,4 @@
-import { db, dbDriver } from "@/db";
+import { db } from "@/db";
 import { variants } from "@/db/schema/products";
 import { eq } from "drizzle-orm";
 import { NextRequest } from "next/server";
@@ -49,7 +49,7 @@ const cart = async (req: NextRequest) => {
     apiVersion: "2023-10-16",
   });
 
-  const products = await dbDriver.query.carts.findMany({
+  const products = await db.query.carts.findMany({
     where: eq(carts.userId, payload.id),
     with: {
       variant: true,
@@ -117,7 +117,7 @@ const singleProduct = async (
     amount: amount * 100,
     currency: "inr",
   });
-  const product = await dbDriver.query.variants.findFirst({
+  const product = await db.query.variants.findFirst({
     columns: {},
     where: eq(variants.id, variantId),
     with: {

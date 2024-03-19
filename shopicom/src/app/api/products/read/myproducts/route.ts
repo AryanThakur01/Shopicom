@@ -1,4 +1,4 @@
-import { dbDriver } from "@/db";
+import { db } from "@/db";
 import { products } from "@/db/schema/products";
 import { jwtDecoder } from "@/utils/api/helpers";
 import { eq } from "drizzle-orm";
@@ -17,7 +17,7 @@ export const GET = async (req: NextRequest, _: NextResponse) => {
 
     const page: number = Number(url.searchParams.get("page"));
     if (!prodId) {
-      const allProducts = await dbDriver.query.products.findMany({
+      const allProducts = await db.query.products.findMany({
         with: {
           properties: true,
           variants: {
@@ -32,7 +32,7 @@ export const GET = async (req: NextRequest, _: NextResponse) => {
       });
       return new NextResponse(JSON.stringify(allProducts.reverse()));
     }
-    const allProducts = await dbDriver.query.products.findFirst({
+    const allProducts = await db.query.products.findFirst({
       with: {
         properties: true,
         variants: {

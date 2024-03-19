@@ -1,6 +1,5 @@
 import { db } from "@/db";
 import { users } from "@/db/schema/users";
-import { sellerVerifySchema } from "@/lib/schemas/sellerVerify";
 import { generateJWT, jwtDecoder } from "@/utils/api/helpers";
 import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";

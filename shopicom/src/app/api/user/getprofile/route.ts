@@ -1,8 +1,7 @@
-import { db, queryClient } from "@/db";
+import { db } from "@/db";
 import { users } from "@/db/schema/users";
 import { jwtDecoder } from "@/utils/api/helpers";
 import { eq } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/postgres-js";
 import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (req: NextRequest, res: NextResponse) => {

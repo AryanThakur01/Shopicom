@@ -16,10 +16,15 @@ const schema = {
 };
 
 // for migrations
-export const queryClient = postgres(process.env.POSTGRES_URL || "");
-export const dbDriver = drizzle(queryClient, { schema });
-
-migrate(dbDriver, { migrationsFolder: "src/db/migrations" });
+const migrationClient = postgres(process.env.POSTGRES_URL || "", {
+  max: 1,
+  max_lifetime: 1000,
+  idle_timeout: 1000,
+});
+migrate(drizzle(migrationClient, { schema }), {
+  migrationsFolder: "src/db/migrations",
+});
 
 // for query purposes
-export const db = drizzle(queryClient);
+export const dbDriver = drizzle(migrationClient, { schema });
+export const db = drizzle(migrationClient, { schema });

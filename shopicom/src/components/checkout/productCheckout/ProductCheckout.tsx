@@ -1,4 +1,4 @@
-import { dbDriver } from "@/db";
+import { db } from "@/db";
 import { products, variants } from "@/db/schema/products";
 import { eq } from "drizzle-orm";
 import React from "react";
@@ -17,7 +17,7 @@ interface IProductCheckout {
 const ProductCheckout: React.FC<IProductCheckout> = async ({
   searchParams,
 }) => {
-  const product = await dbDriver.query.products.findFirst({
+  const product = await db.query.products.findFirst({
     where: eq(products.id, Number(searchParams.productId)),
     with: {
       variants: {

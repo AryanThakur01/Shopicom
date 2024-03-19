@@ -2,7 +2,7 @@ import ActivityButtons from "@/components/products/product/ActivityButtons";
 import ImageCarousel from "@/components/products/product/ImageCarousel";
 import ProductPrice from "@/components/products/product/ProductPrice";
 import VariantSelector from "@/components/products/product/VariantSelector";
-import { dbDriver } from "@/db";
+import { db } from "@/db";
 import { products } from "@/db/schema/products";
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
@@ -15,7 +15,7 @@ const page: React.FC<IPage> = async ({ params }) => {
   const productId = Number(params.id);
   if (isNaN(productId)) redirect("/");
 
-  const product = await dbDriver.query.products.findFirst({
+  const product = await db.query.products.findFirst({
     where: eq(products.id, productId),
     with: {
       seller: true,

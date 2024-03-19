@@ -1,4 +1,4 @@
-import { dbDriver } from "@/db";
+import { db } from "@/db";
 import { categories } from "@/db/schema/products";
 import { eq } from "drizzle-orm";
 import React from "react";
@@ -6,7 +6,7 @@ import ProductCard from "../ProductCard";
 
 const Sponsored = async () => {
   const fetchSponsored = async () => {
-    return await dbDriver.query.categories.findMany({
+    return await db.query.categories.findMany({
       with: {
         product: {
           with: {

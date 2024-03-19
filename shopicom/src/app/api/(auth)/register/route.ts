@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db, queryClient } from "@/db";
+import { db } from "@/db";
 import { users } from "@/db/schema/users";
-import { genSalt, hash } from "bcryptjs";
 import { cookies } from "next/headers";
 import { generateJWT, passwordEncrypter } from "@/utils/api/helpers";
 import jwt from "jsonwebtoken";
-import { drizzle } from "drizzle-orm/postgres-js";
 import { schema } from "@/lib/schemas/auth";
 import { ZodError } from "zod";
 

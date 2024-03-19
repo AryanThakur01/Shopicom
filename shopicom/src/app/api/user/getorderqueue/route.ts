@@ -1,4 +1,4 @@
-import { dbDriver } from "@/db";
+import { db } from "@/db";
 import { jwtDecoder } from "@/utils/api/helpers";
 import { eq, and } from "drizzle-orm";
 import { orders } from "@/db/schema/orders";
@@ -13,7 +13,7 @@ export const GET = async (req: NextRequest) => {
       throw new Error("Session Token role or id missing");
     if (payload.role === "customer") throw new Error("You are no seller");
 
-    const orderQueue = await dbDriver.query.orders.findMany({
+    const orderQueue = await db.query.orders.findMany({
       where: and(
         eq(orders.sellerId, payload.id),
         eq(orders.paymentStatus, "succeeded"),

@@ -1,6 +1,6 @@
-import { db, dbDriver } from "@/db";
+import { db } from "@/db";
 import { jwtDecoder } from "@/utils/api/helpers";
-import { eq, and, DrizzleError } from "drizzle-orm";
+import { eq, DrizzleError } from "drizzle-orm";
 import { orders } from "@/db/schema/orders";
 import { NextRequest, NextResponse } from "next/server";
 import { JwtPayload } from "jsonwebtoken";

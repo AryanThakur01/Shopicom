@@ -1,4 +1,4 @@
-import { db, queryClient } from "@/db";
+import { db } from "@/db";
 import {
   images,
   product,
@@ -10,7 +10,6 @@ import {
 } from "@/db/schema/products";
 import { NextRequest, NextResponse } from "next/server";
 import { jwtDecoder } from "@/utils/api/helpers";
-import { drizzle } from "drizzle-orm/postgres-js";
 import { and, eq } from "drizzle-orm";
 
 interface IReqVariant extends variant {

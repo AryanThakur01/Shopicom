@@ -1,4 +1,4 @@
-import { db, dbDriver } from "@/db";
+import { db } from "@/db";
 import { carts } from "@/db/schema/carts";
 import { jwtDecoder } from "@/utils/api/helpers";
 import { eq } from "drizzle-orm";
@@ -15,7 +15,7 @@ export const GET = async (req: NextRequest) => {
     const userId = jwtPayload.id;
 
     // const cart = await db.select().from(carts).where(eq(carts.userId, userId));
-    const cart = await dbDriver.query.carts.findMany({
+    const cart = await db.query.carts.findMany({
       where: eq(carts.userId, userId),
       with: {
         item: true,
