@@ -1,6 +1,6 @@
 import Image from "next/image";
 import React from "react";
-import { LuBox, LuLocate, LuMapPin, LuPhone } from "react-icons/lu";
+import { LuBox, LuGlobe2, LuLocate, LuMapPin, LuPhone } from "react-icons/lu";
 
 interface IQueuedOrderCard {
   image: string;
@@ -43,7 +43,7 @@ const QueuedOrderCard: React.FC<IQueuedOrderCard> = ({
           <div className="w-[3px] h-full bg-muted rounded" />
           <p className="flex items-center gap-2">
             <span>
-              <LuLocate />
+              <LuGlobe2 />
             </span>
             <span>{country}</span>
           </p>

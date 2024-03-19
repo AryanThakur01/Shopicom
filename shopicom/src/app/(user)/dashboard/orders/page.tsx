@@ -32,7 +32,7 @@ const Page = () => {
     <main>
       <h1 className="text-4xl font-bold">My Orders</h1>
       <hr className="border-border my-10" />
-      {orders.map((item) => (
+      {orders?.map((item) => (
         <ProductItem
           key={item.id}
           itemId={item.id}

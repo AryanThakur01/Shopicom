@@ -32,6 +32,7 @@ const Page = () => {
         {orderData.map((item) => {
           const address: ContactOption["address"] = JSON.parse(item.address);
           const location = address.line1 + (address.line2 || ", ") + address.city + ", " + address.state; //prettier-ignore
+          console.log(address);
           return (
             <QueuedOrderCard
               key={item.id}

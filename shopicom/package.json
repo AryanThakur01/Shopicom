@@ -18,6 +18,7 @@
     "@reduxjs/toolkit": "^2.1.0",
     "@stripe/react-stripe-js": "^2.5.1",
     "@stripe/stripe-js": "^3.0.6",
+    "@uploadthing/react": "^6.4.0",
     "bcryptjs": "^2.4.3",
     "drizzle-orm": "^0.29.3",
     "embla-carousel-react": "^8.0.0-rc22",
@@ -36,6 +37,7 @@
     "sharp": "^0.33.2",
     "stripe": "^14.19.0",
     "tailwind-merge": "^2.2.1",
+    "uploadthing": "^6.6.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
