@@ -16,11 +16,7 @@ const schema = {
 };
 
 // for migrations
-const migrationClient = postgres(process.env.POSTGRES_URL || "", {
-  max: 1,
-  max_lifetime: 1000,
-  idle_timeout: 1000,
-});
+const migrationClient = postgres(process.env.POSTGRES_URL || "");
 migrate(drizzle(migrationClient, { schema }), {
   migrationsFolder: "src/db/migrations",
 });
