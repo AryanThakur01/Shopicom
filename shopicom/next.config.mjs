@@ -16,6 +16,11 @@ const nextConfig = {
       },
     ],
   },
+  experimental: {
+    serverActions: {
+      allowedForwardedHosts: ["shopicom.aryanthakur.me"],
+    },
+  },
 };
 
 export default nextConfig;

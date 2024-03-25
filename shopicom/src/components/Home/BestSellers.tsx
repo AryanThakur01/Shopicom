@@ -3,56 +3,50 @@ import React, { useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import ProductCard from "../ProductCard";
 import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
+import { url } from "@/lib/constants";
+import { category, image, product, variant } from "@/db/schema/products";
 
-interface IFetchedBestSellers {
-  id: number;
-  tag: string;
-  productId: number;
-  product: {
-    description: string;
-    id: number;
-    name: string;
-    sellerId: number;
-    variants: {
-      id: number;
-      images: { value: string }[];
-      price: number;
-      discountedPrice: number;
-    }[];
-  };
+interface IVariants extends variant {
+  images: image[];
+}
+interface IProducts extends product {
+  variants: IVariants[];
+}
+interface IFetchedBestSellers extends category {
+  product: IProducts;
 }
 const BestSellers = () => {
   const [emblaRef, emblaApi] = useEmblaCarousel();
-  const [bestSeller, setBestSeller] = useState<IFetchedBestSellers[]>();
-  const [page, setPage] = useState(0);
+  const [bestSeller, setBestSeller] = useState<IFetchedBestSellers[]>([]);
+
+  const fetchBestSellers = async () => {
+    const res = await fetch(url + "/api/products/read/bestsellers");
+    const { bestSellers }: { bestSellers: IFetchedBestSellers[] } =
+      await res.json();
+    setBestSeller(bestSellers);
+  };
 
   useEffect(() => {
-    fetch("/api/products/read/bestsellers", {
-      method: "GET",
-    }).then(async (res) => {
-      try {
-        const { bestSellers }: { bestSellers: IFetchedBestSellers[] } =
-          await res.json();
-        setBestSeller(bestSellers);
-      } catch (error) {}
-    });
+    fetchBestSellers();
   }, []);
 
   // const bestSeller = await fetchSponsored();
   return (
-    <section className="mt-20 container py-8 bg-muted">
-      <h2 className="text-4xl text-muted-foreground font-bold">Best Sellers</h2>
-      <hr className="my-8 border-border" />
-      <div>
-        {bestSeller && (
-          <>
+    <>
+      {!!bestSeller.length && (
+        <section className="mt-20 container py-8 bg-muted">
+          <h2 className="text-4xl text-muted-foreground font-bold">
+            Best Sellers
+          </h2>
+          <hr className="my-8 border-border" />
+          <div>
             <div className="flex justify-between gap-2">
               <button
                 className="h-fit my-auto text-4xl p-1 hover:text-foreground text-muted-foreground md:block hidden"
                 onClick={() => {
                   if (!emblaApi) return;
                   emblaApi.scrollPrev();
-                  setPage(emblaApi.selectedScrollSnap());
+                  // setPage(emblaApi.selectedScrollSnap());
                 }}
               >
                 <LuChevronLeft />
@@ -85,16 +79,16 @@ const BestSellers = () => {
                 onClick={() => {
                   if (!emblaApi) return;
                   emblaApi.scrollNext();
-                  setPage(emblaApi.selectedScrollSnap());
+                  // setPage(emblaApi.selectedScrollSnap());
                 }}
               >
                 <LuChevronRight />
               </button>
             </div>
-          </>
-        )}
-      </div>
-    </section>
+          </div>
+        </section>
+      )}
+    </>
   );
 };
 

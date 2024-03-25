@@ -7,14 +7,12 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import {
-  LuCheck,
   LuLoader2,
   LuMinus,
   LuPlus,
   LuShoppingCart,
   LuTrash,
 } from "react-icons/lu";
-import { twMerge } from "tailwind-merge";
 
 const CartItems = () => {
   const [total, setTotal] = useState(0);
@@ -27,7 +25,7 @@ const CartItems = () => {
     let tempTotal = 0;
     let discount = 0;
     let netTotal = 0;
-    cart.map((item) => {
+    cart?.map((item) => {
       tempTotal += item.variant?.price;
       discount += item.variant?.price - item.variant?.discountedPrice;
       netTotal += item.variant?.discountedPrice;
@@ -98,7 +96,7 @@ const CartItems = () => {
             </p>
           </div>
           <hr className="my-4 border-border" />
-          {(discount / total) * 100 >= 20 && (
+          {total > 0 && (discount / total) * 100 >= 20 ? (
             <p className="text-center text-success">
               Congrats you saved{" "}
               <b className="text-lg">
@@ -106,6 +104,8 @@ const CartItems = () => {
               </b>{" "}
               on this order
             </p>
+          ) : (
+            <></>
           )}
         </div>
         <Link
