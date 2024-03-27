@@ -26,10 +26,13 @@ export const GET = async (req: NextRequest) => {
 
     const count = Number(url.searchParams.get("count"));
     const sellerId = Number(url.searchParams.get("seller_id"));
+    const category = url.searchParams.get("category");
     if (!count || !sellerId)
-      throw new Error('Send The "Count" and "seller_id" in query');
+      throw new Error(
+        'Send The "count" and "seller_id" in query and optional category',
+      );
 
-    const product = populate(count, sellerId);
+    const product = populate(count, sellerId, category || "object");
 
     return NextResponse.json(product.slice(0, 50));
   } catch (error) {
@@ -101,11 +104,12 @@ const insertProduct = async (body: TFormInput, sellerId: number) => {
   }
 };
 
-const createProduct = () => {
+const createProduct = (category: string) => {
   const wordList = faker.word;
-  const name = wordList.noun() + " " + wordList.verb();
+  const name = wordList.noun() + " " + wordList.adjective();
   const num = randomInt(10);
-  const description = `${faker.rawDefinitions.commerce?.product_description?.[num]}`;
+  const description = `${category.toUpperCase()} || ${faker.rawDefinitions
+    .commerce?.product_description?.[num]}`;
   const properties = [];
   for (let i = 0; i < 8; i++)
     properties.push({ key: wordList.noun(), value: wordList.noun() });
@@ -115,7 +119,7 @@ const createProduct = () => {
     const color = faker.color.rgb();
     const images = [];
     for (let i = 0; i < 5; i++) {
-      const image = faker.image.urlLoremFlickr({ category: "object" });
+      const image = faker.image.urlLoremFlickr({ category });
       images.push({ value: image });
     }
     const price = faker.number.int({ min: 200, max: 10000 });
@@ -134,10 +138,10 @@ const createProduct = () => {
 
   return { name, description, properties, variants };
 };
-const populate = (count: number, sellerId: number) => {
+const populate = (count: number, sellerId: number, category: string) => {
   let body: TFormInput[] = [];
   for (let index = 0; index < count; index++) {
-    const product = createProduct();
+    const product = createProduct(category);
     body.push(product);
     insertProduct(product, sellerId);
   }

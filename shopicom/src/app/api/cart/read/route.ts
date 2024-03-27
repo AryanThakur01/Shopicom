@@ -3,12 +3,12 @@ import { carts } from "@/db/schema/carts";
 import { jwtDecoder } from "@/utils/api/helpers";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/dist/server/web/spec-extension/response";
-import { cookies } from "next/headers";
 import { NextRequest } from "next/server";
 
+export const dynamic = "force-dynamic";
 export const GET = async (req: NextRequest) => {
   try {
-    const token = cookies().get("Session_Token")?.value;
+    const token = req.cookies.get("Session_Token")?.value;
     if (!token) throw new Error("Log in to continue");
     const jwtPayload = jwtDecoder(token);
     if (typeof jwtPayload === "string") throw new Error("Incorrect token");

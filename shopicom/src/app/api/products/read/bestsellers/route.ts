@@ -3,7 +3,8 @@ import { categories } from "@/db/schema/products";
 import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
-export const GET = async (req: NextRequest, _: NextResponse) => {
+export const dynamic = "force-dynamic";
+export const GET = async (req: NextRequest) => {
   try {
     const url = new URL(req.url);
     const page: number = Number(url.searchParams.get("page"));

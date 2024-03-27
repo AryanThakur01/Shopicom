@@ -6,7 +6,7 @@ import {
   useSelector,
 } from "@/lib/redux";
 import { ICart } from "@/types/cart";
-import React, { useEffect, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { LuLoader2 } from "react-icons/lu";
 import { twMerge } from "tailwind-merge";
@@ -15,11 +15,13 @@ interface IAddToCartBtn {
   productId: number;
   variantId?: number;
   className?: string;
+  icon?: ReactNode;
 }
 const AddToCartBtn: React.FC<IAddToCartBtn> = ({
   productId,
   className,
   variantId,
+  icon,
 }) => {
   const [isSelected, setIsSelected] = useState(false);
   const [status, setStatus] = useState<"idle" | "loading">("idle");
@@ -61,21 +63,26 @@ const AddToCartBtn: React.FC<IAddToCartBtn> = ({
     for (const item of cart) if (item.itemId === productId) setIsSelected(true);
   }, [cart]);
   return (
-    <button
-      className={twMerge(
-        "bg-transparent text-primary border border-primary p-2 md:px-6 px-4 rounded w-40 md:text-xl text-xl font-bold",
-        className,
-        isSelected && "text-foreground bg-primary",
-      )}
-      onClick={addToCart}
-      disabled={status === "loading" || (status === "idle" && isSelected)}
-    >
-      {status === "loading" ? (
-        <LuLoader2 className="animate-spin mx-auto" />
-      ) : (
-        "Add to cart"
-      )}
-    </button>
+    <>
+      <button
+        className={twMerge(
+          !icon &&
+            "bg-transparent text-primary border border-primary p-2 md:px-6 px-4 rounded w-40 md:text-xl text-xl font-bold",
+          isSelected && (icon ? "text-success" : "text-foreground bg-primary"),
+          className,
+        )}
+        onClick={addToCart}
+        disabled={status === "loading" || (status === "idle" && isSelected)}
+      >
+        {status === "loading" ? (
+          <LuLoader2 className="animate-spin mx-auto" />
+        ) : icon ? (
+          icon
+        ) : (
+          "Add to cart"
+        )}
+      </button>
+    </>
   );
 };
 

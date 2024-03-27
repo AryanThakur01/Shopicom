@@ -22,13 +22,19 @@ const ImageCarousel: React.FC<IImageCarousel> = ({ image }) => {
       ) : (
         <>
           <div className="w-full md:h-[80vh] overflow-hidden">
-            <Image
-              src={images[curImage].value}
-              alt="Cur Product"
-              width={1920}
-              height={1080}
-              className="min-h-full mx-auto"
-            />
+            {images.map((item, i) => (
+              <Image
+                key={item.id}
+                src={item.value}
+                alt="Cur Product"
+                width={1920}
+                height={1080}
+                className={twMerge(
+                  i === curImage ? "block" : "hidden",
+                  "min-h-full mx-auto",
+                )}
+              />
+            ))}
           </div>
           <div className="my-8 flex gap-4">
             {images.map((item, index) => (

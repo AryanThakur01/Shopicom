@@ -5,7 +5,7 @@ import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
-export const GET = async (req: NextRequest, _: NextResponse) => {
+export const GET = async (req: NextRequest) => {
   try {
     const url = new URL(req.url);
     const token = cookies().get("Session_Token")?.value;
