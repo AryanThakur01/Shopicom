@@ -41,22 +41,6 @@ export const POST = async (req: NextRequest) => {
   }
 };
 
-// TESTING
-export const GET = async () => {
-  try {
-    const res = await db.select().from(contents);
-    return NextResponse.json({ data: res }, { status: 200 });
-  } catch (error) {
-    console.log(error);
-    if (error instanceof Error)
-      return NextResponse.json({ error }, { status: 400 });
-    return NextResponse.json(
-      { error: "Error: /api/content/banner - get" },
-      { status: 500 },
-    );
-  }
-};
-
 export const DELETE = async (req: NextRequest) => {
   try {
     const url = new URL(req.url);
@@ -72,6 +56,22 @@ export const DELETE = async (req: NextRequest) => {
     if (isNaN(id)) throw new Error("Pass in 'id' in the correct format");
 
     const res = await db.delete(contents).where(eq(contents.id, id));
+    return NextResponse.json({ data: res }, { status: 200 });
+  } catch (error) {
+    console.log(error);
+    if (error instanceof Error)
+      return NextResponse.json({ error }, { status: 400 });
+    return NextResponse.json(
+      { error: "Error: /api/content/banner - get" },
+      { status: 500 },
+    );
+  }
+};
+
+// TESTING
+export const GET = async () => {
+  try {
+    const res = await db.select().from(contents);
     return NextResponse.json({ data: res }, { status: 200 });
   } catch (error) {
     console.log(error);

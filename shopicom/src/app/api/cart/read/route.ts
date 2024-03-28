@@ -14,7 +14,6 @@ export const GET = async (req: NextRequest) => {
     if (typeof jwtPayload === "string") throw new Error("Incorrect token");
     const userId = jwtPayload.id;
 
-    // const cart = await db.select().from(carts).where(eq(carts.userId, userId));
     const cart = await db.query.carts.findMany({
       where: eq(carts.userId, userId),
       with: {

@@ -5,6 +5,7 @@ import ProductCard from "../ProductCard";
 import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
 import { url } from "@/lib/constants";
 import { category, image, product, variant } from "@/db/schema/products";
+import { useGetProfileQuery } from "@/lib/redux/services/userApi";
 
 interface IVariants extends variant {
   images: image[];

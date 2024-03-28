@@ -34,3 +34,57 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+# BACKEND
+
+### ADMIN ONLY ROUTES:
+
+- Home Page Banner:
+  - POST: /api/content/banner
+  - DELETE: /api/content/banner
+- Populate Data:
+  - GET: /api/populate
+
+### Authentication routes
+
+- POST: /api/login
+- POST: /api/register
+- POST: /api/verifyseller
+
+### Cart routes
+
+- POST: /api/cart/add
+- POST: /api/cart/delete
+- GET: /api/cart/read
+
+### Checkout route
+
+- GET: /api/checkout
+
+### Product routes
+
+- GET: /api/products
+- POST: /api/products/update
+- POST: /api/products/update/category
+
+- GET: /api/products/read/myproducts
+- GET: /api/products/read/bestsellers
+
+- POST: /api/products/create
+
+### UploadThings route
+
+- GET, POST: /api/uploadthing
+
+### User routes
+
+- GET: /api/user/getorderqueue
+- GET: /api/user/getprofile
+- GET: /api/user/orders
+- PATCH: /api/user/orders/received
+- POST: /api/user/updateprofile
+
+### Webhooks route
+
+- Stripe webhook
+  - POST: /api/webhooks
