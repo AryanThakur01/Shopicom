@@ -12,6 +12,7 @@ import { stripePublicKey, url } from "@/lib/constants";
 import toast from "react-hot-toast";
 import { twMerge } from "tailwind-merge";
 import { LuLoader2 } from "react-icons/lu";
+import { useGetProfileQuery } from "@/lib/redux/services/user";
 
 interface IPaymentsForm {
   variantId?: number;
@@ -73,6 +74,7 @@ const CheckoutForm = () => {
   const [isLoading, setIsLoading] = React.useState(false);
   const stripe = useStripe();
   const elements = useElements();
+  const { data: user } = useGetProfileQuery();
 
   useEffect(() => {
     if (!stripe) return;
@@ -114,10 +116,9 @@ const CheckoutForm = () => {
     const sResult = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: url + "/dashboard/orders",
+        return_url: url + (user ? "/dashboard/orders" : "/purchases"),
       },
     });
-    console.log(sResult);
     const error = sResult.error;
 
     if (error) {
@@ -126,12 +127,7 @@ const CheckoutForm = () => {
       } else {
         toast.error(error?.message || "Something Wrong");
       }
-    } else {
-      // if (sResult.paymentIntent.status === "succeeded")
-      //   toast.success("Payment Succeeded");
-      // else toast.error(sResult.paymentIntent.status);
     }
-
     setIsLoading(false);
   };
 

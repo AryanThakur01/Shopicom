@@ -6,7 +6,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LuLoader, LuLock, LuMail } from "react-icons/lu";
 // import * as zod from "zod";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 // import { useDispatch, userDataAsync } from "@/lib/redux";
 import { schema, type TFormInput } from "@/lib/schemas/auth";
 import { useRegisterMutation } from "@/lib/redux/services/user";
@@ -15,6 +15,7 @@ const Register = () => {
   const [submitting, setSubmitting] = useState(false);
   const [registerUser] = useRegisterMutation();
   const router = useRouter();
+  const callback = useSearchParams().get("callback");
   const {
     handleSubmit,
     register,
@@ -47,7 +48,10 @@ const Register = () => {
         <h1 className="text-center text-2xl">Register</h1>
         <h2 className="text-center text-xs text-muted-foreground my-2">
           Already have an account?{" "}
-          <Link href="/login" className="hover:underline text-primary">
+          <Link
+            href={"/login" + ((callback && `?callback=${callback}`) || "")}
+            className="hover:underline text-primary"
+          >
             Login
           </Link>
         </h2>

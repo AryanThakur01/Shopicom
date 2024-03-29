@@ -1,6 +1,5 @@
 "use client";
-import { useDispatch, useSelector, userSlice } from "@/lib/redux";
-import { ISession, getServerSession } from "@/utils/serverActions/session";
+import { ISession } from "@/utils/serverActions/session";
 import * as Dialog from "@radix-ui/react-dialog";
 import Link from "next/link";
 import React, { FC, ReactNode, useEffect, useState } from "react";
@@ -227,8 +226,9 @@ const Drawer: FC<IProfileDialog> = ({ children }) => {
             {session?.role === "customer" && (
               <NavLink linkText="Become A Seller" href="/selleraccount" />
             )}
+            {/* {!session && <NavLink linkText="My Purchases" href="/purchases" />} */}
           </div>
-          <div className="mb-8 mt-auto px-4">
+          <div className="mb-24 mt-auto px-4">
             {session ? (
               <Dialog.Close
                 className="w-full border border-border p-2 bg-background rounded flex items-center gap-4 px-4"

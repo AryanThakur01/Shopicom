@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const hiddenRoutes = ["/login", "/register"];
+const hiddenRoutes = ["/login", "/register", "/purchases"];
 const privateRoutes = ["/dashboard/*", "/cart"];
 
 export async function middleware(request: NextRequest) {

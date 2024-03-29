@@ -16,7 +16,7 @@ const Banner = async () => {
   banners.sort((a, b) => a.id - b.id);
 
   return (
-    <section className="my-4 container">
+    <section className="my-4 md:container">
       <Carousel>
         <div className="flex">
           {banners &&

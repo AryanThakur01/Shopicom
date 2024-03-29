@@ -5,7 +5,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LuLoader, LuLock, LuMail } from "react-icons/lu";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useDispatch, userDataAsync } from "@/lib/redux";
 import { schema, type TFormInput } from "@/lib/schemas/auth";
 import { ZodError } from "zod";
@@ -15,6 +15,7 @@ const Login = () => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
+  const callback = useSearchParams().get("callback");
   const {
     handleSubmit,
     register,
@@ -47,7 +48,10 @@ const Login = () => {
         <h1 className="text-center text-2xl">Welcome Back</h1>
         <h2 className="text-center text-xs text-muted-foreground my-2">
           Don&apos;t have an account yet?{" "}
-          <Link href="/register" className="hover:underline text-primary">
+          <Link
+            href={"/register" + ((callback && `?callback=${callback}`) || "")}
+            className="hover:underline text-primary"
+          >
             Register Now
           </Link>
         </h2>

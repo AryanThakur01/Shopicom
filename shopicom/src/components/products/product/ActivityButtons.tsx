@@ -1,6 +1,7 @@
 "use client";
 import AddToCartBtn from "@/components/AddToCartBtn";
 import { useSelector } from "@/lib/redux";
+import { useGetProfileQuery } from "@/lib/redux/services/user";
 import Link from "next/link";
 import React, { useState } from "react";
 import { LuMinus, LuPlus, LuWallet2 } from "react-icons/lu";
@@ -10,6 +11,7 @@ interface IActivityButtons {
 }
 const ActivityButtons: React.FC<IActivityButtons> = ({ productId }) => {
   const [qty, setQty] = useState("1");
+  const { data: user } = useGetProfileQuery();
   const product = useSelector((state) => state.product.initialProduct.value);
   const prodVariant = useSelector(
     (state) => state.product.initialProduct.value.variant,
@@ -58,7 +60,11 @@ const ActivityButtons: React.FC<IActivityButtons> = ({ productId }) => {
         </div>
         <Link
           className="bg-success w-full rounded p-2 flex justify-center items-center gap-2"
-          href={`/checkout/?productId=${productId}&variantId=${product.variant.id}&qty=${qty}`}
+          href={
+            user
+              ? `/checkout/?productId=${productId}&variantId=${product.variant.id}&qty=${qty}`
+              : `/login?callback=/products/${productId}`
+          }
         >
           <LuWallet2 />
           <span>Buy Now</span>

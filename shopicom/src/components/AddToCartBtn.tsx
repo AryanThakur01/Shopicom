@@ -25,7 +25,7 @@ const AddToCartBtn: React.FC<IAddToCartBtn> = ({
   const [isSelected, setIsSelected] = useState(false);
   const cart = useGetCartQuery().data;
   // const user = useSelector((state) => state.user.value.isLoggedin);
-  const user = useGetProfileQuery();
+  const { data: user } = useGetProfileQuery();
   const [addToCart, { isLoading }] = useAddToCartMutation();
 
   const cartHandler = async () => {
