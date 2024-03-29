@@ -61,7 +61,7 @@ const BannerUploader = () => {
 
   return (
     <div>
-      <h2 className="text-2xl">Home Page Banner</h2>
+      <h2 className="text-2xl">Home Page Banner (Only For Admin)</h2>
       <hr className="mb-8 mt-4 border-border" />
       <div className="border border-border rounded-lg">
         <div className="min-h-72 p-2 flex">

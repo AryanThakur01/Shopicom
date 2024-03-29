@@ -1,14 +1,14 @@
 "use client";
-import CartItems from "@/components/cart/CartItems";
 import { useSelector } from "@/lib/redux";
 import React from "react";
 import { ProductCard } from "../ProductCard";
+import { useGetCartQuery } from "@/lib/redux/services/cart";
 
 const CartCheckout = () => {
-  const cart = useSelector((state) => state.cart.value);
+  const cart = useGetCartQuery().data;
   return (
     <div className="flex flex-col gap-4">
-      {cart.map((item) => (
+      {cart?.map((item) => (
         <ProductCard
           name={item.item.name}
           description={item.item.description}

@@ -12,14 +12,17 @@ import { usePathname } from "next/navigation";
 import { ISession, getServerSession } from "@/utils/serverActions/session";
 import { useSelector } from "@/lib/redux";
 import Cookies from "js-cookie";
+import { useGetProfileQuery } from "@/lib/redux/services/user";
 
 interface IAsideMenu {}
 const AsideMenu: React.FC<IAsideMenu> = ({}) => {
   const [session, setSession] = useState<ISession | null>();
-  const user = useSelector((state) => state.user.value);
+  // const user = useSelector((state) => state.user.value);
+  const { data: user, isLoading } = useGetProfileQuery();
   const userStatus = useSelector((state) => state.user.status);
   useEffect(() => {
-    setSession({ id: `${user.id}`, role: user.role });
+    if (user) setSession({ id: `${user.id}`, role: user.role });
+    console.log(user);
   }, [user]);
   const menuList = [
     {

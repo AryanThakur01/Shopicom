@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { useDispatch, userDataAsync } from "@/lib/redux";
 import { schema, type TFormInput } from "@/lib/schemas/auth";
 import { ZodError } from "zod";
+import { useLoginMutation } from "@/lib/redux/services/user";
 
 const Login = () => {
   const [submitting, setSubmitting] = useState(false);
@@ -22,19 +23,21 @@ const Login = () => {
     resolver: zodResolver(schema),
     defaultValues: { email: "", password: "" },
   });
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
+  const [login] = useLoginMutation();
 
   const submitHandler: SubmitHandler<TFormInput> = async (data) => {
     setSubmitting(true);
     try {
-      const body = { ...data };
-      const config = { method: "POST", body: JSON.stringify(body) };
-      const res = await fetch("/api/login", config);
-      if (!res.ok) throw new Error((await res.json()).error);
-      dispatch(userDataAsync());
+      // const body = { ...data };
+      // const config = { method: "POST", body: JSON.stringify(body) };
+      // const res = await fetch("/api/login", config);
+      // if (!res.ok) throw new Error((await res.json()).error);
+      // dispatch(userDataAsync());
+      await login(data).unwrap();
       router.push("/");
     } catch (error) {
-      if (error instanceof Error) setError(error.message);
+      setError("Recheck username and password");
     }
     setSubmitting(false);
   };

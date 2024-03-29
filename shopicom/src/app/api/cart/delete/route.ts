@@ -30,6 +30,7 @@ export const DELETE = async (req: NextRequest) => {
 
     // Delete One
     const idParam = req.nextUrl.searchParams.get("id");
+    console.log(idParam);
     if (!idParam) throw new Error("'id' param of type number is required");
 
     const id = Number(idParam);

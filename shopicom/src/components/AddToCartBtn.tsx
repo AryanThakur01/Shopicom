@@ -1,11 +1,9 @@
 "use client";
+import { useSelector } from "@/lib/redux";
 import {
-  cartDataAsync,
-  cartSlice,
-  useDispatch,
-  useSelector,
-} from "@/lib/redux";
-import { ICart } from "@/types/cart";
+  useAddToCartMutation,
+  useGetCartQuery,
+} from "@/lib/redux/services/cart";
 import React, { ReactNode, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { LuLoader2 } from "react-icons/lu";
@@ -24,36 +22,22 @@ const AddToCartBtn: React.FC<IAddToCartBtn> = ({
   icon,
 }) => {
   const [isSelected, setIsSelected] = useState(false);
-  const [status, setStatus] = useState<"idle" | "loading">("idle");
-  const cart = useSelector((state) => state.cart.value);
+  const cart = useGetCartQuery().data;
   const user = useSelector((state) => state.user.value.isLoggedin);
-  const dispatch = useDispatch();
+  const [addToCart, { isLoading }] = useAddToCartMutation();
 
-  const addToCart = async () => {
-    setStatus("loading");
+  const cartHandler = async () => {
     try {
-      if (user) {
-        const res = await fetch("/api/cart/add", {
-          method: "POST",
-          body: JSON.stringify({ itemId: productId, variantId }),
-        });
-        if (!res.ok) throw new Error((await res.json()).error);
-        dispatch(cartDataAsync());
-      } else {
-        toast.error("Login For The Cart", {
-          style: {
-            borderRadius: "4px",
-          },
-        });
+      if (!variantId) throw new Error("No variant id found");
+      if (!user) {
+        throw new Error("Login For The Cart");
       }
+      addToCart({ itemId: productId, variantId });
     } catch (error) {
-      toast.error(`${error}`, {
-        style: {
-          borderRadius: "4px",
-        },
-      });
+      let message = "It's not you, it's us";
+      if (error instanceof Error) message = error.message;
+      toast.error(message, { style: { borderRadius: "4px" } });
     }
-    setStatus("idle");
   };
   useEffect(() => {
     if (!cart?.length) {
@@ -71,10 +55,10 @@ const AddToCartBtn: React.FC<IAddToCartBtn> = ({
           isSelected && (icon ? "text-success" : "text-foreground bg-primary"),
           className,
         )}
-        onClick={addToCart}
-        disabled={status === "loading" || (status === "idle" && isSelected)}
+        onClick={cartHandler}
+        disabled={isLoading || isSelected}
       >
-        {status === "loading" ? (
+        {isLoading ? (
           <LuLoader2 className="animate-spin mx-auto" />
         ) : icon ? (
           icon

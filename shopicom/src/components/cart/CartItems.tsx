@@ -1,6 +1,10 @@
 "use client";
 import { cart } from "@/db/schema/carts";
 import { cartSlice, useDispatch, useSelector } from "@/lib/redux";
+import {
+  useDeleteFromCartMutation,
+  useGetCartQuery,
+} from "@/lib/redux/services/cart";
 import { ICart } from "@/types/cart";
 import Image from "next/image";
 import Link from "next/link";
@@ -19,7 +23,8 @@ const CartItems = () => {
   const [discount, setDiscount] = useState(0);
   const [netTotal, setNetToatal] = useState(0);
 
-  const cart = useSelector((state) => state.cart.value);
+  // const cart = useSelector((state) => state.cart.value);
+  const cart = useGetCartQuery().data;
   const status = useSelector((state) => state.cart.status);
   useEffect(() => {
     let tempTotal = 0;
@@ -62,7 +67,7 @@ const CartItems = () => {
         {/*   </button> */}
         {/* </div> */}
         {cart?.map((item) => <Product item={item} key={item.id} />)}
-        {status !== "loading" && !cart.length && (
+        {cart && status !== "loading" && !cart.length && (
           <div className="border border-border rounded h-full w-full flex">
             <div className="text-muted font-bold m-auto min-h-80 flex flex-col justify-center">
               <LuShoppingCart className="mx-auto size-32" />
@@ -112,7 +117,7 @@ const CartItems = () => {
           href={`/checkout?cart=true`}
           className="font-bold text-muted text-center w-full bg-foreground p-2 rounded block"
         >
-          Buy Now ({cart.length})
+          Buy Now ({cart?.length})
         </Link>
       </div>
     </div>
@@ -127,23 +132,29 @@ const Product: React.FC<IProduct> = ({ item }) => {
   const [loading, setLoading] = useState(false);
   // const [selected, setSelected] = useState(false);
   const name = item.item?.name;
-  const cartItems = useSelector((state) => state.cart.value);
+  // const cartItems = useSelector((state) => state.cart.value);
+  const cartItems = useGetCartQuery().data;
   const dispatch = useDispatch();
+  const [deleteItem, { isLoading }] = useDeleteFromCartMutation();
   const dropItem = async () => {
     setLoading(true);
     try {
-      let tempCart = [...cartItems];
-      const res = await fetch(`/api/cart/delete?delete=one&id=${item.id}`, {
-        method: "DELETE",
-      });
-      if (!res.ok) throw new Error(`${(await res.json()).error}`);
-      const { data }: { data: cart[] } = await res.json();
-      if (!data || data.length === 0) throw new Error("Data Not Found");
-
-      tempCart = tempCart.filter((item) => {
-        if (item.id !== data[0].id) return item;
-      });
-      dispatch(cartSlice.actions.setCart([...tempCart]));
+      if (!cartItems) {
+        return;
+      }
+      deleteItem({ del: "one", id: item.id });
+      // let tempCart = [...cartItems];
+      // const res = await fetch(`/api/cart/delete?delete=one&id=${item.id}`, {
+      //   method: "DELETE",
+      // });
+      // if (!res.ok) throw new Error(`${(await res.json()).error}`);
+      // const { data }: { data: cart[] } = await res.json();
+      // if (!data || data.length === 0) throw new Error("Data Not Found");
+      //
+      // tempCart = tempCart.filter((item) => {
+      //   if (item.id !== data[0].id) return item;
+      // });
+      // dispatch(cartSlice.actions.setCart([...tempCart]));
     } catch (error) {
       if (error instanceof Error) toast.error(error.message);
     }
@@ -205,9 +216,13 @@ const Product: React.FC<IProduct> = ({ item }) => {
         <button
           className="text-xl text-muted-foreground hover:text-foreground transition-all duration-500"
           onClick={dropItem}
-          disabled={loading}
+          // disabled={loading}
+          disabled={isLoading}
         >
-          {!loading ? <LuTrash /> : <LuLoader2 className="animate-spin" />}
+          {
+            //!loading
+            !isLoading ? <LuTrash /> : <LuLoader2 className="animate-spin" />
+          }
         </button>
         <div className="border border-border rounded-sm mt-auto p-1 px-2 w-fit flex items-center">
           <button onClick={() => qty > 1 && setQty(qty - 1)}>

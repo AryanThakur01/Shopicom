@@ -1,11 +1,5 @@
 "use client";
-import {
-  cartDataAsync,
-  cartSlice,
-  useDispatch,
-  useSelector,
-  userSlice,
-} from "@/lib/redux";
+import { useDispatch, useSelector, userSlice } from "@/lib/redux";
 import { ISession, getServerSession } from "@/utils/serverActions/session";
 import * as Dialog from "@radix-ui/react-dialog";
 import Link from "next/link";
@@ -24,16 +18,16 @@ import {
 import { twMerge } from "tailwind-merge";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
+import { useGetProfileQuery } from "@/lib/redux/services/user";
+import { useGetCartQuery } from "@/lib/redux/services/cart";
+import toast from "react-hot-toast";
 
 const Nav = () => {
-  const dispatch = useDispatch();
   const [cartCount, setCartCount] = useState(0);
-  const cart = useSelector((s) => s.cart.value);
-  const user = useSelector((state) => state.user);
-  useEffect(() => {
-    if (!!user.value.isLoggedin) dispatch(cartDataAsync());
-    else dispatch(cartSlice.actions.resetCart());
-  }, [user]);
+
+  // -------------------------- VERSION 2 CODE --------------------------------
+  const cart = useGetCartQuery().data;
+
   useEffect(() => {
     if (!cart || !cart.length) {
       setCartCount(0);
@@ -43,6 +37,8 @@ const Nav = () => {
     for (const item of cart) if (!item.isSeen) tempCount++;
     setCartCount(tempCount);
   }, [cart]);
+  // ----------------------------- X -- X -- X --------------------------------
+
   return (
     <nav className="flex flex-col container h-12 bg-black/40 backdrop-blur-xl sticky top-0 z-30">
       <div className="my-auto flex items-center">
@@ -61,7 +57,7 @@ const Nav = () => {
               {!!cartCount && (
                 <div className="h-0 w-0 relative right-2 bottom-5">
                   <div className="h-5 w-5 bg-muted rounded-full text-foreground text-[10px] font-bold flex justify-center items-center">
-                    {cartCount <= 99 ? cartCount : `${cartCount}+`}
+                    {cartCount <= 99 ? cartCount : `99+`}
                   </div>
                 </div>
               )}
@@ -196,9 +192,10 @@ interface IProfileDialog {
 }
 const Drawer: FC<IProfileDialog> = ({ children }) => {
   const [session, setSession] = useState<ISession | null>();
-  const user = useSelector((state) => state.user.value);
+  const user = useGetProfileQuery().data;
+  // const user = useSelector((state) => state.user.value);
   const router = useRouter();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   useEffect(() => {
     const token = Cookies.get("Session_Token");
     if (token) getServerSession(token).then((s) => setSession(s));
@@ -233,8 +230,9 @@ const Drawer: FC<IProfileDialog> = ({ children }) => {
                 onClick={() => {
                   Cookies.remove("Session_Token");
                   setSession(null);
-                  dispatch(userSlice.actions.resetUser());
-                  router.push("/");
+                  window.location.reload();
+                  // dispatch(userSlice.actions.resetUser());
+                  // router.push("/");
                 }}
               >
                 <LuLogOut />
@@ -243,7 +241,14 @@ const Drawer: FC<IProfileDialog> = ({ children }) => {
             ) : (
               <Dialog.Close
                 onClick={() => router.push("/login")}
-                className="gap-4 items-center w-full bg-background rounded flex p-2 px-4"
+                className="gap-4 items-center w-full bg-background rounded flex p-2 px-4 overflow-hidden h-12"
+                onMouseDown={(e) => {
+                  e.currentTarget.style.backgroundColor = "hsl(var(--muted))";
+                }}
+                onMouseUp={(e) => {
+                  e.currentTarget.style.backgroundColor =
+                    "hsl(var(--background))";
+                }}
               >
                 <LuLogIn />
                 <span>Login</span>

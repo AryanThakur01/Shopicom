@@ -28,6 +28,11 @@ export const GET = async (req: NextRequest) => {
 
     return NextResponse.json({ data: cart });
   } catch (error) {
-    return NextResponse.json({});
+    if (error instanceof Error)
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
   }
 };
