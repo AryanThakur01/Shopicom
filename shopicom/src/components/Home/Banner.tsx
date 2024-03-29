@@ -5,6 +5,7 @@ import { eq } from "drizzle-orm";
 import Carousel from "../Carousel";
 import Image from "next/image";
 import Link from "next/link";
+import { twMerge } from "tailwind-merge";
 
 const Banner = async () => {
   const banners = await db
@@ -12,39 +13,74 @@ const Banner = async () => {
     .from(contents)
     .where(eq(contents.tag, "home_banner"));
 
+  banners.sort((a, b) => a.id - b.id);
+
   return (
     <section className="my-4 container">
       <Carousel>
         <div className="flex">
           {banners &&
-            banners.map((item) => (
-              <div
-                key={item.id}
-                className="flex-[0_0_95%] bg-card mx-2 rounded-xl flex flex-col overflow-hidden"
-              >
-                <Image
-                  src={`${item.image}`}
-                  alt={`${item.title}`}
-                  width={1920}
-                  height={1080}
-                  className="h-[75vh] sm:object-cover object-fill"
-                />
-                <div className="mt-auto bg-card p-4 min-h-20 flex justify-between gap-8 items-center">
-                  <div>
-                    <h1 className="md:text-4xl text-2xl">{item.title}</h1>
-                    <h2 className="my-4 md:text-xl text-sm">{item.content}</h2>
+            banners.map((item) => {
+              const content = item.content?.split("|");
+              return (
+                <div
+                  key={item.id}
+                  className="flex-[0_0_95%] bg-card mx-2 rounded-xl flex flex-col overflow-hidden min-h-[80vh] max-h-[40rem]"
+                  style={{
+                    background: `url(${item.image})no-repeat ${
+                      content && content[1] ? content[1] : "center"
+                    } center/cover`,
+                  }}
+                >
+                  <div
+                    className={twMerge(
+                      "h-full w-full flex flex-col container justify-center",
+                      content &&
+                        content[3] &&
+                        content[3].toLowerCase() === "y" &&
+                        "bg-background/80 backdrop-blur-sm",
+                    )}
+                  >
+                    {item.title && (
+                      <>
+                        <h1
+                          className="text-6xl"
+                          style={{
+                            color: `${
+                              content && content[2]
+                                ? content[2]
+                                : "hsl(var(--foreground))"
+                            }`,
+                          }}
+                        >
+                          {item.title}
+                        </h1>
+                        <h2
+                          className="md:text-xl max-w-[28rem]"
+                          style={{
+                            color: `${
+                              content && content[2]
+                                ? content[2]
+                                : "hsl(var(--foreground))"
+                            }`,
+                          }}
+                        >
+                          {content && content[0]}
+                        </h2>
+                      </>
+                    )}
+                    {item.link && (
+                      <Link
+                        href={item.link}
+                        className="bg-success w-32 p-1 text-center rounded text-xl my-4"
+                      >
+                        Show Docs
+                      </Link>
+                    )}
                   </div>
-                  {item.link && (
-                    <Link
-                      href={item.link}
-                      className="bg-success w-20 p-1 text-center rounded text-xl"
-                    >
-                      Visit
-                    </Link>
-                  )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
         </div>
       </Carousel>
     </section>

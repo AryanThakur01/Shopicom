@@ -164,20 +164,20 @@ const SearchDropDown: React.FC<ISearchDropDown> = ({ children }) => {
               )}
               <h2 className="text-sm px-1">Quick Links</h2>
               <div className="flex flex-col gap-1 my-2 text-sm">
-                <a
-                  href="/products/2529"
-                  className="flex gap-4 items-center hover:bg-card p-1 rounded-md"
-                >
-                  <LuArrowRight />
-                  <p className="text-foreground">Shearling Baffle</p>
-                </a>
-                <a
-                  href="/products/2530"
-                  className="flex gap-4 items-center hover:bg-card p-1 rounded-md"
-                >
-                  <LuArrowRight />
-                  <p className="text-foreground">Flock Subtract</p>
-                </a>
+                {/* <a */}
+                {/*   href="/products/2529" */}
+                {/*   className="flex gap-4 items-center hover:bg-card p-1 rounded-md" */}
+                {/* > */}
+                {/*   <LuArrowRight /> */}
+                {/*   <p className="text-foreground">Shearling Baffle</p> */}
+                {/* </a> */}
+                {/* <a */}
+                {/*   href="/products/2530" */}
+                {/*   className="flex gap-4 items-center hover:bg-card p-1 rounded-md" */}
+                {/* > */}
+                {/*   <LuArrowRight /> */}
+                {/*   <p className="text-foreground">Flock Subtract</p> */}
+                {/* </a> */}
               </div>
             </div>
           </Dialog.Content>
@@ -193,12 +193,17 @@ interface IProfileDialog {
 const Drawer: FC<IProfileDialog> = ({ children }) => {
   const [session, setSession] = useState<ISession | null>();
   const user = useGetProfileQuery().data;
-  // const user = useSelector((state) => state.user.value);
   const router = useRouter();
-  // const dispatch = useDispatch();
+  const updateSession = async () => {
+    if (user) setSession({ id: user.id.toString(), role: user.role });
+    // const token = Cookies.get("Session_Token");
+    // if (token) {
+    //   const s = await getServerSession(token);
+    //   setSession(s);
+    // }
+  };
   useEffect(() => {
-    const token = Cookies.get("Session_Token");
-    if (token) getServerSession(token).then((s) => setSession(s));
+    updateSession();
   }, [user]);
   return (
     <Dialog.Root>

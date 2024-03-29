@@ -221,7 +221,7 @@ const Banner: React.FC<IBanner> = ({ data }) => {
         <input
           type="text"
           className="md:col-span-2 bg-background border-b border-b-border w-full px-4 p-1 outline-none focus:border-b-success"
-          placeholder="Description"
+          placeholder="Description | image hook | text color | overlay(y/n)"
           value={description ? description : ""}
           onChange={(e) => setDescription(e.target.value)}
         />

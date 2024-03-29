@@ -6,7 +6,7 @@ interface ICarousel {
   children: React.ReactNode;
 }
 const Carousel: React.FC<ICarousel> = ({ children }) => {
-  const [emblaRef, emblaApi] = useEmblaCarousel();
+  const [emblaRef] = useEmblaCarousel();
   return (
     <div className="overflow-hidden" ref={emblaRef}>
       {children}
