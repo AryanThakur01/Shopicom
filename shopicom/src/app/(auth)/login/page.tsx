@@ -4,7 +4,7 @@ import Link from "next/link";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LuLoader, LuLock, LuMail } from "react-icons/lu";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useDispatch, userDataAsync } from "@/lib/redux";
 import { schema, type TFormInput } from "@/lib/schemas/auth";
@@ -101,4 +101,15 @@ const Login = () => {
   );
 };
 
-export default Login;
+const Wrapper = () => {
+  const SearchBarFallback = () => {
+    return <>Error</>;
+  };
+  return (
+    <Suspense fallback={<SearchBarFallback />}>
+      <Login />
+    </Suspense>
+  );
+};
+
+export default Wrapper;

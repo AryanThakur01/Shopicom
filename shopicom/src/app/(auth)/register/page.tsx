@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 import FormField from "@/components/FormField";
 import Link from "next/link";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -102,5 +102,15 @@ const Register = () => {
     </section>
   );
 };
+const Wrapper = () => {
+  const SearchBarFallback = () => {
+    return <>Error</>;
+  };
+  return (
+    <Suspense fallback={<SearchBarFallback />}>
+      <Register />
+    </Suspense>
+  );
+};
 
-export default Register;
+export default Wrapper;
