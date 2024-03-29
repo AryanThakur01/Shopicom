@@ -1,37 +1,47 @@
 "use client";
 
-import { IProductProps } from "@/types/products";
+import { IProducts } from "@/types/products";
 import Image from "next/image";
-import React, { FC, ReactNode, useMemo, useState } from "react";
+import React, { FC, ReactNode, useEffect, useMemo, useState } from "react";
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
 import * as Popover from "@radix-ui/react-popover";
 import Link from "next/link";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { useGetMyProductsQuery } from "@/lib/redux/services/products";
 
 interface IProductList {}
 
 const ProductList: FC<IProductList> = () => {
-  const [productList, setProductList] = useState<IProductProps[]>([]);
+  const [productList, setProductList] = useState<IProducts[]>([]);
   const [productFetching, setProductFetching] = useState(false);
   const [selectedVariant, setSelectedVariant] = useState<number[]>([]);
   const [page, setPage] = useState(1);
-  const fetchProducts = async () => {
-    setProductFetching(true);
-    try {
-      const res = await fetch(`/api/products/read/myproducts?page=${page}`, {
-        method: "GET",
-      });
-      const products = await res.json();
-      console.log(products);
-      setSelectedVariant([...Array(products.length)].map(() => 0));
-      setProductList(products);
-    } catch (error) {
-      console.log("ERROR FETCHING DATA");
-    }
-    setProductFetching(false);
-  };
+  const { data: productList_v2 } = useGetMyProductsQuery(page);
 
-  useMemo(fetchProducts, [page]);
+  useEffect(() => {
+    if (productList_v2) {
+      setSelectedVariant([...Array(productList_v2.length)].map(() => 0));
+      setProductList(productList_v2);
+    }
+  }, [productList_v2]);
+
+  // const fetchProducts = async () => {
+  //   setProductFetching(true);
+  //   try {
+  //     const res = await fetch(`/api/products/read/myproducts?page=${page}`, {
+  //       method: "GET",
+  //     });
+  //     const products = await res.json();
+  //     console.log(products);
+  //     setSelectedVariant([...Array(products.length)].map(() => 0));
+  //     setProductList(products);
+  //   } catch (error) {
+  //     console.log("ERROR FETCHING DATA");
+  //   }
+  //   setProductFetching(false);
+  // };
+  //
+  // useMemo(fetchProducts, [page]);
 
   return (
     <>

@@ -17,24 +17,30 @@ import Image from "next/image";
 import { imageProcessor } from "@/utils/helpers/blobToStr";
 import { ReduxState, useDispatch, useSelector } from "@/lib/redux/store";
 import { userDataAsync } from "@/lib/redux";
+import {
+  useGetProfileQuery,
+  useUpdateProfileMutation,
+} from "@/lib/redux/services/user";
+import toast from "react-hot-toast";
 
 const Profile = () => {
-  const user = useSelector((state: ReduxState) => state.user.value);
-  const userStatus = useSelector((state: ReduxState) => state.user.status);
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(userDataAsync());
-  }, []);
+  // const user = useSelector((state: ReduxState) => state.user.value);
+  // const userStatus = useSelector((state: ReduxState) => state.user.status);
+  const { data: user, isLoading } = useGetProfileQuery();
+  // const dispatch = useDispatch();
+  // useEffect(() => {
+  //   dispatch(userDataAsync());
+  // }, []);
   return (
     <>
       <h2 className="text-2xl font-semibold">Profile</h2>
       <div className="mx-auto h-32 w-32 bg-muted mt-8 rounded-full overflow-hidden">
-        {userStatus === "loading" ? (
+        {isLoading ? (
           <div className="bg-card h-full w-full animate-pulse" />
-        ) : user.profilePic ? (
+        ) : user?.profilePic ? (
           <Image
-            src={user.profilePic}
-            alt={user.firstName}
+            src={user?.profilePic || ""}
+            alt={user?.firstName || ""}
             height={400}
             width={400}
             className="min-h-full min-w-full object-contain"
@@ -43,12 +49,12 @@ const Profile = () => {
           <LuUser />
         )}
       </div>
-      {userStatus === "loading" ? (
+      {isLoading ? (
         <div className="rounded mx-auto w-40 mt-4 h-8 animate-pulse bg-card" />
       ) : (
         <h1 className="text-center text-xl mt-4 min-h-8">
-          {user.firstName} {user.lastName}
-          {!user.firstName && !user.lastName && "Anonymous"}
+          {user?.firstName} {user?.lastName}
+          {!user?.firstName && !user?.lastName && "Anonymous"}
         </h1>
       )}
       <div className="flex gap-4 justify-center my-4 text-muted-foreground">
@@ -90,7 +96,9 @@ const schema = zod.object({
 const ProfileDialog: FC<IProfileDialog> = ({ children }) => {
   const [usrImg, setUsrImg] = useState<string>();
   const [loading, setLoading] = useState(false);
-  const user = useSelector((state: ReduxState) => state.user.value);
+  // const user = useSelector((state: ReduxState) => state.user.value);
+  const { data: user } = useGetProfileQuery();
+  const [profileUpdater] = useUpdateProfileMutation();
   const {
     handleSubmit,
     register,
@@ -106,20 +114,22 @@ const ProfileDialog: FC<IProfileDialog> = ({ children }) => {
     },
   });
   useEffect(() => {
-    if (user.firstName) setValue("firstName", user.firstName);
-    if (user.lastName) setValue("lastName", user.lastName);
-    if (user.profilePic) setUsrImg(user.profilePic);
+    if (user?.firstName) setValue("firstName", user.firstName);
+    if (user?.lastName) setValue("lastName", user.lastName);
+    if (user?.profilePic) setUsrImg(user.profilePic);
   }, [user]);
   const formWatch = useWatch({ control });
   const submitHandler: SubmitHandler<IFormInput> = async (data) => {
     setLoading(true);
     try {
       const image = await imageProcessor(data.profilePic[0] || usrImg || "");
-      const user = await fetch("/api/user/updateprofile", {
-        method: "POST",
-        body: JSON.stringify({ ...data, profilePic: image }),
-      });
-      console.log(await user.json());
+      await profileUpdater({ ...data, profilePic: image });
+      toast.success("Profile Updated Successfully", { duration: 5000 });
+      // const user = await fetch("/api/user/updateprofile", {
+      //   method: "POST",
+      //   body: JSON.stringify({ ...data, profilePic: image }),
+      // });
+      // console.log(await user.json());
     } catch (error) {
       console.log(error);
     }

@@ -19,7 +19,7 @@ const AsideMenu: React.FC<IAsideMenu> = ({}) => {
   const [session, setSession] = useState<ISession | null>();
   // const user = useSelector((state) => state.user.value);
   const { data: user, isLoading } = useGetProfileQuery();
-  const userStatus = useSelector((state) => state.user.status);
+  // const userStatus = useSelector((state) => state.user.status);
   useEffect(() => {
     if (user) setSession({ id: `${user.id}`, role: user.role });
     console.log(user);
@@ -52,7 +52,7 @@ const AsideMenu: React.FC<IAsideMenu> = ({}) => {
     <aside className="text-sm lg:px-4 px-2 hidden md:flex flex-col gap-4 lg:text-xl">
       <h2 className="font-semibold">SHOPICOM</h2>
       {menuList.map((item, i) =>
-        userStatus === "loading" ? (
+        isLoading ? (
           <div
             className="h-12 w-full animate-pulse bg-card rounded-lg flex items-center px-4 gap-4"
             key={"skeleton" + i}

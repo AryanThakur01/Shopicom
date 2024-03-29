@@ -5,13 +5,15 @@ import Link from "next/link";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LuLoader, LuLock, LuMail } from "react-icons/lu";
-import * as zod from "zod";
+// import * as zod from "zod";
 import { useRouter } from "next/navigation";
-import { useDispatch, userDataAsync } from "@/lib/redux";
+// import { useDispatch, userDataAsync } from "@/lib/redux";
 import { schema, type TFormInput } from "@/lib/schemas/auth";
+import { useRegisterMutation } from "@/lib/redux/services/user";
 
 const Register = () => {
   const [submitting, setSubmitting] = useState(false);
+  const [registerUser] = useRegisterMutation();
   const router = useRouter();
   const {
     handleSubmit,
@@ -21,16 +23,18 @@ const Register = () => {
     resolver: zodResolver(schema),
     defaultValues: { email: "", password: "" },
   });
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
   const submitHandler: SubmitHandler<TFormInput> = async (data) => {
     setSubmitting(true);
     try {
-      const body = { ...data };
-      const config = { method: "POST", body: JSON.stringify(body) };
-      const res = await fetch("/api/register", config);
-      if (!res.ok) throw new Error("Some Error Occured");
-      dispatch(userDataAsync());
+      // const body = { ...data };
+      // const config = { method: "POST", body: JSON.stringify(body) };
+      // const res = await fetch("/api/register", config);
+      // if (!res.ok) throw new Error("Some Error Occured");
+      // dispatch(userDataAsync());
+      // router.push("/dashboard");
+      await registerUser(data).unwrap();
       router.push("/dashboard");
     } catch (error) {
       console.log(error);

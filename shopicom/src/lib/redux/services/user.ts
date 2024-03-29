@@ -31,15 +31,36 @@ export const user = api.injectEndpoints({
       providesTags: ["User"],
     }),
     login: build.mutation<string, TFormInput>({
-      query: (body) => ({
-        url: "/login",
-        method: "POST",
-        body,
-      }),
+      query: (body) => ({ url: "/login", method: "POST", body }),
       invalidatesTags: ["User", "Cart"],
+    }),
+    register: build.mutation<string, TFormInput>({
+      query: (body) => ({ url: "/register", method: "POST", body }),
+      invalidatesTags: ["User", "Cart"],
+    }),
+    verifyseller: build.mutation<
+      string,
+      { firstName: string; lastName: string; profilePic: string }
+    >({
+      query: (body) => ({ url: "/verifyseller", method: "POST", body }),
+      invalidatesTags: ["User", "Cart"],
+    }),
+    updateProfile: build.mutation<
+      User,
+      { firstName: string; lastName: string; profilePic: FileList | string }
+    >({
+      query: (body) => ({ url: "/user/updateprofile", method: "POST", body }),
+      invalidatesTags: ["User"],
     }),
   }),
   overrideExisting: true,
 });
 
-export const { useGetOrdersQuery, useGetProfileQuery, useLoginMutation } = user;
+export const {
+  useGetOrdersQuery,
+  useGetProfileQuery,
+  useLoginMutation,
+  useRegisterMutation,
+  useUpdateProfileMutation,
+  useVerifysellerMutation,
+} = user;

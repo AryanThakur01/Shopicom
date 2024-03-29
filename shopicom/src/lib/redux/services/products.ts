@@ -1,13 +1,7 @@
 import { image, product, property, variant } from "@/db/schema/products";
 import { api } from "./api";
+import { IProducts } from "@/types/products";
 
-interface IVariants extends variant {
-  images: image;
-}
-interface IProducts extends product {
-  properties: property;
-  variants: IVariants[];
-}
 export const products = api.injectEndpoints({
   endpoints: (build) => ({
     getOneProduct: build.query<IProducts, { productId: number }>({
@@ -18,10 +12,10 @@ export const products = api.injectEndpoints({
         return { url: "/products/read/myproducts" + queryString };
       },
     }),
-    getMyProducts: build.query<IProducts[], { page: number }>({
-      query: (vars) => {
+    getMyProducts: build.query<IProducts[], number>({
+      query: (page) => {
         let queryString = "?";
-        if (vars.page) queryString += `page=${vars.page}`;
+        if (page) queryString += `page=${page}`;
 
         return { url: "/products/read/myproducts" + queryString };
       },

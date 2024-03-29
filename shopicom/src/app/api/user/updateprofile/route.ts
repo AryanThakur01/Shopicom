@@ -23,7 +23,6 @@ export const POST = async (req: NextRequest) => {
       })
       .where(eq(users.id, payload.id))
       .returning();
-    console.log(newData);
     return new NextResponse(JSON.stringify(newData));
   } catch (error) {
     if (error instanceof Error) return new NextResponse(error.message);

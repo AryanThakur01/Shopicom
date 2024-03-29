@@ -4,6 +4,7 @@ import {
   useAddToCartMutation,
   useGetCartQuery,
 } from "@/lib/redux/services/cart";
+import { useGetProfileQuery } from "@/lib/redux/services/user";
 import React, { ReactNode, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { LuLoader2 } from "react-icons/lu";
@@ -23,7 +24,8 @@ const AddToCartBtn: React.FC<IAddToCartBtn> = ({
 }) => {
   const [isSelected, setIsSelected] = useState(false);
   const cart = useGetCartQuery().data;
-  const user = useSelector((state) => state.user.value.isLoggedin);
+  // const user = useSelector((state) => state.user.value.isLoggedin);
+  const user = useGetProfileQuery();
   const [addToCart, { isLoading }] = useAddToCartMutation();
 
   const cartHandler = async () => {

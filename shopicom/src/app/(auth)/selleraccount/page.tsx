@@ -10,18 +10,22 @@ import { url } from "@/lib/constants";
 import { UploadButton, UploadDropzone } from "@/utils/uploadthing";
 import Image from "next/image";
 import toast from "react-hot-toast";
+import {
+  useGetProfileQuery,
+  useVerifysellerMutation,
+} from "@/lib/redux/services/user";
 
 interface IFormInput {
   firstName: string;
   lastName: string;
 }
 const Page = () => {
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState("");
   const [image, setImage] = useState("");
-  const user = useSelector((state) => state.user.value);
+  // const user = useSelector((state) => state.user.value);
+  const { data: user } = useGetProfileQuery();
   const router = useRouter();
   const form = useRef<HTMLFormElement>(null);
+  const [sellerVerify] = useVerifysellerMutation();
 
   const {
     handleSubmit,
@@ -36,33 +40,31 @@ const Page = () => {
   });
 
   useEffect(() => {
-    if (user.role === "seller" || user.role === "admin") router.back();
-    setImage(user.profilePic || "");
+    if (user?.role === "seller" || user?.role === "admin") router.back();
+    setImage(user?.profilePic || "");
   }, [user]);
 
   const submitHandler: SubmitHandler<IFormInput> = async (data) => {
-    setSubmitting(true);
     try {
       if (!image) throw new Error("Please Upload the image first");
       if (!form.current) throw new Error("No form found");
-
-      const body = JSON.stringify({
+      const body = {
         firstName: data.firstName,
         lastName: data.lastName,
         profilePic: image,
-      });
-      const res = await fetch(url + "/api/verifyseller", {
-        method: "POST",
-        body,
-      });
-      const response = await res.json();
-      if (response.error) throw new Error(response.error);
+      };
+      await sellerVerify(body).unwrap();
+      // const res = await fetch(url + "/api/verifyseller", {
+      //   method: "POST",
+      //   body,
+      // });
+      // const response = await res.json();
+      // if (response.error) throw new Error(response.error);
       router.push("/dashboard");
     } catch (error) {
       if (error instanceof Error) toast.error(error.message);
       else toast.error("Something went wrong");
     }
-    setSubmitting(false);
   };
   return (
     <section className="container max-w-[20rem] border border-border mt-4 min-h-[70vh]">
@@ -78,7 +80,7 @@ const Page = () => {
             {image.length ? (
               <Image
                 src={image}
-                alt={user.firstName + " " + user.lastName}
+                alt={user?.firstName + " " + user?.lastName}
                 height={400}
                 width={400}
               />
