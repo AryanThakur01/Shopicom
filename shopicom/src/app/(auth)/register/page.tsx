@@ -36,7 +36,7 @@ const Register = () => {
       // dispatch(userDataAsync());
       // router.push("/dashboard");
       await registerUser(data).unwrap();
-      router.push("/dashboard");
+      router.push(callback || "/dashboard");
     } catch (error) {
       console.log(error);
     }

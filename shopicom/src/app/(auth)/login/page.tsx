@@ -36,7 +36,7 @@ const Login = () => {
       // if (!res.ok) throw new Error((await res.json()).error);
       // dispatch(userDataAsync());
       await login(data).unwrap();
-      router.push("/");
+      router.push(callback || "/");
     } catch (error) {
       setError("Recheck username and password");
     }
