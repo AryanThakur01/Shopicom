@@ -6,7 +6,7 @@ import { MetadataRoute } from "next";
 
 export async function generateSitemaps() {
   // Fetch the total number of products and calculate the number of sitemaps needed
-  return [{ id: 0 }, { id: 1 }, { id: 2 }, { id: 3 }];
+  return [{ id: 0 }];
 }
 
 export default async function sitemap({
@@ -14,8 +14,8 @@ export default async function sitemap({
 }: {
   id: number;
 }): Promise<MetadataRoute.Sitemap> {
-  const start = id * 50000;
-  const end = start + 50000;
+  const start = id * 10000;
+  const end = start + 10000;
   const productList = [];
   for (let productId = 0; productId < end; productId++) {
     const product = await db.query.products.findFirst({
@@ -31,9 +31,7 @@ export default async function sitemap({
         properties: true,
       },
     });
-    if (product) {
-      productList.push(product);
-    }
+    if (product) productList.push(product);
   }
   return productList.map((product) => ({
     url: `${url}/products/${product.id}`,
