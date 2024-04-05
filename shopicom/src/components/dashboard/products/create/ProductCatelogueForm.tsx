@@ -10,6 +10,8 @@ import { useRouter } from "next/navigation";
 import { processAllImages } from "@/utils/helpers/blobToStr";
 import { IProductProps } from "@/types/products";
 import { productSchema } from "@/lib/schemas/products";
+import { objectToFormData } from "@/utils/helpers/objectToFormData";
+import toast from "react-hot-toast";
 
 // -------------------- zod Schema for validation --------------------------
 export type TFormInput = zod.infer<typeof productSchema>;
@@ -67,6 +69,12 @@ const ProductCatelogueForm: React.FC<IProductCatelogueForm> = ({
   const submitHandler: SubmitHandler<TFormInput> = async (data) => {
     setSubmitting(true);
     try {
+      // console.log(objectToFormData(data));
+      // const f = await fetch("/api/products/create", {
+      //   method: "POST",
+      //   body: objectToFormData(data),
+      // });
+      // console.log(await f.text());
       await processAllImages(data);
       if (!product) {
         await fetch("/api/products/create", {
@@ -94,9 +102,12 @@ const ProductCatelogueForm: React.FC<IProductCatelogueForm> = ({
         });
         console.log(await res.text());
       }
-      // router.push("/dashboard/products");
+      router.push("/dashboard/products");
     } catch (error) {
-      console.log("ERROR: ", error);
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+      console.log(error);
     }
     setSubmitting(false);
   };

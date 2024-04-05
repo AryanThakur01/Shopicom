@@ -16,7 +16,7 @@ const ProductList: FC<IProductList> = () => {
   const [productFetching, setProductFetching] = useState(false);
   const [selectedVariant, setSelectedVariant] = useState<number[]>([]);
   const [page, setPage] = useState(1);
-  const { data: productList_v2 } = useGetMyProductsQuery(page);
+  const { data: productList_v2, isLoading } = useGetMyProductsQuery(page);
 
   useEffect(() => {
     if (productList_v2) {
@@ -55,7 +55,7 @@ const ProductList: FC<IProductList> = () => {
           <h3 className="md:block hidden">ORDERS</h3>
           <h3>COLOR</h3>
         </Tr>
-        {productFetching ? (
+        {isLoading || productFetching ? (
           <>
             <TrLoadingSkeleton />
             <TrLoadingSkeleton />
@@ -85,9 +85,8 @@ const ProductList: FC<IProductList> = () => {
                       >
                         <div className="h-12 w-12 rounded overflow-hidden flex items-center">
                           <Image
-                            src={`${
-                              item.variants[selectedVariant[i]].images[0].value
-                            }`}
+                            src={`${item.variants[selectedVariant[i]].images[0]
+                              ?.value}`}
                             alt="?"
                             className="text-4xl object-center min-h-full"
                             height={50}
@@ -175,11 +174,13 @@ const ProductList: FC<IProductList> = () => {
             (page !== 1 ? "hover:text-foreground " : "cursor-default") +
             " border border-border p-1 rounded"
           }
-          onClick={() => page > 1 && !productFetching && setPage(page - 1)}
+          onClick={() =>
+            page > 1 && !(isLoading || productFetching) && setPage(page - 1)
+          }
         >
           <FaChevronLeft />
         </button>
-        <span>{page} </span>
+        <span className="cursor-default">{page} </span>
         <button
           className={
             (productList.length === 10
@@ -187,7 +188,9 @@ const ProductList: FC<IProductList> = () => {
               : "cursor-default") + " border border-border p-1 rounded"
           }
           onClick={() =>
-            productList.length === 10 && !productFetching && setPage(page + 1)
+            productList.length === 10 &&
+            !(isLoading || productFetching) &&
+            setPage(page + 1)
           }
         >
           <FaChevronRight />
