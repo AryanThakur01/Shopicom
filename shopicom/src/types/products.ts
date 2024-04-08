@@ -25,7 +25,7 @@ export interface IProductProps {
   }[];
 }
 
-interface IVariants extends variant {
+export interface IVariants extends variant {
   images: image[];
 }
 export interface IProducts extends product {

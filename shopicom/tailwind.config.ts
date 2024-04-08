@@ -63,6 +63,10 @@ const config: Config = {
           from: { opacity: "0" },
           to: { opacity: "0.5" },
         },
+        "open-from-l-wide": {
+          from: { width: "0%" },
+          to: { width: "100%" },
+        },
       },
       animation: {
         "open-from-t": "open-from-t 0.2s linear",
@@ -72,6 +76,7 @@ const config: Config = {
         "open-pop": "open-pop 0.2s ease-out",
         "close-pop": "close-pop 0.2s ease-out",
         "open-opacity": "open-opacity 0.2s ease-out",
+        "open-from-l-wide": "open-from-l-wide 1s ease-out",
       },
     },
   },

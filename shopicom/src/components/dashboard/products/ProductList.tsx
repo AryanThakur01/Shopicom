@@ -85,8 +85,10 @@ const ProductList: FC<IProductList> = () => {
                       >
                         <div className="h-12 w-12 rounded overflow-hidden flex items-center">
                           <Image
-                            src={`${item.variants[selectedVariant[i]].images[0]
-                              ?.value}`}
+                            src={`${
+                              item.variants[selectedVariant[i]]?.images[0]
+                                ?.value || ""
+                            }`}
                             alt="?"
                             className="text-4xl object-center min-h-full"
                             height={50}
@@ -99,32 +101,32 @@ const ProductList: FC<IProductList> = () => {
                           </p>
                           <div className="flex gap-2 text-xs">
                             <p className="line-through text-muted-foreground">
-                              ₹ {item.variants[selectedVariant[i]].price}
+                              ₹ {item.variants[selectedVariant[i]]?.price}
                             </p>
                             <p>
                               ₹{" "}
                               {
                                 item.variants[selectedVariant[i]]
-                                  .discountedPrice
+                                  ?.discountedPrice
                               }
                             </p>
                           </div>
                         </div>
                       </Link>
                       <p className="md:block hidden">
-                        {item.variants[selectedVariant[i]].stock}
+                        {item.variants[selectedVariant[i]]?.stock}
                       </p>
                       <p className="md:block hidden">
-                        {item.variants[selectedVariant[i]].orders}
+                        {item.variants[selectedVariant[i]]?.orders}
                       </p>
                       <Popover.Root>
                         <Popover.Trigger asChild>
                           <button
                             className="h-8 w-8 mx-auto rounded-full hover:ring-muted hover:ring"
                             style={{
-                              backgroundColor: `${
-                                item.variants[selectedVariant[i]].color
-                              }`,
+                              backgroundColor: `${item.variants[
+                                selectedVariant[i]
+                              ]?.color}`,
                             }}
                           ></button>
                         </Popover.Trigger>

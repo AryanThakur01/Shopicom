@@ -20,6 +20,7 @@
     "@stripe/stripe-js": "^3.0.6",
     "@uploadthing/react": "^6.4.0",
     "bcryptjs": "^2.4.3",
+    "cloudinary": "^2.1.0",
     "drizzle-orm": "^0.29.3",
     "embla-carousel-react": "^8.0.0-rc22",
     "googleapis": "^132.0.0",

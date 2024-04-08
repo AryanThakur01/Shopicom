@@ -18,7 +18,7 @@ const AsideMenu: React.FC<IAsideMenu> = ({}) => {
   const { data: user, isLoading } = useGetProfileQuery();
   useEffect(() => {
     if (user) setSession({ id: user.id.toString(), role: user.role });
-    console.log(user);
+    // console.log(user);
   }, [user]);
   const menuList = [
     {

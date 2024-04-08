@@ -6,24 +6,21 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import { LuLoader, LuTrash } from "react-icons/lu";
 import * as zod from "zod";
+import SectionContainer from "./SectionContainer";
 
-interface IGenDetails {
-  product?: IProductProps;
-  id?: string;
-}
+interface IGenDetails {}
 type TFormInput = zod.infer<typeof productSchema_v2>;
-const GenDetails: React.FC<IGenDetails> = ({ product, id }) => {
+const GenDetails: React.FC<IGenDetails> = () => {
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
-  const defaultValues = product
-    ? { ...product }
-    : {
-        name: "",
-        description: "",
-        properties: [{ key: "", value: "" }],
-      };
+  const defaultValues = {
+    name: "",
+    description: "",
+    properties: [{ key: "", value: "" }],
+  };
   const {
     control,
     handleSubmit,
@@ -34,13 +31,28 @@ const GenDetails: React.FC<IGenDetails> = ({ product, id }) => {
     defaultValues,
   });
   const propTable = useFieldArray({ control, name: "properties" });
-  const submitHandler: SubmitHandler<TFormInput> = (data) => {
-    console.log(data);
+  const submitHandler: SubmitHandler<TFormInput> = async (body) => {
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/products/create", {
+        method: "POST",
+        body: JSON.stringify(body),
+      });
+      const {
+        data,
+        data: { newProduct },
+      } = await res.json();
+      console.log(data, newProduct);
+      router.push(`/dashboard/products/create/variant/${newProduct.id}`);
+    } catch (error) {
+      toast.error("Something Went Wrong");
+    }
+    setSubmitting(false);
   };
   return (
     <form
       onSubmit={handleSubmit(submitHandler)}
-      className="my-8 flex flex-col gap-4"
+      className="my-4 flex flex-col gap-4"
     >
       <SectionContainer title="General Details">
         <FormField
@@ -110,51 +122,17 @@ const GenDetails: React.FC<IGenDetails> = ({ product, id }) => {
       </SectionContainer>
       <button
         type="submit"
-        className="bg-primary rounded-lg h-10 font-bold w-40 ml-auto"
+        className="bg-primary rounded h-10 font-bold w-40 ml-auto"
         disabled={submitting}
       >
         {submitting ? (
           <LuLoader className="animate-spin mx-auto size-5" />
         ) : (
-          "Submit"
+          "Next"
         )}
       </button>
     </form>
   );
 };
-
-// --------------------------- Container For Section -------------------------
-interface ISectionContainer {
-  title: string;
-  children: React.ReactNode;
-  ctaFunction?: () => void;
-  ctaText?: string;
-}
-const SectionContainer: React.FC<ISectionContainer> = ({
-  title,
-  children,
-  ctaFunction,
-  ctaText,
-}) => {
-  return (
-    <div className="border border-border bg-card rounded-md overflow-hidden">
-      <div className="flex justify-between bg-muted items-center p-2 px-4 min-h-16">
-        <h3 className="text-lg font-bold">{title}</h3>
-        {ctaFunction && (
-          <button
-            type="button"
-            onClick={ctaFunction}
-            className="bg-success p-2 w-32 rounded"
-          >
-            {ctaText}
-          </button>
-        )}
-      </div>
-      <hr className="border-border" />
-      <div className="p-4">{children}</div>
-    </div>
-  );
-};
-// ---------------------------------------------------------------------------
 
 export default GenDetails;
