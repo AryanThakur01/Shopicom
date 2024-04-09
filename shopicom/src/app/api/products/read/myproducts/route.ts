@@ -26,11 +26,17 @@ export const GET = async (req: NextRequest) => {
             },
           },
         },
-        limit: 10,
-        offset: !page ? 0 : (page - 1) * 10,
+        // offset: !page ? 0 : (page - 1) * 10,
+        orderBy: products.id,
+        // limit: 10,
         where: eq(products.sellerId, Number(jwtPayload.id)),
       });
-      return new NextResponse(JSON.stringify(allProducts.reverse()));
+      allProducts.reverse();
+      const limitedProducts = allProducts.slice(
+        (page - 1) * 10,
+        (page - 1) * 10 + 10,
+      );
+      return new NextResponse(JSON.stringify(limitedProducts));
     }
     const allProducts = await db.query.products.findFirst({
       with: {

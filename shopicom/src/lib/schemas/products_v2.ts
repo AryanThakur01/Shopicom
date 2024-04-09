@@ -3,8 +3,6 @@ import * as zod from "zod";
 const properties = zod
   .array(
     zod.object({
-      id: zod.number().optional(),
-      productId: zod.number().optional(),
       key: zod.string(),
       value: zod.string(),
     }),
@@ -32,4 +30,9 @@ export const productSchema_v2 = zod.object({
   name: zod.string().min(3),
   description: zod.string().min(10),
   properties,
+});
+
+export const generalSchema = zod.object({
+  name: zod.string().min(3),
+  description: zod.string().min(10),
 });

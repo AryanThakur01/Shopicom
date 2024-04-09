@@ -25,24 +25,6 @@ const ProductList: FC<IProductList> = () => {
     }
   }, [productList_v2]);
 
-  // const fetchProducts = async () => {
-  //   setProductFetching(true);
-  //   try {
-  //     const res = await fetch(`/api/products/read/myproducts?page=${page}`, {
-  //       method: "GET",
-  //     });
-  //     const products = await res.json();
-  //     console.log(products);
-  //     setSelectedVariant([...Array(products.length)].map(() => 0));
-  //     setProductList(products);
-  //   } catch (error) {
-  //     console.log("ERROR FETCHING DATA");
-  //   }
-  //   setProductFetching(false);
-  // };
-  //
-  // useMemo(fetchProducts, [page]);
-
   return (
     <>
       <div className="min-h-96">

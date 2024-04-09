@@ -1,4 +1,10 @@
-import { image, variant } from "@/db/schema/products";
+import {
+  image,
+  newProperty,
+  product,
+  property,
+  variant,
+} from "@/db/schema/products";
 import { api } from "./api";
 import { IProducts, IVariants } from "@/types/products";
 import * as zod from "zod";
@@ -17,6 +23,7 @@ export const products = api.injectEndpoints({
 
         return { url: "/products/read/myproducts" + queryString };
       },
+      providesTags: ["Product"],
     }),
     getMyProducts: build.query<IProducts[], number>({
       query: (page) => {
@@ -77,6 +84,35 @@ export const products = api.injectEndpoints({
       },
       invalidatesTags: ["Product"],
     }),
+    updateProductGeneral: build.mutation<string, product>({
+      query: (data) => {
+        return {
+          url: "/products/update",
+          method: "POST",
+          body: data,
+        };
+      },
+      invalidatesTags: ["Product"],
+    }),
+    updateSingleProperty: build.mutation<property, newProperty>({
+      query: (data) => {
+        return {
+          url: "/products/update/singleproperty",
+          method: "POST",
+          body: data,
+        };
+      },
+      invalidatesTags: ["Product"],
+    }),
+    removeSingleProperty: build.mutation<property, number>({
+      query: (propertyId) => {
+        return {
+          url: "/products/update/singleproperty" + `?propertyId=${propertyId}`,
+          method: "DELETE",
+        };
+      },
+      invalidatesTags: ["Product"],
+    }),
   }),
   overrideExisting: true,
 });
@@ -88,4 +124,7 @@ export const {
   useCreateVariantMutation,
   useUploadImageMutation,
   useDeleteImageMutation,
+  useUpdateProductGeneralMutation,
+  useUpdateSinglePropertyMutation,
+  useRemoveSinglePropertyMutation,
 } = products;

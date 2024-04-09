@@ -34,10 +34,12 @@ const SectionContainer: React.FC<ISectionContainer> = ({
             {ctaText}
           </button>
         )}
-        <div
-          className="h-8 w-8 rounded-full bg-transparent border border-border"
-          style={{ backgroundColor: color }}
-        />
+        {color && (
+          <div
+            className="h-8 w-8 rounded-full bg-transparent border border-border"
+            style={{ backgroundColor: color }}
+          />
+        )}
       </div>
       <hr className="border-border/30" />
       <div className="p-4">{children}</div>

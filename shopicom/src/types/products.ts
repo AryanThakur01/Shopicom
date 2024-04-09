@@ -1,18 +1,7 @@
-export { type TFormInput } from "@/components/dashboard/products/create/ProductCatelogueForm";
-import {
-  image,
-  newProperty,
-  product,
-  property,
-  variant,
-} from "@/db/schema/products";
+import { image, product, property, variant } from "@/db/schema/products";
 
-export interface IProductProps {
-  id: number;
-  name: string;
-  description: string;
-  sellerId: number;
-  properties: newProperty[];
+export interface IProductProps extends product {
+  properties: property[];
   variants: {
     id: number;
     color: string;
@@ -29,6 +18,6 @@ export interface IVariants extends variant {
   images: image[];
 }
 export interface IProducts extends product {
-  properties: property;
+  properties: property[];
   variants: IVariants[];
 }

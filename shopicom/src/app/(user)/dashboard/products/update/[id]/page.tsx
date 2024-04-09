@@ -1,4 +1,4 @@
-import ProductCatelogueForm from "@/components/dashboard/products/create/ProductCatelogueForm";
+import ProductCatelogueForm from "@/components/dashboard/products/create_v2/ProductCatelogueForm";
 import withAuth from "@/components/withAuth";
 import { db } from "@/db";
 import { products } from "@/db/schema/products";

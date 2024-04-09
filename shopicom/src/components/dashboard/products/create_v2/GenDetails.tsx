@@ -1,7 +1,6 @@
 "use client";
 import FormField from "@/components/FormField";
 import { productSchema_v2 } from "@/lib/schemas/products_v2";
-import { IProductProps } from "@/types/products";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
