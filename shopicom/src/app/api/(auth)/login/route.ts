@@ -26,7 +26,11 @@ export const POST = async (req: NextRequest) => {
     if (!passwordCheck) throw new Error("Incorrect Password");
 
     const authToken = generateJWT({ id: user[0].id, role: user[0].role });
-    cookies().set("Session_Token", authToken, { sameSite: "none" });
+    cookies().set("Session_Token", authToken, {
+      secure: true,
+      sameSite: "lax",
+      httpOnly: true,
+    });
     return new NextResponse(JSON.stringify(authToken));
   } catch (error) {
     if (error instanceof ZodError)

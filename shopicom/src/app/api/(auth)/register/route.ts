@@ -18,7 +18,11 @@ export const POST = async (req: NextRequest) => {
     data.password = await passwordEncrypter(data.password);
     const res = await db.insert(users).values(data).returning();
     const authToken = generateJWT({ id: res[0].id, role: res[0].role });
-    cookies().set("Session_Token", authToken);
+    cookies().set("Session_Token", authToken, {
+      secure: true,
+      sameSite: "lax",
+      httpOnly: true,
+    });
     return new NextResponse(JSON.stringify(authToken));
   } catch (error) {
     console.log(error);
@@ -52,7 +56,11 @@ export const GET = async (req: NextRequest) => {
     if (!authTokens.id_token) throw new Error("Not Verified");
 
     jwt.decode(authTokens.id_token);
-    cookies().set("Session_Token", authTokens.id_token);
+    cookies().set("Session_Token", authTokens.id_token, {
+      secure: true,
+      sameSite: "lax",
+      httpOnly: true,
+    });
     return NextResponse.redirect(new URL("/register", req.url));
   } catch (error) {
     if (error instanceof Error) return new NextResponse(error.message);

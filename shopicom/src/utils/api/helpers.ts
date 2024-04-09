@@ -22,7 +22,12 @@ export const jwtDecoder = (token: string): JwtPayload => {
   const initial = time.getTime() / 1000;
   if (payload.exp - initial <= 1) {
     const newToken = generateJWT({ id: payload.id, role: payload.role });
-    cookies().set("Session_Token", newToken);
+    cookies().set("Session_Token", newToken, {
+      secure: true,
+      expires: payload.exp,
+      sameSite: "lax",
+      httpOnly: true,
+    });
   }
 
   return payload as JwtPayload;
