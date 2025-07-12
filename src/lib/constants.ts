@@ -3,4 +3,4 @@ export const url =
     ? "https://shopicom.aryanthakur.dev"
     : "http://localhost:3000";
 
-export const stripePublicKey = String(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
+export const stripePublicKey = String(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE)
