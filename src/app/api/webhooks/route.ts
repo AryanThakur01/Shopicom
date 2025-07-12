@@ -34,12 +34,12 @@ export const POST = async (req: NextRequest) => {
       case "payment_intent.payment_failed":
         console.log("WEBHOOK STRIPE payment failed");
         sessionId = event.data.object.id;
-        cancelOrder(sessionId);
+        await cancelOrder(sessionId);
         break;
       case "payment_intent.requires_action":
         console.log("WEBHOOK STRIPE requires action");
         sessionId = event.data.object.id;
-        lockProducts(sessionId);
+        await lockProducts(sessionId);
         break;
 
       case "payment_intent.succeeded":
