@@ -73,7 +73,7 @@ const Banner = async () => {
                         href={item.link}
                         className="bg-success w-32 p-1 text-center rounded text-xl my-4"
                       >
-                        Show Docs
+                        View
                       </Link>
                     )}
                   </div>
