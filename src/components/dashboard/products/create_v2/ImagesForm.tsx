@@ -52,10 +52,10 @@ const ImagesForm: React.FC<IImageForm> = ({ id, color, images }) => {
   return (
     <>
       <SectionContainer title="Product Images" className="h-full" color={color}>
-        <div className="grid lg:grid-cols-5 sm:grid-cols-4 grid-cols-2 gap-4">
+        <div className="gap-4 flex overflow-scroll">
           {images?.map((item, i) => (
             <div
-              className="md:h-40 md:w-40 h-32 w-32 overflow-hidden rounded group flex"
+              className="md:h-40 md:w-40 h-32 w-32 overflow-hidden rounded group flex shrink-0"
               key={item.id}
             >
               <div
@@ -92,7 +92,7 @@ const ImagesForm: React.FC<IImageForm> = ({ id, color, images }) => {
             </div>
           ))}
           {(!images || images.length < 5) && (
-            <div className="md:h-40 md:w-40 h-32 w-32 border-dashed border rounded flex justify-center items-center">
+            <div className="md:h-40 md:w-40 h-32 w-32 border-dashed border rounded flex justify-center items-center shrink-0">
               {uploading ? (
                 <LuLoader2 className="mx-auto my-auto animate-spin size-16 stroke-muted-foreground" />
               ) : (

@@ -30,11 +30,14 @@ const CreateVariants: React.FC<ICreateVariants> = ({ id }) => {
           <div className="my-2" key={`variant-${i}`}>
             <Carousel>
               <div className="flex">
-                <div className="shrink-0 w-full">
-                  <VariantForm variant={item} id={id} />
+                <div className="shrink-0 w-3/4">
+                  <div className="w-full">
+                    <VariantForm variant={item} id={id} />
+                  </div>
                 </div>
+                <div className="shrink-0 w-3/4 px-8">
                 {!!item && (
-                  <div className="shrink-0 w-full">
+                  <div className="w-full h-full">
                     <ImagesForm
                       id={item.id}
                       color={item.color}
@@ -42,6 +45,7 @@ const CreateVariants: React.FC<ICreateVariants> = ({ id }) => {
                     />
                   </div>
                 )}
+                </div>
               </div>
             </Carousel>
           </div>

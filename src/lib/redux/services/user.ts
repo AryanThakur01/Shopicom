@@ -34,6 +34,10 @@ export const user = api.injectEndpoints({
       query: (body) => ({ url: "/login", method: "POST", body }),
       invalidatesTags: ["User", "Cart"],
     }),
+    logout: build.mutation<void, void>({
+      query: () => ({ url: "/logout", method: "POST" }),
+      invalidatesTags: []
+    }),
     register: build.mutation<string, TFormInput>({
       query: (body) => ({ url: "/register", method: "POST", body }),
       invalidatesTags: ["User", "Cart"],
@@ -63,4 +67,5 @@ export const {
   useRegisterMutation,
   useUpdateProfileMutation,
   useVerifysellerMutation,
+  useLogoutMutation
 } = user;

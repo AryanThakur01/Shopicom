@@ -15,11 +15,11 @@ import {
   LuX,
 } from "react-icons/lu";
 import { twMerge } from "tailwind-merge";
-import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
-import { useGetProfileQuery } from "@/lib/redux/services/user";
+import { useGetProfileQuery, useLogoutMutation } from "@/lib/redux/services/user";
 import { useGetCartQuery } from "@/lib/redux/services/cart";
 import toast from "react-hot-toast";
+import { useDispatch, userSlice } from "@/lib/redux";
 
 const Nav = () => {
   const [cartCount, setCartCount] = useState(0);
@@ -108,7 +108,7 @@ const SearchDropDown: React.FC<ISearchDropDown> = ({ children }) => {
         </Dialog.Trigger>
         <Dialog.Portal>
           <Dialog.Overlay className="fixed top-0 bg-black/50 backdrop-blur-lg h-screen w-screen animate-open-opacity" />
-          <Dialog.Content className="pt-12 pb-8 overflow-hidden flex flex-col w-screen fixed right-0 top-0 bg-black animate-open-from-t z-40 container min-h-[60vh]">
+          <Dialog.Content className="pt-12 pb-8 overflow-hidden flex flex-col fixed right-0 top-0 bg-black animate-open-from-t z-40 container min-h-[60vh] max-w-[100vw]">
             <Dialog.DialogClose className="ml-auto relative bottom-8 right-20 font-extrabold text-xl">
               <LuX />
             </Dialog.DialogClose>
@@ -161,23 +161,6 @@ const SearchDropDown: React.FC<ISearchDropDown> = ({ children }) => {
                   </div>
                 </>
               )}
-              <h2 className="text-sm px-1">Quick Links</h2>
-              <div className="flex flex-col gap-1 my-2 text-sm">
-                {/* <a */}
-                {/*   href="/products/2529" */}
-                {/*   className="flex gap-4 items-center hover:bg-card p-1 rounded-md" */}
-                {/* > */}
-                {/*   <LuArrowRight /> */}
-                {/*   <p className="text-foreground">Shearling Baffle</p> */}
-                {/* </a> */}
-                {/* <a */}
-                {/*   href="/products/2530" */}
-                {/*   className="flex gap-4 items-center hover:bg-card p-1 rounded-md" */}
-                {/* > */}
-                {/*   <LuArrowRight /> */}
-                {/*   <p className="text-foreground">Flock Subtract</p> */}
-                {/* </a> */}
-              </div>
             </div>
           </Dialog.Content>
         </Dialog.Portal>
@@ -190,16 +173,13 @@ interface IProfileDialog {
   children: React.ReactNode;
 }
 const Drawer: FC<IProfileDialog> = ({ children }) => {
-  const [session, setSession] = useState<ISession | null>();
+  const dispatch = useDispatch()
+  const [session, setSession] = useState<ISession | null>(null);
   const user = useGetProfileQuery().data;
   const router = useRouter();
+  const [logout] = useLogoutMutation()
   const updateSession = async () => {
     if (user) setSession({ id: user.id.toString(), role: user.role });
-    // const token = Cookies.get("Session_Token");
-    // if (token) {
-    //   const s = await getServerSession(token);
-    //   setSession(s);
-    // }
   };
   useEffect(() => {
     updateSession();
@@ -232,12 +212,12 @@ const Drawer: FC<IProfileDialog> = ({ children }) => {
             {session ? (
               <Dialog.Close
                 className="w-full border border-border p-2 bg-background rounded flex items-center gap-4 px-4"
-                onClick={() => {
-                  Cookies.remove("Session_Token");
-                  setSession(null);
-                  window.location.reload();
-                  // dispatch(userSlice.actions.resetUser());
-                  // router.push("/");
+                onClick={async () => {
+                  await logout()
+                  setSession(null)
+                  toast.success("Logged out successfully");
+                  dispatch(userSlice.actions.resetUser());
+                  router.push("/");
                 }}
               >
                 <LuLogOut />

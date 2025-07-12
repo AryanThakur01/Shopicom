@@ -21,9 +21,9 @@ const BestSellers = () => {
 
   const fetchBestSellers = async () => {
     const res = await fetch(url + "/api/products/read/bestsellers");
-    const { bestSellers }: { bestSellers: IFetchedBestSellers[] } =
+    const { bestSellers }: { bestSellers?: IFetchedBestSellers[] } =
       await res.json();
-    setBestSeller(bestSellers);
+    if(bestSellers) setBestSeller(bestSellers);
   };
 
   useEffect(() => {
@@ -33,7 +33,7 @@ const BestSellers = () => {
   // const bestSeller = await fetchSponsored();
   return (
     <>
-      {!!bestSeller.length && (
+      {bestSeller.length>0 && (
         <section className="mt-20 container py-8 bg-muted">
           <h2 className="text-4xl text-muted-foreground font-bold">
             Best Sellers
@@ -46,7 +46,6 @@ const BestSellers = () => {
                 onClick={() => {
                   if (!emblaApi) return;
                   emblaApi.scrollPrev();
-                  // setPage(emblaApi.selectedScrollSnap());
                 }}
               >
                 <LuChevronLeft />

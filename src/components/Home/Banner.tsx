@@ -3,7 +3,6 @@ import { db } from "@/db";
 import { contents } from "@/db/schema/dynamicContent";
 import { eq } from "drizzle-orm";
 import Carousel from "../Carousel";
-import Image from "next/image";
 import Link from "next/link";
 import { twMerge } from "tailwind-merge";
 

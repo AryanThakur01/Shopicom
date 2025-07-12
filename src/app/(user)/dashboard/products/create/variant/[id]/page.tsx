@@ -1,8 +1,5 @@
 import CreateVariants from "@/components/dashboard/products/create_v2/CreateVariants";
 import withAuth from "@/components/withAuth";
-import { db } from "@/db";
-import { products } from "@/db/schema/products";
-import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import React from "react";
 
@@ -11,10 +8,9 @@ interface IPage {
     id: string;
   };
 }
-const page: React.FC<IPage> = async ({ params }) => {
+const page: React.FC<IPage> = ({ params }) => {
   const id = Number(params.id);
   if (isNaN(id)) redirect("/dashboard/products/create");
-  const product = await db.select().from(products).where(eq(products.id, id));
   return (
     <>
       <div className="relative left-1 h-2 bg-muted w-72 rounded-full flex my-4">
