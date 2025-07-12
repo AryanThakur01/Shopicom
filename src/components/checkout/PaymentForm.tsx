@@ -56,7 +56,11 @@ const PaymentForm: React.FC<IPaymentsForm> = ({
   return (
     <section className={twMerge(className)}>
       <h1 className="text-3xl font-bold my-4">Confirm Payment</h1>
-      {loading ? (
+      {
+        cart ?(<p className="border rounded p-2 text-center border-border text-muted-foreground py-20">Cart checkout is not supported in this test version</p>)
+        :
+
+        loading ? (
         <LuLoader2 className="animate-spin mx-auto my-20 size-24" />
       ) : (
         clientSecret && (

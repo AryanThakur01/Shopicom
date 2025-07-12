@@ -39,11 +39,13 @@ const createOrder = async (
 };
 
 const cart = async (req: NextRequest) => {
+  console.log("Payment Intent Generator for Cart");
   const token = req.cookies.get("Session_Token")?.value;
   if (!token) throw new Error("Token Not Found");
   const payload = jwtDecoder(token);
   if (!payload.id || !payload.role)
     throw new Error("Session Token role or id missing");
+  console.log("Payload", payload);
 
   const stripe = new Stripe(process.env.STRIPE_SECRET || "", {
     apiVersion: "2023-10-16",
@@ -56,6 +58,7 @@ const cart = async (req: NextRequest) => {
       item: true,
     },
   });
+  console.log("Products in Cart", products);
 
   let amount = 0;
   let orderedVariants: orderList[] = [];
@@ -79,6 +82,7 @@ const cart = async (req: NextRequest) => {
     amount: amount * 100,
     currency: "inr",
   });
+  console.log("Payment Intent Created", paymentIntent.id);
   createOrder(paymentIntent, orderedVariants, payload.id);
   return paymentIntent;
 };

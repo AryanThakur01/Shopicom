@@ -29,7 +29,7 @@ export const POST = async (req: NextRequest) => {
     let sessionId: string = "";
     switch (event.type) {
       case "payment_intent.created":
-        console.log("WEBHOOK STRIPE created");
+        console.log("WEBHOOK STRIPE created", event.data.object.id);
         break;
       case "payment_intent.payment_failed":
         console.log("WEBHOOK STRIPE payment failed");
@@ -37,7 +37,7 @@ export const POST = async (req: NextRequest) => {
         await cancelOrder(sessionId);
         break;
       case "payment_intent.requires_action":
-        console.log("WEBHOOK STRIPE requires action");
+        console.log("WEBHOOK STRIPE requires action", event.data.object.id);
         sessionId = event.data.object.id;
         await lockProducts(sessionId);
         break;
