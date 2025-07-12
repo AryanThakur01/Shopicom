@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: ["/dashboard/*"],
     },
-    sitemap: "https://dsa.aryanthakur.me/sitemap.xml",
+    sitemap: "https://dsa.aryanthakur.dev/sitemap.xml",
   };
 }

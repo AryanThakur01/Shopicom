@@ -1,6 +1,6 @@
 export const url =
   process.env.NODE_ENV === "production"
-    ? "https://shopicom.aryanthakur.me"
+    ? "https://shopicom.aryanthakur.dev"
     : "http://localhost:3000";
 
 export const stripePublicKey =

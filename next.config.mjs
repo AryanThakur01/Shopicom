@@ -24,7 +24,7 @@ const nextConfig = {
   },
   experimental: {
     serverActions: {
-      allowedForwardedHosts: ["shopicom.aryanthakur.me"],
+      allowedForwardedHosts: ["shopicom.aryanthakur.dev"],
     },
   },
 };
