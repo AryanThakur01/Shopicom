@@ -6,17 +6,21 @@ import {
   LuChevronRight,
   LuImagePlus,
   LuLoader,
+  LuLoader2,
   LuMegaphone,
   LuX,
 } from "react-icons/lu";
 import { imageProcessor } from "@/utils/helpers/blobToStr";
 import { NewContent } from "@/db/schema/dynamicContent";
 import toast from "react-hot-toast";
+import { useGetProfileQuery } from "@/lib/redux/services/user";
 
 const BannerUploader = () => {
   const [emblaRef, emblaApi] = useEmblaCarousel();
   const [banners, setBanners] = useState<NewContent[]>([]);
   const [deleting, setDeleting] = useState(false);
+
+  const {isLoading, data: user} = useGetProfileQuery()
 
   const getBanners = async () => {
     try {
@@ -59,7 +63,12 @@ const BannerUploader = () => {
     getBanners();
   }, []);
 
-  return (
+  return isLoading?
+    <div className="w-full min-h-[50vh] flex items-center justify-center">
+      <LuLoader2 className="animate-spin size-10" />
+    </div>
+    :
+    user?.role === "admin" ?(
     <div>
       <h2 className="text-2xl">Home Page Banner (Only For Admin)</h2>
       <hr className="mb-8 mt-4 border-border" />
@@ -118,7 +127,10 @@ const BannerUploader = () => {
         </div>
       </div>
     </div>
-  );
+  ): <>
+    <h2 className="text-2xl">Welcome {user?.firstName && user.lastName ? `${user?.firstName} ${user?.lastName}`: "User"}</h2>
+        <h3 className="text-muted-foreground">You can check your orders and all other details from the sidebar</h3>
+      </>;
 };
 
 interface IBanner {
