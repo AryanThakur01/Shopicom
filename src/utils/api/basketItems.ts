@@ -13,6 +13,7 @@ export const lockProducts = async (sessionId: string) => {
       qty: orders.qty,
       isLocked: orders.isLocked,
     });
+  console.log("WEBHOOK STRIPE lockProducts", userOrders);
   userOrders.map(async (item) => {
     const curVariant = await db
       .select({
@@ -22,8 +23,10 @@ export const lockProducts = async (sessionId: string) => {
       })
       .from(variants)
       .where(eq(variants.id, item.variantId));
+    console.log("WEBHOOK STRIPE curVariant", curVariant);
     if (curVariant[0].stock - userOrders[0].qty <= 0)
       throw new Error("Product Out Of Stock");
+    console.log("WEBHOOK STRIPE curVariant orders", curVariant[0].orders);
     await db
       .update(variants)
       .set({
