@@ -137,7 +137,7 @@ const singleProduct = async (
     },
   });
   if (!product) throw new Error("Single Product Checkout Failed");
-  createOrder(
+  await createOrder(
     paymentIntent,
     [{ variantId, qty, sellerId: product.product.sellerId }],
     payload?.id,
