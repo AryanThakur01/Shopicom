@@ -21,7 +21,7 @@ const createOrder = async (
   const shipping = paymentIntent.shipping;
   const address = shipping?.address;
   console.log("Variants List", variantsList);
-  await Promise.all([variantsList.map(async (item) => {
+  await Promise.all(variantsList.map(async (item) => {
     console.log("Creating Order for Variant", item.variantId);
     const order = await db
       .insert(orders)
@@ -39,7 +39,7 @@ const createOrder = async (
       })
       .returning();
     console.log("Order Created", order);
-  })]);
+  }));
 };
 
 const cart = async (req: NextRequest) => {
