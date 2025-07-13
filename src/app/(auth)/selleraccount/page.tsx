@@ -18,12 +18,12 @@ interface IFormInput {
   lastName: string;
 }
 const Page = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const [image, setImage] = useState("");
-  // const user = useSelector((state) => state.user.value);
   const { data: user } = useGetProfileQuery();
   const router = useRouter();
   const form = useRef<HTMLFormElement>(null);
-  const [sellerVerify] = useVerifysellerMutation();
+  const [sellerVerify, verifyRest] = useVerifysellerMutation();
 
   const {
     handleSubmit,
@@ -43,6 +43,7 @@ const Page = () => {
   }, [user]);
 
   const submitHandler: SubmitHandler<IFormInput> = async (data) => {
+    setIsLoading(true);
     try {
       if (!image) throw new Error("Please Upload the image first");
       if (!form.current) throw new Error("No form found");
@@ -52,17 +53,12 @@ const Page = () => {
         profilePic: image,
       };
       await sellerVerify(body).unwrap();
-      // const res = await fetch(url + "/api/verifyseller", {
-      //   method: "POST",
-      //   body,
-      // });
-      // const response = await res.json();
-      // if (response.error) throw new Error(response.error);
       router.push("/dashboard");
     } catch (error) {
       if (error instanceof Error) toast.error(error.message);
       else toast.error("Something went wrong");
     }
+    setIsLoading(false);
   };
   return (
     <section className="container max-w-[20rem] border border-border mt-4 min-h-[70vh]">
@@ -123,8 +119,8 @@ const Page = () => {
             register={register}
           />
         </div>
-        <button className="mx-auto my-8 bg-primary p-2 w-40 rounded text-lg">
-          Become Seller
+        <button className="mx-auto my-8 bg-primary p-2 w-40 rounded text-lg" disabled={isLoading}>
+          {isLoading ? "Loading..." : "Become Seller"}
         </button>
       </form>
     </section>
