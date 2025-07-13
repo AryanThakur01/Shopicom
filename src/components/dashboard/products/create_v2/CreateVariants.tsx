@@ -27,7 +27,7 @@ const CreateVariants: React.FC<ICreateVariants> = ({ id }) => {
         </div>
       ) : (
         variants.length <= 0 ? (
-        <div className="border border-border rounded-lg w-full h-40">
+        <div className="border border-border rounded-lg w-full h-40 text-center flex items-center text-muted-foreground">
               No Variants Found
             </div>
         ):
