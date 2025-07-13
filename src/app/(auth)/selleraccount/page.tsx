@@ -91,7 +91,13 @@ const Page = () => {
                     marginBlock: "2px",
                     color: "hsl(var(--primary))",
                   },
-                  button: { display: "none", },
+                  button: {
+                    marginTop: "5px",
+                    backgroundColor: "hsl(var(--primary))",
+                    paddingInline: "1rem",
+                    borderRadius: "2px",
+                    height: "2rem",
+                  },
                   allowedContent: { fontSize: "10px" },
                 }}
                 onClientUploadComplete={(res) => {
