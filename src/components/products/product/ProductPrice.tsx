@@ -10,8 +10,8 @@ const ProductPrice = () => {
     <>
       <div className="bg-success w-20 text-center rounded-full p-1 my-2">
         {(
-          ((variantDetails.price - variantDetails.discountedPrice) /
-            variantDetails.price) *
+          ((Number(variantDetails.price) - variantDetails.discountedPrice) /
+            Number(variantDetails.price)) *
           100
         ).toFixed(1)}
         %

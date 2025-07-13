@@ -62,7 +62,7 @@ const ProductCheckout: React.FC<IProductCheckout> = async ({
                 ₹{" "}
                 {curVariant &&
                   (
-                    curVariant.price * Number(searchParams.qty)
+                    Number(curVariant.price) * Number(searchParams.qty)
                   ).toLocaleString()}
               </p>
             </div>
@@ -72,7 +72,7 @@ const ProductCheckout: React.FC<IProductCheckout> = async ({
                 ₹{" "}
                 {curVariant &&
                   (
-                    (curVariant.price - curVariant.discountedPrice) *
+                    (Number(curVariant.price) - curVariant.discountedPrice) *
                     Number(searchParams.qty)
                   ).toLocaleString()}
               </p>

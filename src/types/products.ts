@@ -5,7 +5,7 @@ export interface IProductProps extends product {
   variants: {
     id: number;
     color: string;
-    price: number;
+    price: string;
     images: image[];
     discountedPrice: number;
     productId: number;

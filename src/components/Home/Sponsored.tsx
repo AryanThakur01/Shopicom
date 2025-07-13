@@ -35,7 +35,7 @@ const Sponsored = async () => {
             name={item.product.name}
             tag={item.tag}
             description={item.product.description}
-            price={item.product.variants[0].price}
+            price={String(item.product.variants[0].price)}
             discountedPrice={item.product.variants[0].discountedPrice}
             variantId={item.product.variants[0].id}
           />

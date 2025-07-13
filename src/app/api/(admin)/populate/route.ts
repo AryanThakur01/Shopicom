@@ -81,7 +81,7 @@ async function seed(sellerId: number, count: number) {
       const img = item.images[i] || faker.image.urlLoremFlickr({ category: "product", width: 640, height: 480 }) + `?random=${faker.string.alphanumeric(8)}`;
       const variant = await db.insert(variants).values({
         color: faker.color.human(), // Random color
-        price: parseFloat(item.price + Math.floor(Math.random() * 10).toFixed(2)), // Randomly adjust price
+        price: String(parseFloat(item.price + Math.floor(Math.random() * 10).toFixed(2))), // Randomly adjust price
         discountedPrice: Math.round(item.price * (1 - item.discountPercentage / 100)),
         stock: Math.floor(item.stock / item.images.length),
         orders: 0,

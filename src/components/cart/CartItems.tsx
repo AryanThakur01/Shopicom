@@ -31,8 +31,8 @@ const CartItems = () => {
     let discount = 0;
     let netTotal = 0;
     cart?.map((item) => {
-      tempTotal += item.variant?.price;
-      discount += item.variant?.price - item.variant?.discountedPrice;
+      tempTotal += Number(item.variant?.price);
+      discount += Number(item.variant?.price) - item.variant?.discountedPrice;
       netTotal += item.variant?.discountedPrice;
     });
     setTotal(tempTotal);

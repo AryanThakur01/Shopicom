@@ -9,7 +9,7 @@ interface IProductCard {
   name: string;
   tag: string;
   description: string;
-  price: number;
+  price: string;
   discountedPrice: number;
   id: number;
   variantId?: number;

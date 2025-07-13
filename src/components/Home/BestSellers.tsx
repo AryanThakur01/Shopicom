@@ -63,7 +63,7 @@ const BestSellers = () => {
                         name={item.product.name}
                         tag={item.tag}
                         description={item.product.description}
-                        price={Number(item.product.variants[0].price)}
+                        price={item.product.variants[0].price}
                         discountedPrice={
                           item.product.variants[0].discountedPrice
                         }

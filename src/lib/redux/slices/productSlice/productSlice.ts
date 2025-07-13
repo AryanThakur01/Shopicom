@@ -15,7 +15,7 @@ export const initialProduct: ProductSliceState = {
     variant: {
       id: 0,
       color: "",
-      price: 0,
+      price: "0",
       stock: 0,
       orders: 0,
       productId: 0,

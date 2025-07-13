@@ -23,7 +23,7 @@ export const POST = async (req: NextRequest) => {
       productId,
       discountedPrice: Number(body.discountedPrice),
       color: body.color,
-      price: Number(body.price),
+      price: body.price,
       stock: Number(body.stock),
       orders: Number(body.orders),
       id: variantId && !isNaN(variantId) ? variantId : undefined,
