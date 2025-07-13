@@ -26,6 +26,11 @@ const CreateVariants: React.FC<ICreateVariants> = ({ id }) => {
           <LuLoader2 className="mx-auto my-auto animate-spin" size={80} />
         </div>
       ) : (
+        variants.length <= 0 ? (
+        <div className="border border-border rounded-lg w-full h-40">
+              No Variants Found
+            </div>
+        ):
         variants.map((item, i) => (
           <div className="my-2" key={`variant-${i}`}>
             <Carousel>

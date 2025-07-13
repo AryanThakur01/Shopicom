@@ -1,5 +1,5 @@
 import { UploadApiResponse, v2 as cloudinary } from "cloudinary";
-import fs from "fs";
+import { Readable } from "stream"; // Node.js built-in
 
 export const cloudinaryConfig = () => {
   return cloudinary.config({
@@ -16,21 +16,29 @@ export const UploadBlobToCloudinary = async (
   variantId: number,
 ): Promise<UploadApiResponse> => {
   cloudinaryConfig();
-  let tempsLocation = "temps";
-  !fs.existsSync(tempsLocation) && fs.mkdirSync(tempsLocation);
-  tempsLocation += "/cloudinary";
-  !fs.existsSync(tempsLocation) && fs.mkdirSync(tempsLocation);
 
-  const fullFileLocation = tempsLocation + "/" + fileName;
-  fs.writeFileSync(fullFileLocation, Buffer.from(await file.arrayBuffer()));
-  const image = await cloudinary.uploader.upload(fullFileLocation, {
-    transformation: {
-      width: 1000,
-      height: 1000,
-    },
-    folder: `Shopicom/${variantId}`,
+  const buffer = Buffer.from(await file.arrayBuffer());
+
+  // Create a stream from buffer (no extra libraries needed)
+  const stream = Readable.from(buffer);
+
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        transformation: {
+          width: 1000,
+          height: 1000,
+        },
+        folder: `Shopicom/${variantId}`,
+        public_id: fileName.split(".")[0], // Optional: no extension
+      },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result as UploadApiResponse);
+      }
+    );
+
+    stream.pipe(uploadStream);
   });
-  fs.unlinkSync(fullFileLocation);
-
-  return image;
 };
+
