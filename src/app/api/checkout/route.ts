@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import intentGenerator from "@/utils/helpers/paymentIntentGenerator";
 import { cookies } from "next/headers";
 
+export const dynamic = "force-dynamic"; // Force dynamic rendering for this route
 export const GET = async (req: NextRequest) => {
   try {
     const variantId = Number(req.nextUrl.searchParams.getAll("variantId"));
