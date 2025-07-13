@@ -17,8 +17,10 @@ const createOrder = async (
   variantsList: orderList[],
   customerId?: number,
 ) => {
+  console.log("Creating Order for Payment Intent", paymentIntent.id);
   const shipping = paymentIntent.shipping;
   const address = shipping?.address;
+  console.log("Variants List", variantsList);
   variantsList.map(async (item) => {
     await db
       .insert(orders)
