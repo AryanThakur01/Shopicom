@@ -13,6 +13,7 @@ import {
   LuSearch,
   LuShoppingBag,
   LuX,
+  LuPenSquare
 } from "react-icons/lu";
 import { twMerge } from "tailwind-merge";
 import { useRouter } from "next/navigation";
@@ -224,20 +225,36 @@ const Drawer: FC<IProfileDialog> = ({ children }) => {
                 <span>Logout</span>
               </Dialog.Close>
             ) : (
-              <Dialog.Close
-                onClick={() => router.push("/login")}
-                className="gap-4 items-center w-full bg-background rounded flex p-2 px-4 overflow-hidden h-12"
-                onMouseDown={(e) => {
-                  e.currentTarget.style.backgroundColor = "hsl(var(--muted))";
-                }}
-                onMouseUp={(e) => {
-                  e.currentTarget.style.backgroundColor =
-                    "hsl(var(--background))";
-                }}
-              >
-                <LuLogIn />
-                <span>Login</span>
-              </Dialog.Close>
+                <>
+                  <Dialog.Close
+                    onClick={() => router.push("/login")}
+                    className="gap-4 items-center w-full bg-background rounded flex p-2 px-4 overflow-hidden h-12"
+                    onMouseDown={(e) => {
+                      e.currentTarget.style.backgroundColor = "hsl(var(--muted))";
+                    }}
+                    onMouseUp={(e) => {
+                      e.currentTarget.style.backgroundColor =
+                        "hsl(var(--background))";
+                    }}
+                  >
+                    <LuLogIn />
+                    <span>Login</span>
+                  </Dialog.Close>
+                  <Dialog.Close
+                    onClick={() => router.push("/register")}
+                    className="gap-4 items-center w-full bg-background rounded flex p-2 px-4 overflow-hidden h-12 mt-4"
+                    onMouseDown={(e) => {
+                      e.currentTarget.style.backgroundColor = "hsl(var(--muted))";
+                    }}
+                    onMouseUp={(e) => {
+                      e.currentTarget.style.backgroundColor =
+                        "hsl(var(--background))";
+                    }}
+                  >
+                    <LuPenSquare />
+                    <span>Register</span>
+                  </Dialog.Close>
+                </>
             )}
           </div>
         </Dialog.Content>
