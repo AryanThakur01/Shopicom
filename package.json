@@ -21,6 +21,7 @@
     "@stripe/react-stripe-js": "^2.5.1",
     "@stripe/stripe-js": "^3.0.6",
     "@uploadthing/react": "^6.4.0",
+    "@vercel/analytics": "^1.5.0",
     "bcryptjs": "^2.4.3",
     "cloudinary": "^2.1.0",
     "drizzle-orm": "^0.29.3",

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next"
 import { Ubuntu } from "next/font/google";
 import "./globals.css";
 import Nav from "@/components/Nav";
@@ -35,6 +36,7 @@ export default function RootLayout({
         className={ubuntu.className + " bg-background text-foreground"}
         suppressHydrationWarning={true}
       >
+        <Analytics />
         <ToasterProvider />
         <Providers>
           <Nav />
