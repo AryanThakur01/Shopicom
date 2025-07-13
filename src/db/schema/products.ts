@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { integer, pgTable, serial, text } from "drizzle-orm/pg-core";
+import { integer, numeric, pgTable, serial, text } from "drizzle-orm/pg-core";
 import { users } from "./users";
 
 // Product Table Definition and relations
@@ -58,7 +58,7 @@ export const propertiesRelations = relations(properties, ({ one }) => ({
 export const variants = pgTable("variants", {
   id: serial("id").primaryKey(),
   color: text("color").notNull(),
-  price: integer("price").notNull(),
+  price: numeric("price").notNull(),
   discountedPrice: integer("discountedPrice").notNull(),
   stock: integer("stock").notNull(),
   orders: integer("orders").notNull(),

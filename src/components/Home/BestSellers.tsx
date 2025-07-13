@@ -52,7 +52,7 @@ const BestSellers = () => {
               </button>
               <div className="overflow-hidden" ref={emblaRef}>
                 <div className="flex gap-[2%] h-fit">
-                  {bestSeller.map((item, i) => (
+                  {bestSeller.map((item) => item.product.variants[0] && (
                     <div
                       className="lg:flex-[0_0_31%] md:flex-[0_0_60%] sm:flex-[0_0_80%] flex-[0_0_96%] h-fit"
                       key={item.id}
@@ -63,7 +63,7 @@ const BestSellers = () => {
                         name={item.product.name}
                         tag={item.tag}
                         description={item.product.description}
-                        price={item.product.variants[0].price}
+                        price={Number(item.product.variants[0].price)}
                         discountedPrice={
                           item.product.variants[0].discountedPrice
                         }
