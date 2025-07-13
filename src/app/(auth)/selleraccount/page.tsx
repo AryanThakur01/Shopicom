@@ -1,13 +1,11 @@
 "use client";
-import { useSelector } from "@/lib/redux";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { sellerVerifySchema } from "@/lib/schemas/sellerVerify";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import FormField from "@/components/FormField";
-import { url } from "@/lib/constants";
-import { UploadButton, UploadDropzone } from "@/utils/uploadthing";
+import { UploadDropzone } from "@/utils/uploadthing";
 import Image from "next/image";
 import toast from "react-hot-toast";
 import {
@@ -93,13 +91,7 @@ const Page = () => {
                     marginBlock: "2px",
                     color: "hsl(var(--primary))",
                   },
-                  button: {
-                    marginTop: "5px",
-                    backgroundColor: "hsl(var(--primary))",
-                    paddingInline: "1rem",
-                    borderRadius: "2px",
-                    height: "2rem",
-                  },
+                  button: { display: "none", },
                   allowedContent: { fontSize: "10px" },
                 }}
                 onClientUploadComplete={(res) => {
