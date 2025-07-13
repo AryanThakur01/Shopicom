@@ -45,7 +45,7 @@ export const GET = async (req: NextRequest) => {
 };
 
 async function seed(sellerId: number, count: number) {
-  const res = await fetch(`https://dummyjson.com/products?limit=${count}&select=title,description,price,discountPercentage,stock,images,tags`);
+  const res = await fetch(`https://dummyjson.com/products?limit=${count}`);
   const data = await res.json();
 
   let counter = 0
@@ -63,8 +63,13 @@ async function seed(sellerId: number, count: number) {
 
     // Add a fake property or two
       await db.insert(properties).values([
-        { key: "brand", value: item.brand || "Unknown", productId },
+        ...(item.brand ? [{ key: "brand", value: item.brand || "Unknown", productId }]: []),
         { key: "rating", value: item.rating?.toString() || "0", productId },
+        { key: "category", value: item.category || "Uncategorized", productId },
+        { key: "weight", value: item.weight || "0", productId },
+        { key: "dimension:width", value: item.dimensions?.width?.toString() || "0", productId },
+        { key: "dimension:height", value: item.dimensions?.height?.toString() || "0", productId },
+        { key: "dimension:depth", value: item.dimensions?.depth?.toString() || "0", productId },
       ]);
 
     // Add a category based on tags
